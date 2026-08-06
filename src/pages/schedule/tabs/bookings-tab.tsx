@@ -1,14 +1,38 @@
-import {
-  CalendarIcon,
-  MoreVerticalIcon,
-  SlidersHorizontalIcon,
-} from "lucide-react";
+import { useState } from "react";
+import { CalendarIcon, MoreVerticalIcon } from "lucide-react";
 
 import { StatusIconBadge } from "@/components/ui/status-icon-badge";
 import { TabsContent } from "@/components/ui/tabs";
+import { AttendeesFilterPopover } from "@/pages/schedule/tabs/attendees-filter";
+import {
+  defaultAttendeesFilter,
+  type AttendeesFilter,
+} from "@/pages/schedule/tabs/attendees-filter.types";
 import type { Reservation } from "@/types/schedule";
 
+function matchesFilter(reservation: Reservation, filter: AttendeesFilter) {
+  const statusMatches =
+    filter.status === "all"
+      ? true
+      : filter.status === "unmarked"
+        ? reservation.status === "booked"
+        : filter.status === "attended"
+          ? reservation.status === "attended"
+          : reservation.status === "no_show" ||
+            reservation.status === "late_cancelled";
+
+  const userTypeMatches =
+    filter.userType === "all" ||
+    (filter.userType === "new"
+      ? reservation.clientTotalVisits === 1
+      : reservation.clientTotalVisits > 1);
+
+  return statusMatches && userTypeMatches;
+}
+
 export function BookingsTab({ reservations }: { reservations: Reservation[] }) {
+  const [filter, setFilter] = useState<AttendeesFilter>(defaultAttendeesFilter);
+
   if (reservations.length === 0) {
     return (
       <TabsContent
@@ -28,6 +52,10 @@ export function BookingsTab({ reservations }: { reservations: Reservation[] }) {
   ).length;
   const returningUsers = totalUsers - newUsers;
 
+  const filteredReservations = reservations.filter((reservation) =>
+    matchesFilter(reservation, filter),
+  );
+
   return (
     <TabsContent value="bookings" className="flex flex-1 flex-col gap-4">
       <div className="grid grid-cols-3 gap-3">
@@ -42,14 +70,20 @@ export function BookingsTab({ reservations }: { reservations: Reservation[] }) {
             Attendees
           </span>
           <div className="flex items-center gap-3 text-muted-foreground">
-            <SlidersHorizontalIcon className="size-4" />
+            <AttendeesFilterPopover filter={filter} onApply={setFilter} />
           </div>
         </div>
-        <ul className="flex flex-col divide-y divide-border">
-          {reservations.map((reservation) => (
-            <BookingRow key={reservation.id} reservation={reservation} />
-          ))}
-        </ul>
+        {filteredReservations.length === 0 ? (
+          <p className="flex flex-1 items-center justify-center p-6 text-center text-sm text-muted-foreground">
+            No attendees match the selected filters.
+          </p>
+        ) : (
+          <ul className="flex flex-col divide-y divide-border">
+            {filteredReservations.map((reservation) => (
+              <BookingRow key={reservation.id} reservation={reservation} />
+            ))}
+          </ul>
+        )}
       </div>
     </TabsContent>
   );
