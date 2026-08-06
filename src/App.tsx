@@ -5,6 +5,7 @@ import { SiteHeader } from "#components/site-header";
 import { SidebarInset, SidebarProvider } from "#components/ui/sidebar";
 import { TooltipProvider } from "#components/ui/tooltip";
 import { sidebarNavigation, type PageId } from "#config/navigation";
+import { SchedulePage } from "#pages/schedule";
 
 const pageTitles: Record<PageId, string> = {
   home: "Home",
@@ -25,6 +26,20 @@ const pageTitles: Record<PageId, string> = {
   account: "Account",
   internal: "Internal",
 };
+
+function PageContentRenderer({ activePage }: { activePage: PageId }) {
+  if (activePage === "schedule") {
+    return <SchedulePage />;
+  }
+
+  return (
+    <main className="p-6">
+      <h2 className="text-2xl font-semibold tracking-normal">
+        {pageTitles[activePage]}
+      </h2>
+    </main>
+  );
+}
 
 function App() {
   const [activePage, setActivePage] = useState<PageId>("schedule-settings");
@@ -47,13 +62,7 @@ function App() {
         />
         <SidebarInset className="min-h-svh bg-muted/30">
           <SiteHeader title={pageTitles[activePage]} />
-          <div className="p-6">
-            <section className="min-h-112 border bg-background p-8">
-              <h2 className="text-2xl font-semibold tracking-normal">
-                {pageTitles[activePage]}
-              </h2>
-            </section>
-          </div>
+          <PageContentRenderer activePage={activePage} />
         </SidebarInset>
       </SidebarProvider>
     </TooltipProvider>

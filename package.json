@@ -7,7 +7,8 @@
     "#components/*": "./src/components/*.tsx",
     "#config/*": "./src/config/*.tsx",
     "#lib/*": "./src/lib/*.ts",
-    "#hooks/*": "./src/hooks/*.ts"
+    "#hooks/*": "./src/hooks/*.ts",
+    "#pages/*": "./src/pages/*/index.tsx"
   },
   "scripts": {
     "dev": "vite",
