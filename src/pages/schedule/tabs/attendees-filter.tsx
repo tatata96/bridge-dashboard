@@ -50,7 +50,7 @@ export function AttendeesFilterPopover({
         <button
           type="button"
           aria-label="Filter attendees"
-          className="text-muted-foreground hover:text-foreground"
+          className="cursor-pointer text-muted-foreground hover:text-foreground"
         >
           <SlidersHorizontalIcon className="size-4" />
         </button>
@@ -81,7 +81,7 @@ export function AttendeesFilterPopover({
             {STATUS_OPTIONS.map((option) => (
               <label
                 key={option.value}
-                className="flex items-center gap-2 text-sm text-foreground"
+                className="flex cursor-pointer items-center gap-2 text-sm text-foreground"
               >
                 <RadioGroupItem value={option.value} />
                 {option.label}
@@ -106,7 +106,7 @@ export function AttendeesFilterPopover({
             {USER_TYPE_OPTIONS.map((option) => (
               <label
                 key={option.value}
-                className="flex items-center gap-2 text-sm text-foreground"
+                className="flex cursor-pointer items-center gap-2 text-sm text-foreground"
               >
                 <RadioGroupItem value={option.value} />
                 {option.label}
