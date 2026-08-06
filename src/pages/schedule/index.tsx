@@ -22,8 +22,20 @@ export function SchedulePage() {
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
     null,
   );
+  const [sessions, setSessions] = useState(() => mockClassSessions);
 
-  const entries: ScheduleListEntry[] = mockClassSessions
+  function updateSessionClassPassCapacity(
+    sessionId: string,
+    classPassCapacity: number,
+  ) {
+    setSessions((prev) =>
+      prev.map((session) =>
+        session.id === sessionId ? { ...session, classPassCapacity } : session,
+      ),
+    );
+  }
+
+  const entries: ScheduleListEntry[] = sessions
     .filter((session) => isSameDay(new Date(session.startAt), selectedDate))
     .filter((session) => {
       if (typeFilter === "all") return true;
@@ -65,7 +77,10 @@ export function SchedulePage() {
             onSelectSession={setSelectedSessionId}
           />
         </div>
-        <ScheduleDetailPanel entry={selectedEntry} />
+        <ScheduleDetailPanel
+          entry={selectedEntry}
+          onClassPassCapacityChange={updateSessionClassPassCapacity}
+        />
       </div>
     </main>
   );

@@ -63,7 +63,7 @@ export function ScheduleToolbar({
           <span className="text-muted-foreground">Type</span>
           <SelectValue />
         </SelectTrigger>
-        <SelectContent position="popper" align="start" sideOffset={4}>
+        <SelectContent>
           {CLASS_TYPE_OPTIONS.map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
