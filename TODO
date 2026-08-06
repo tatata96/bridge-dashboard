@@ -1,0 +1,2 @@
+No live region for silent state changes. 
+Stepping the date, selecting a different class, or applying a filter that empties the list all update the page purely visually — nothing announces the change to a screen reader user who isn't manually re-reading the panel.

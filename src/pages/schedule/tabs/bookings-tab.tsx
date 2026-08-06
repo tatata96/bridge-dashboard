@@ -66,9 +66,7 @@ export function BookingsTab({ reservations }: { reservations: Reservation[] }) {
 
       <div className="flex flex-1 flex-col rounded-lg border border-border">
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
-          <span className="text-sm font-semibold text-foreground">
-            Attendees
-          </span>
+          <h3 className="text-sm font-semibold text-foreground">Attendees</h3>
           <div className="flex items-center gap-3 text-muted-foreground">
             <AttendeesFilterPopover filter={filter} onApply={setFilter} />
           </div>
@@ -106,6 +104,8 @@ function BookingRow({ reservation }: { reservation: Reservation }) {
           reservation.status === "late_cancelled"
         ? "cross"
         : null;
+  const attendanceLabel =
+    attendanceVariant === "check" ? "Attended" : "No-show";
 
   return (
     <li className="flex items-center justify-between gap-3 px-4 py-3">
@@ -125,7 +125,10 @@ function BookingRow({ reservation }: { reservation: Reservation }) {
 
       <div className="flex items-center gap-1.5">
         {attendanceVariant ? (
-          <StatusIconBadge variant={attendanceVariant} />
+          <StatusIconBadge
+            variant={attendanceVariant}
+            label={attendanceLabel}
+          />
         ) : null}
         <MoreVerticalIcon className="size-4 text-muted-foreground" />
       </div>

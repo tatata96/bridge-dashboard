@@ -59,9 +59,13 @@ export function AttendeesFilterPopover({
         align="end"
         side="bottom"
         avoidCollisions={false}
+        aria-labelledby="attendees-filter-title"
         className="w-64"
       >
-        <p className="text-sm font-semibold text-foreground">
+        <p
+          id="attendees-filter-title"
+          className="text-sm font-semibold text-foreground"
+        >
           Filter attendees
         </p>
 

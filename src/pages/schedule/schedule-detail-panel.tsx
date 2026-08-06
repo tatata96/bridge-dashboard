@@ -47,9 +47,9 @@ export function ScheduleDetailPanel({
             </span>
           </div>
           <div className="flex flex-col gap-0.5">
-            <span className="text-base font-semibold text-foreground">
+            <h2 className="text-base font-semibold text-foreground">
               {className}
-            </span>
+            </h2>
             <span className="text-sm text-muted-foreground">
               {instructorName}
             </span>
@@ -68,7 +68,11 @@ export function ScheduleDetailPanel({
               onClassPassCapacityChange(session.id, Number(value))
             }
           >
-            <SelectTrigger size="sm" className="w-16">
+            <SelectTrigger
+              size="sm"
+              className="w-16"
+              aria-label="ClassPass capacity"
+            >
               <SelectValue>{session.classPassCapacity}</SelectValue>
             </SelectTrigger>
             <SelectContent>

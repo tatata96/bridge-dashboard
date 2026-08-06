@@ -35,7 +35,7 @@ export function ScheduleClassList({
             <button
               type="button"
               onClick={() => onSelectSession(session.id)}
-              aria-pressed={isSelected}
+              aria-current={isSelected ? "true" : undefined}
               className={cn(
                 "flex w-full cursor-pointer items-start justify-between gap-3 border-l-2 border-transparent px-4 py-3 text-left transition-colors hover:bg-muted/50",
                 isSelected && "border-l-primary bg-muted/40",
