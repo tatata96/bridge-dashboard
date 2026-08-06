@@ -10,6 +10,7 @@ import {
   mockClasses,
   mockClassSessions,
   mockInstructors,
+  mockReservations,
 } from "@/pages/schedule/schedule.mock-data";
 import { ScheduleToolbar } from "@/pages/schedule/schedule-toolbar";
 
@@ -59,6 +60,12 @@ export function SchedulePage() {
     entries.find((entry) => entry.session.id === selectedSessionId) ??
     entries[0];
 
+  const selectedEntryReservations = selectedEntry
+    ? mockReservations.filter(
+        (reservation) => reservation.sessionId === selectedEntry.session.id,
+      )
+    : [];
+
   return (
     <main className="flex flex-1 flex-col gap-6 p-6">
       <ScheduleToolbar
@@ -80,6 +87,7 @@ export function SchedulePage() {
         <ScheduleDetailPanel
           entry={selectedEntry}
           onClassPassCapacityChange={updateSessionClassPassCapacity}
+          reservations={selectedEntryReservations}
         />
       </div>
     </main>

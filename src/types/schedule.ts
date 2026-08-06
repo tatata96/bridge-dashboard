@@ -30,6 +30,7 @@ export type Reservation = {
   id: string;
   sessionId: string;
   clientName: string;
+  clientTotalVisits: number; // this client's all-time visit count, including this booking
   bookingSource: BookingSource;
   status: ReservationStatus;
   bookedAt: string; // ISO 8601 datetime

@@ -1,5 +1,10 @@
 import { atTime } from "@/lib/date.utils";
-import type { Class, ClassSession, Instructor } from "@/types/schedule";
+import type {
+  Class,
+  ClassSession,
+  Instructor,
+  Reservation,
+} from "@/types/schedule";
 
 const today = new Date();
 
@@ -26,9 +31,9 @@ export const mockClassSessions: ClassSession[] = [
     startAt: atTime(today, 7, 0).toISOString(),
     durationMinutes: 60,
     capacity: 3,
-    reservedCount: 0,
+    reservedCount: 2,
     classPassCapacity: 3,
-    classPassReservedCount: 0,
+    classPassReservedCount: 2,
   },
   {
     id: "session-2",
@@ -73,5 +78,26 @@ export const mockClassSessions: ClassSession[] = [
     reservedCount: 0,
     classPassCapacity: 4,
     classPassReservedCount: 0,
+  },
+];
+
+export const mockReservations: Reservation[] = [
+  {
+    id: "reservation-1",
+    sessionId: "session-1",
+    clientName: "Ken Jones",
+    clientTotalVisits: 16,
+    bookingSource: "classpass",
+    status: "attended",
+    bookedAt: atTime(today, 6, 30).toISOString(),
+  },
+  {
+    id: "reservation-2",
+    sessionId: "session-1",
+    clientName: "Holly Smith",
+    clientTotalVisits: 68,
+    bookingSource: "classpass",
+    status: "no_show",
+    bookedAt: atTime(today, 6, 45).toISOString(),
   },
 ];

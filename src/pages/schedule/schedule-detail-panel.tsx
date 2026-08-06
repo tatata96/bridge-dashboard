@@ -9,13 +9,16 @@ import { Separator } from "@/components/ui/separator";
 import { formatTime } from "@/lib/date.utils";
 import type { ScheduleListEntry } from "@/pages/schedule/schedule-class-list";
 import { ScheduleDetailTabs } from "@/pages/schedule/tabs";
+import type { Reservation } from "@/types/schedule";
 
 export function ScheduleDetailPanel({
   entry,
   onClassPassCapacityChange,
+  reservations,
 }: {
   entry: ScheduleListEntry | undefined;
   onClassPassCapacityChange: (sessionId: string, capacity: number) => void;
+  reservations: Reservation[];
 }) {
   if (!entry) {
     return (
@@ -81,7 +84,7 @@ export function ScheduleDetailPanel({
 
       <Separator />
 
-      <ScheduleDetailTabs />
+      <ScheduleDetailTabs reservations={reservations} />
     </div>
   );
 }
