@@ -25,13 +25,13 @@ export function SchedulePage() {
   );
   const [sessions, setSessions] = useState(() => mockClassSessions);
 
-  function updateSessionClassPassCapacity(
+  function updateSessionclassCapacity(
     sessionId: string,
-    classPassCapacity: number,
+    classCapacity: number,
   ) {
     setSessions((prev) =>
       prev.map((session) =>
-        session.id === sessionId ? { ...session, classPassCapacity } : session,
+        session.id === sessionId ? { ...session, classCapacity } : session,
       ),
     );
   }
@@ -86,7 +86,7 @@ export function SchedulePage() {
         </div>
         <ScheduleDetailPanel
           entry={selectedEntry}
-          onClassPassCapacityChange={updateSessionClassPassCapacity}
+          onclassCapacityChange={updateSessionclassCapacity}
           reservations={selectedEntryReservations}
         />
       </div>

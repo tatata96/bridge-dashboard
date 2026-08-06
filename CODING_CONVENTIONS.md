@@ -141,7 +141,7 @@ nearby text.
 Prefer this:
 
 ```tsx
-<SelectTrigger aria-label="ClassPass capacity">
+<SelectTrigger aria-label="Classiva capacity">
   <SelectValue>{capacity}</SelectValue>
 </SelectTrigger>
 ```

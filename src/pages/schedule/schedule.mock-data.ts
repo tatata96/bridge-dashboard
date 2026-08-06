@@ -1,3 +1,4 @@
+import { APP_NAME } from "@/config/constants";
 import { atTime } from "@/lib/date.utils";
 import type {
   Class,
@@ -32,8 +33,8 @@ export const mockClassSessions: ClassSession[] = [
     durationMinutes: 60,
     capacity: 3,
     reservedCount: 2,
-    classPassCapacity: 3,
-    classPassReservedCount: 2,
+    classCapacity: 3,
+    classReservedCount: 2,
   },
   {
     id: "session-2",
@@ -43,8 +44,8 @@ export const mockClassSessions: ClassSession[] = [
     durationMinutes: 60,
     capacity: 5,
     reservedCount: 0,
-    classPassCapacity: 5,
-    classPassReservedCount: 0,
+    classCapacity: 5,
+    classReservedCount: 0,
   },
   {
     id: "session-3",
@@ -54,8 +55,8 @@ export const mockClassSessions: ClassSession[] = [
     durationMinutes: 60,
     capacity: 3,
     reservedCount: 0,
-    classPassCapacity: 3,
-    classPassReservedCount: 0,
+    classCapacity: 3,
+    classReservedCount: 0,
   },
   {
     id: "session-4",
@@ -65,8 +66,8 @@ export const mockClassSessions: ClassSession[] = [
     durationMinutes: 60,
     capacity: 10,
     reservedCount: 0,
-    classPassCapacity: 10,
-    classPassReservedCount: 0,
+    classCapacity: 10,
+    classReservedCount: 0,
   },
   {
     id: "session-5",
@@ -76,8 +77,8 @@ export const mockClassSessions: ClassSession[] = [
     durationMinutes: 60,
     capacity: 4,
     reservedCount: 0,
-    classPassCapacity: 4,
-    classPassReservedCount: 0,
+    classCapacity: 4,
+    classReservedCount: 0,
   },
 ];
 
@@ -87,7 +88,7 @@ export const mockReservations: Reservation[] = [
     sessionId: "session-1",
     clientName: "Ken Jones",
     clientTotalVisits: 16,
-    bookingSource: "classpass",
+    bookingSource: APP_NAME,
     status: "attended",
     bookedAt: atTime(today, 6, 30).toISOString(),
   },
@@ -96,7 +97,7 @@ export const mockReservations: Reservation[] = [
     sessionId: "session-1",
     clientName: "Holly Smith",
     clientTotalVisits: 68,
-    bookingSource: "classpass",
+    bookingSource: APP_NAME,
     status: "no_show",
     bookedAt: atTime(today, 6, 45).toISOString(),
   },

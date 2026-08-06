@@ -1,3 +1,5 @@
+import type { APP_NAME } from "@/config/constants";
+
 export type Instructor = {
   id: string;
   name: string;
@@ -18,11 +20,11 @@ export type ClassSession = {
   durationMinutes: number;
   capacity: number;
   reservedCount: number;
-  classPassCapacity: number; // spots allocated to the ClassPass marketplace
-  classPassReservedCount: number; // of classPassCapacity, how many are currently booked
+  classCapacity: number; // spots allocated to the Classiva marketplace
+  classReservedCount: number; // of classCapacity, how many are currently booked
 };
 
-export type BookingSource = "classpass" | "direct";
+export type BookingSource = typeof APP_NAME | "direct";
 export type ReservationStatus =
   "booked" | "attended" | "no_show" | "late_cancelled";
 
