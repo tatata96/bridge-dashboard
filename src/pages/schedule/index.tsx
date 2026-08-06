@@ -1,11 +1,51 @@
 import { useState } from "react";
 
-import { addDays } from "@/lib/date.utils";
+import { addDays, isSameDay } from "@/lib/date.utils";
+import {
+  ScheduleClassList,
+  type ScheduleListEntry,
+} from "@/pages/schedule/schedule-class-list";
+import { ScheduleDetailPanel } from "@/pages/schedule/schedule-detail-panel";
+import {
+  mockClasses,
+  mockClassSessions,
+  mockInstructors,
+} from "@/pages/schedule/schedule.mock-data";
 import { ScheduleToolbar } from "@/pages/schedule/schedule-toolbar";
+
+const classesById = new Map(mockClasses.map((c) => [c.id, c]));
+const instructorsById = new Map(mockInstructors.map((i) => [i.id, i]));
 
 export function SchedulePage() {
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const [typeFilter, setTypeFilter] = useState("all");
+  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
+    null,
+  );
+
+  const entries: ScheduleListEntry[] = mockClassSessions
+    .filter((session) => isSameDay(new Date(session.startAt), selectedDate))
+    .filter((session) => {
+      if (typeFilter === "all") return true;
+      return (
+        classesById.get(session.classId)?.category.toLowerCase() === typeFilter
+      );
+    })
+    .sort(
+      (a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
+    )
+    .map((session) => ({
+      session,
+      className: classesById.get(session.classId)?.name ?? "Unknown class",
+      instructorName: session.instructorId
+        ? (instructorsById.get(session.instructorId)?.name ??
+          "Unknown instructor")
+        : "No Staff Specified",
+    }));
+
+  const selectedEntry =
+    entries.find((entry) => entry.session.id === selectedSessionId) ??
+    entries[0];
 
   return (
     <main className="flex flex-1 flex-col gap-6 p-6">
@@ -16,6 +56,17 @@ export function SchedulePage() {
         typeFilter={typeFilter}
         onTypeFilterChange={setTypeFilter}
       />
+
+      <div className="flex flex-1 gap-4">
+        <div className="flex w-full max-w-md flex-col">
+          <ScheduleClassList
+            entries={entries}
+            selectedSessionId={selectedEntry?.session.id ?? null}
+            onSelectSession={setSelectedSessionId}
+          />
+        </div>
+        <ScheduleDetailPanel entry={selectedEntry} />
+      </div>
     </main>
   );
 }
