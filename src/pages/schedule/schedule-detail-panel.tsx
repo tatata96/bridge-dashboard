@@ -5,8 +5,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { formatTime } from "@/lib/date.utils";
 import type { ScheduleListEntry } from "@/pages/schedule/schedule-class-list";
+import { ScheduleDetailTabs } from "@/pages/schedule/tabs";
 
 export function ScheduleDetailPanel({
   entry,
@@ -76,6 +78,10 @@ export function ScheduleDetailPanel({
           </Select>
         </div>
       </div>
+
+      <Separator />
+
+      <ScheduleDetailTabs />
     </div>
   );
 }
