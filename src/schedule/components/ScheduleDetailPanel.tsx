@@ -59,7 +59,19 @@ export function ScheduleDetailPanel({
         </div>
 
         {classHasStarted ? (
-          <span className="inline-flex h-8 shrink-0 items-center rounded-full border border-border bg-muted/50 px-3 text-sm font-medium text-muted-foreground">
+          <span
+            className={
+              classHasEnded
+                ? "inline-flex h-8 shrink-0 items-center rounded-md bg-muted/50 px-3 text-sm font-medium text-secondary-foreground"
+                : "inline-flex h-8 shrink-0 items-center gap-2 rounded-md bg-blue-50 px-3 text-sm font-medium text-blue-800"
+            }
+          >
+            {classHasEnded ? null : (
+              <span
+                className="size-1.5 rounded-full bg-blue-600"
+                aria-hidden="true"
+              />
+            )}
             {classHasEnded ? "Completed" : "In progress"}
           </span>
         ) : (

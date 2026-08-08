@@ -9,27 +9,18 @@ import {
 } from "@/schedule/components/ScheduleClassList";
 import { ScheduleDetailPanel } from "@/schedule/components/ScheduleDetailPanel";
 import {
-  mockClasses,
   mockClassSessions,
   mockInstructors,
   mockReservations,
 } from "@/schedule/data/schedule.mock-data";
 import { ScheduleToolbar } from "@/schedule/components/ScheduleToolbar";
+import {
+  classesById,
+  getInstructorName,
+  hasSessionEnded,
+  hasSessionStarted,
+} from "@/schedule/utils/schedule.utils";
 import type { ClassSession } from "@/types/schedule";
-
-const classesById = new Map(mockClasses.map((c) => [c.id, c]));
-const instructorsById = new Map(mockInstructors.map((i) => [i.id, i]));
-
-function hasSessionStarted(session: ClassSession) {
-  return Date.now() >= new Date(session.startAt).getTime();
-}
-
-function hasSessionEnded(session: ClassSession) {
-  return (
-    Date.now() >=
-    new Date(session.startAt).getTime() + session.durationMinutes * 60_000
-  );
-}
 
 export function SchedulePage() {
   const { toast } = useToast();
@@ -75,8 +66,20 @@ export function SchedulePage() {
       ),
     );
 
+    const changeMessages: string[] = [];
+    if (changes.capacity !== originalSession.capacity) {
+      changeMessages.push(
+        `Capacity changed from ${originalSession.capacity} to ${changes.capacity}`,
+      );
+    }
+    if (changes.instructorId !== originalSession.instructorId) {
+      changeMessages.push(
+        `Instructor is now ${getInstructorName(changes.instructorId)}`,
+      );
+    }
+
     toast({
-      title: "Session updated",
+      title: changeMessages.join(". ") || "Class changes saved",
       action: {
         label: "Undo",
         onClick: () => {
@@ -206,10 +209,7 @@ export function SchedulePage() {
     (session) => ({
       session,
       className: classesById.get(session.classId)?.name ?? "Unknown class",
-      instructorName: session.instructorId
-        ? (instructorsById.get(session.instructorId)?.name ??
-          "Unknown instructor")
-        : "No Staff Specified",
+      instructorName: getInstructorName(session.instructorId),
     }),
   );
 
