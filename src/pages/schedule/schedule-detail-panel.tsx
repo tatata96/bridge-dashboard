@@ -2,7 +2,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { formatTime } from "@/lib/date.utils";
 import { Bookings } from "@/pages/schedule/bookings";
-import { CancelClassButton } from "@/pages/schedule/cancel-class-button";
+import { CancelSessionButton } from "@/pages/schedule/cancel-session-button";
 import { EditClassModal } from "@/pages/schedule/edit-class-modal";
 import type { ScheduleListEntry } from "@/pages/schedule/schedule-class-list";
 import type { Instructor, Reservation } from "@/types/schedule";
@@ -48,14 +48,16 @@ export function ScheduleDetailPanel({
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <EditClassModal
             entry={entry}
             instructors={instructors}
             onSave={onSaveClass}
           />
 
-          <CancelClassButton entry={entry} onConfirm={onCancelSession} />
+          <span className="h-4 w-px bg-border" aria-hidden="true" />
+
+          <CancelSessionButton entry={entry} onConfirm={onCancelSession} />
         </div>
       </div>
 

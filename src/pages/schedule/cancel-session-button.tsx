@@ -13,7 +13,7 @@ import {
 import { ClassSessionSummary } from "@/pages/schedule/class-session-summary";
 import type { ScheduleListEntry } from "@/pages/schedule/schedule-class-list";
 
-export function CancelClassButton({
+export function CancelSessionButton({
   entry,
   onConfirm,
 }: {
@@ -25,15 +25,15 @@ export function CancelClassButton({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button type="button" variant="destructive" size="sm">
-          Cancel
+        <Button type="button" variant="destructive-link" size="sm">
+          Cancel Session
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Cancel class</DialogTitle>
+          <DialogTitle>Cancel Session</DialogTitle>
           <DialogDescription>
-            Are you sure you want to cancel this class? This can't be undone.
+            Are you sure you want to cancel this session? This can't be undone.
           </DialogDescription>
         </DialogHeader>
 
@@ -46,7 +46,7 @@ export function CancelClassButton({
             size="sm"
             onClick={() => setOpen(false)}
           >
-            Keep class
+            Keep session
           </Button>
           <Button
             type="button"
@@ -57,7 +57,7 @@ export function CancelClassButton({
               setOpen(false);
             }}
           >
-            Cancel class
+            Cancel session
           </Button>
         </DialogFooter>
       </DialogContent>
