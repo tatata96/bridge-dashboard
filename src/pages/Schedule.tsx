@@ -41,7 +41,23 @@ export function SchedulePage() {
   }
 
   function cancelSession(sessionId: string) {
+    const session = sessions.find((s) => s.id === sessionId);
+    if (!session) return;
+
     setSessions((prev) => prev.filter((session) => session.id !== sessionId));
+
+    toast({
+      title: "Session cancelled",
+      action: {
+        label: "Undo",
+        onClick: () => {
+          setSessions((prev) =>
+            prev.some((s) => s.id === sessionId) ? prev : [...prev, session],
+          );
+          setSelectedSessionId(sessionId);
+        },
+      },
+    });
   }
 
   function checkInReservation(reservationId: string) {
