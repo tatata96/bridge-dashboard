@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -10,8 +10,23 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ClassSessionSummary } from "@/schedule/components/ClassSessionSummary";
 import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
+
+const cancellationReasons = [
+  "Low attendance",
+  "Instructor unavailable",
+  "Facility issue",
+  "Schedule conflict",
+  "Other",
+];
 
 export function CancelSessionButton({
   entry,
@@ -21,26 +36,71 @@ export function CancelSessionButton({
   onConfirm: (sessionId: string) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [cancellationReason, setCancellationReason] = useState(
+    cancellationReasons[0],
+  );
+  const keepSessionButtonRef = useRef<HTMLButtonElement>(null);
+  const attendeeCount = entry.session.reservedCount;
+  const refundCredits = attendeeCount * 2;
+
+  function handleOpenChange(nextOpen: boolean) {
+    setOpen(nextOpen);
+    if (nextOpen) {
+      setCancellationReason(cancellationReasons[0]);
+    }
+  }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button type="button" variant="destructive-link" size="sm">
-          Cancel Session
+          Cancel session
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent
+        onOpenAutoFocus={(event) => {
+          event.preventDefault();
+          keepSessionButtonRef.current?.focus();
+        }}
+      >
         <DialogHeader>
-          <DialogTitle>Cancel Session</DialogTitle>
-          <DialogDescription>
-            Are you sure you want to cancel this session? This can't be undone.
-          </DialogDescription>
+          <DialogTitle>Cancel this session?</DialogTitle>
+          {attendeeCount > 0 ? (
+            <DialogDescription>
+              {attendeeCount} {attendeeCount === 1 ? "attendee" : "attendees"}{" "}
+              will be notified and refunded {refundCredits}{" "}
+              {refundCredits === 1 ? "credit" : "credits"}. This can't be
+              undone.
+            </DialogDescription>
+          ) : null}
         </DialogHeader>
 
         <ClassSessionSummary entry={entry} />
 
+        <label className="flex flex-col gap-1.5 text-sm">
+          <span className="text-xs font-medium text-muted-foreground">
+            Cancellation reason
+          </span>
+          <Select
+            value={cancellationReason}
+            onValueChange={setCancellationReason}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {cancellationReasons.map((reason) => (
+                <SelectItem key={reason} value={reason}>
+                  {reason}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </label>
+
         <DialogFooter>
           <Button
+            ref={keepSessionButtonRef}
             type="button"
             variant="outline"
             size="sm"
