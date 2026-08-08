@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { useToast } from "@/hooks/use-toast";
 import { addDays, isSameDay } from "@/lib/date.utils";
 import {
   ScheduleClassList,
@@ -18,12 +19,15 @@ const classesById = new Map(mockClasses.map((c) => [c.id, c]));
 const instructorsById = new Map(mockInstructors.map((i) => [i.id, i]));
 
 export function SchedulePage() {
+  const { toast } = useToast();
+  const [now] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const [typeFilter, setTypeFilter] = useState("all");
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
     null,
   );
   const [sessions, setSessions] = useState(() => mockClassSessions);
+  const [reservations, setReservations] = useState(() => mockReservations);
 
   function updateSessionClass(
     sessionId: string,
@@ -38,6 +42,32 @@ export function SchedulePage() {
 
   function cancelSession(sessionId: string) {
     setSessions((prev) => prev.filter((session) => session.id !== sessionId));
+  }
+
+  function checkInReservation(reservationId: string) {
+    const reservation = reservations.find((r) => r.id === reservationId);
+    if (!reservation) return;
+
+    setReservations((prev) =>
+      prev.map((r) =>
+        r.id === reservationId ? { ...r, status: "attended" } : r,
+      ),
+    );
+
+    const firstName = reservation.clientName.split(" ")[0];
+    toast({
+      title: `${firstName} checked in`,
+      action: {
+        label: "Undo",
+        onClick: () => {
+          setReservations((prev) =>
+            prev.map((r) =>
+              r.id === reservationId ? { ...r, status: "booked" } : r,
+            ),
+          );
+        },
+      },
+    });
   }
 
   const entries: ScheduleListEntry[] = sessions
@@ -65,10 +95,16 @@ export function SchedulePage() {
     entries[0];
 
   const selectedEntryReservations = selectedEntry
-    ? mockReservations.filter(
+    ? reservations.filter(
         (reservation) => reservation.sessionId === selectedEntry.session.id,
       )
     : [];
+
+  const classHasEnded = selectedEntry
+    ? now.getTime() >=
+      new Date(selectedEntry.session.startAt).getTime() +
+        selectedEntry.session.durationMinutes * 60_000
+    : false;
 
   return (
     <main className="flex flex-1 flex-col gap-6 p-6">
@@ -94,6 +130,8 @@ export function SchedulePage() {
           instructors={mockInstructors}
           onSaveClass={updateSessionClass}
           onCancelSession={cancelSession}
+          onCheckIn={checkInReservation}
+          classHasEnded={classHasEnded}
         />
       </div>
     </main>

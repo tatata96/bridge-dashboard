@@ -13,6 +13,8 @@ export function ScheduleDetailPanel({
   instructors,
   onSaveClass,
   onCancelSession,
+  onCheckIn,
+  classHasEnded,
 }: {
   entry: ScheduleListEntry | undefined;
   reservations: Reservation[];
@@ -22,6 +24,8 @@ export function ScheduleDetailPanel({
     changes: { instructorId: string | null; capacity: number },
   ) => void;
   onCancelSession: (sessionId: string) => void;
+  onCheckIn: (reservationId: string) => void;
+  classHasEnded: boolean;
 }) {
   if (!entry) {
     return (
@@ -79,7 +83,11 @@ export function ScheduleDetailPanel({
         <Progress value={bookedPercent} />
       </div>
 
-      <Bookings reservations={reservations} />
+      <Bookings
+        reservations={reservations}
+        classHasEnded={classHasEnded}
+        onCheckIn={onCheckIn}
+      />
     </div>
   );
 }

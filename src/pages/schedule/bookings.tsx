@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CalendarIcon, MoreVerticalIcon } from "lucide-react";
+import { CalendarIcon, CheckIcon, MoreVerticalIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { StatusIconBadge } from "@/components/ui/status-icon-badge";
+import { cn } from "@/lib/classnames.utils";
 import { AttendeesFilterPopover } from "@/pages/schedule/attendees-filter";
 import {
   defaultAttendeesFilter,
@@ -36,7 +36,15 @@ function matchesFilter(reservation: Reservation, filter: AttendeesFilter) {
   return statusMatches && userTypeMatches;
 }
 
-export function Bookings({ reservations }: { reservations: Reservation[] }) {
+export function Bookings({
+  reservations,
+  classHasEnded,
+  onCheckIn,
+}: {
+  reservations: Reservation[];
+  classHasEnded: boolean;
+  onCheckIn: (reservationId: string) => void;
+}) {
   const [filter, setFilter] = useState<AttendeesFilter>(defaultAttendeesFilter);
 
   if (reservations.length === 0) {
@@ -69,7 +77,12 @@ export function Bookings({ reservations }: { reservations: Reservation[] }) {
         ) : (
           <ul className="flex flex-col divide-y divide-border">
             {filteredReservations.map((reservation) => (
-              <BookingRow key={reservation.id} reservation={reservation} />
+              <BookingRow
+                key={reservation.id}
+                reservation={reservation}
+                classHasEnded={classHasEnded}
+                onCheckIn={onCheckIn}
+              />
             ))}
           </ul>
         )}
@@ -78,17 +91,15 @@ export function Bookings({ reservations }: { reservations: Reservation[] }) {
   );
 }
 
-function BookingRow({ reservation }: { reservation: Reservation }) {
-  const attendanceVariant =
-    reservation.status === "attended"
-      ? "check"
-      : reservation.status === "no_show" ||
-          reservation.status === "late_cancelled"
-        ? "cross"
-        : null;
-  const attendanceLabel =
-    attendanceVariant === "check" ? "Attended" : "No-show";
-
+function BookingRow({
+  reservation,
+  classHasEnded,
+  onCheckIn,
+}: {
+  reservation: Reservation;
+  classHasEnded: boolean;
+  onCheckIn: (reservationId: string) => void;
+}) {
   return (
     <li className="flex items-center justify-between gap-3 px-4 py-3">
       <div className="flex items-center gap-3">
@@ -106,12 +117,11 @@ function BookingRow({ reservation }: { reservation: Reservation }) {
       </div>
 
       <div className="flex items-center gap-1.5">
-        {attendanceVariant ? (
-          <StatusIconBadge
-            variant={attendanceVariant}
-            label={attendanceLabel}
-          />
-        ) : null}
+        <AttendanceStatus
+          reservation={reservation}
+          classHasEnded={classHasEnded}
+          onCheckIn={onCheckIn}
+        />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -129,5 +139,48 @@ function BookingRow({ reservation }: { reservation: Reservation }) {
         </DropdownMenu>
       </div>
     </li>
+  );
+}
+
+function AttendanceStatus({
+  reservation,
+  classHasEnded,
+  onCheckIn,
+}: {
+  reservation: Reservation;
+  classHasEnded: boolean;
+  onCheckIn: (reservationId: string) => void;
+}) {
+  if (reservation.status === "attended") {
+    return (
+      <span
+        className={cn(
+          "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium",
+          "bg-green-500/15 text-green-700 dark:bg-green-500/20 dark:text-green-400",
+        )}
+      >
+        <CheckIcon className="size-3.5" aria-hidden="true" />
+        Checked in
+      </span>
+    );
+  }
+
+  if (reservation.status === "booked" && !classHasEnded) {
+    return (
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={() => onCheckIn(reservation.id)}
+      >
+        Check in
+      </Button>
+    );
+  }
+
+  return (
+    <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+      Not checked in
+    </span>
   );
 }

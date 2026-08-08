@@ -2,6 +2,7 @@ import { useState, type CSSProperties } from "react";
 
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
+import { Toaster } from "@/components/toaster";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { sidebarNavigation, type PageId } from "@/config/navigation";
@@ -46,25 +47,27 @@ function App() {
 
   return (
     <TooltipProvider>
-      <SidebarProvider
-        style={
-          {
-            "--header-height": "4.5rem",
-            "--sidebar-width": "13.75rem",
-          } as CSSProperties
-        }
-      >
-        <AppSidebar
-          activePage={activePage}
-          navMain={sidebarNavigation.navMain}
-          navSecondary={sidebarNavigation.navSecondary}
-          onNavigate={setActivePage}
-        />
-        <SidebarInset className="min-h-svh bg-muted/30">
-          <SiteHeader title={pageTitles[activePage]} />
-          <PageContentRenderer activePage={activePage} />
-        </SidebarInset>
-      </SidebarProvider>
+      <Toaster>
+        <SidebarProvider
+          style={
+            {
+              "--header-height": "4.5rem",
+              "--sidebar-width": "13.75rem",
+            } as CSSProperties
+          }
+        >
+          <AppSidebar
+            activePage={activePage}
+            navMain={sidebarNavigation.navMain}
+            navSecondary={sidebarNavigation.navSecondary}
+            onNavigate={setActivePage}
+          />
+          <SidebarInset className="min-h-svh bg-muted/30">
+            <SiteHeader title={pageTitles[activePage]} />
+            <PageContentRenderer activePage={activePage} />
+          </SidebarInset>
+        </SidebarProvider>
+      </Toaster>
     </TooltipProvider>
   );
 }
