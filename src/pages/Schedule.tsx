@@ -123,7 +123,7 @@ export function SchedulePage() {
     : false;
 
   return (
-    <main className="flex flex-1 flex-col gap-6 p-6">
+    <main className="flex min-w-0 flex-1 flex-col gap-4 p-4 sm:gap-6 sm:p-6">
       <ScheduleToolbar
         selectedDate={selectedDate}
         onPrevDay={() => setSelectedDate((date) => addDays(date, -1))}
@@ -132,8 +132,8 @@ export function SchedulePage() {
         onTypeFilterChange={setTypeFilter}
       />
 
-      <div className="flex flex-1 gap-4">
-        <div className="flex w-full max-w-md flex-col">
+      <div className="flex min-w-0 flex-1 flex-col gap-4 xl:flex-row">
+        <div className="flex w-full min-w-0 flex-col xl:max-w-64">
           <ScheduleClassList
             entries={entries}
             selectedSessionId={selectedEntry?.session.id ?? null}

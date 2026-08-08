@@ -29,7 +29,7 @@ export function ScheduleDetailPanel({
 }) {
   if (!entry) {
     return (
-      <div className="flex flex-1 items-center justify-center rounded-lg border border-border bg-background p-6 text-sm text-muted-foreground">
+      <div className="flex min-h-80 flex-1 items-center justify-center rounded-lg border border-border bg-background p-6 text-sm text-muted-foreground">
         Select a class to see its details.
       </div>
     );
@@ -41,9 +41,9 @@ export function ScheduleDetailPanel({
     session.capacity > 0 ? (session.reservedCount / session.capacity) * 100 : 0;
 
   return (
-    <div className="flex flex-1 flex-col gap-4 rounded-lg border border-border bg-background p-4">
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex flex-col gap-0.5">
+    <div className="flex min-h-80 min-w-0 flex-1 flex-col gap-4 rounded-lg border border-border bg-background p-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 flex-col gap-0.5">
           <h2 className="text-base font-semibold text-foreground">
             {formatTime(new Date(session.startAt))} {className}
           </h2>
@@ -52,14 +52,17 @@ export function ScheduleDetailPanel({
           </span>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <EditClassModal
             entry={entry}
             instructors={instructors}
             onSave={onSaveClass}
           />
 
-          <span className="h-4 w-px bg-border" aria-hidden="true" />
+          <span
+            className="hidden h-4 w-px bg-border sm:block"
+            aria-hidden="true"
+          />
 
           <CancelSessionButton entry={entry} onConfirm={onCancelSession} />
         </div>
