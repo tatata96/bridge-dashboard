@@ -133,7 +133,7 @@ export function SchedulePage() {
       />
 
       <div className="flex min-w-0 flex-1 flex-col gap-4 xl:flex-row">
-        <div className="flex w-full min-w-0 flex-col xl:max-w-64">
+        <div className="flex w-full min-w-0 flex-col xl:w-[clamp(22rem,34vw,39rem)] xl:flex-none">
           <ScheduleClassList
             entries={entries}
             selectedSessionId={selectedEntry?.session.id ?? null}
