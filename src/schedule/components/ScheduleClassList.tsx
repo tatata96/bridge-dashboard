@@ -19,29 +19,30 @@ export function ScheduleClassList({
 }) {
   if (entries.length === 0) {
     return (
-      <div className="flex flex-1 items-center justify-center rounded-lg border border-border bg-background p-6 text-sm text-muted-foreground">
+      <div className="flex min-h-24 flex-1 items-center justify-center rounded-lg border border-border bg-background p-6 text-sm text-muted-foreground">
         No classes scheduled for this day.
       </div>
     );
   }
 
   return (
-    <ul className="flex flex-1 flex-col divide-y divide-border overflow-y-auto rounded-lg border border-border bg-background">
+    <ul className="flex min-w-0 flex-1 divide-x divide-border overflow-x-auto rounded-lg border border-border bg-background xl:flex-col xl:divide-x-0 xl:divide-y xl:overflow-x-visible xl:overflow-y-auto">
       {entries.map(({ session, className, instructorName }) => {
         const isSelected = session.id === selectedSessionId;
 
         return (
-          <li key={session.id}>
+          <li key={session.id} className="w-48 shrink-0 xl:w-auto xl:shrink">
             <button
               type="button"
               onClick={() => onSelectSession(session.id)}
               aria-current={isSelected ? "true" : undefined}
               className={cn(
-                "flex w-full cursor-pointer items-start justify-between gap-3 border-l-2 border-transparent px-4 py-3 text-left transition-colors hover:bg-muted/50",
-                isSelected && "border-l-primary bg-muted/40",
+                "flex h-full w-full cursor-pointer items-start justify-between gap-3 border-b-2 border-transparent px-4 py-3 text-left transition-colors hover:bg-muted/50 xl:border-b-0 xl:border-l-2",
+                isSelected &&
+                  "border-b-primary bg-muted/40 xl:border-l-primary",
               )}
             >
-              <div className="flex flex-col gap-0.5">
+              <div className="flex min-w-0 flex-col gap-0.5">
                 <span className="text-sm font-medium text-foreground">
                   {formatTime(new Date(session.startAt))}
                 </span>

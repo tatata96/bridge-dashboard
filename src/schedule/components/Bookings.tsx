@@ -62,7 +62,7 @@ export function Bookings({
   );
 
   return (
-    <div className="flex flex-1 flex-col gap-4">
+    <div className="flex min-w-0 flex-1 flex-col gap-4">
       <div className="flex flex-1 flex-col rounded-lg border border-border">
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <h3 className="text-sm font-semibold text-foreground">Attendees</h3>
@@ -101,12 +101,12 @@ function BookingRow({
   onCheckIn: (reservationId: string) => void;
 }) {
   return (
-    <li className="flex items-center justify-between gap-3 px-4 py-3">
-      <div className="flex items-center gap-3">
+    <li className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex min-w-0 items-center gap-3">
         <span className="flex size-8 items-center justify-center rounded-full bg-muted text-sm font-medium text-foreground">
           {reservation.clientName.charAt(0)}
         </span>
-        <div className="flex flex-col">
+        <div className="flex min-w-0 flex-col">
           <span className="text-sm font-medium text-foreground">
             {reservation.clientName}
           </span>
@@ -116,7 +116,7 @@ function BookingRow({
         </div>
       </div>
 
-      <div className="flex items-center gap-1.5">
+      <div className="flex flex-wrap items-center gap-1.5 sm:justify-end">
         <AttendanceStatus
           reservation={reservation}
           classHasEnded={classHasEnded}
