@@ -1,5 +1,5 @@
 import { APP_NAME } from "@/config/constants";
-import { atTime } from "@/lib/date.utils";
+import { addDays, atTime } from "@/lib/date.utils";
 import type {
   Class,
   ClassSession,
@@ -8,6 +8,7 @@ import type {
 } from "@/types/schedule";
 
 const today = new Date();
+const yesterday = addDays(today, -1);
 
 export const mockInstructors: Instructor[] = [
   { id: "instructor-1", name: "Betty White" },
@@ -25,6 +26,39 @@ export const mockClasses: Class[] = [
 ];
 
 export const mockClassSessions: ClassSession[] = [
+  {
+    id: "session-yesterday-1",
+    classId: "class-1",
+    instructorId: "instructor-1",
+    startAt: atTime(yesterday, 7, 0).toISOString(),
+    durationMinutes: 60,
+    capacity: 8,
+    reservedCount: 4,
+    classCapacity: 8,
+    classReservedCount: 4,
+  },
+  {
+    id: "session-yesterday-2",
+    classId: "class-2",
+    instructorId: null,
+    startAt: atTime(yesterday, 9, 30).toISOString(),
+    durationMinutes: 45,
+    capacity: 6,
+    reservedCount: 2,
+    classCapacity: 6,
+    classReservedCount: 2,
+  },
+  {
+    id: "session-yesterday-3",
+    classId: "class-3",
+    instructorId: "instructor-1",
+    startAt: atTime(yesterday, 18, 0).toISOString(),
+    durationMinutes: 60,
+    capacity: 10,
+    reservedCount: 5,
+    classCapacity: 10,
+    classReservedCount: 5,
+  },
   {
     id: "session-1",
     classId: "class-1",
@@ -98,6 +132,105 @@ export const mockClassSessions: ClassSession[] = [
 ];
 
 export const mockReservations: Reservation[] = [
+  {
+    id: "reservation-yesterday-1",
+    sessionId: "session-yesterday-1",
+    clientName: "Avery Brooks",
+    clientTotalVisits: 21,
+    bookingSource: APP_NAME,
+    status: "attended",
+    bookedAt: atTime(yesterday, 6, 20).toISOString(),
+  },
+  {
+    id: "reservation-yesterday-2",
+    sessionId: "session-yesterday-1",
+    clientName: "Nina Patel",
+    clientTotalVisits: 7,
+    bookingSource: APP_NAME,
+    status: "attended",
+    bookedAt: atTime(yesterday, 6, 25).toISOString(),
+  },
+  {
+    id: "reservation-yesterday-3",
+    sessionId: "session-yesterday-1",
+    clientName: "Elliot Ward",
+    clientTotalVisits: 2,
+    bookingSource: APP_NAME,
+    status: "no_show",
+    bookedAt: atTime(yesterday, 6, 35).toISOString(),
+  },
+  {
+    id: "reservation-yesterday-4",
+    sessionId: "session-yesterday-1",
+    clientName: "Maya Singh",
+    clientTotalVisits: 11,
+    bookingSource: APP_NAME,
+    status: "attended",
+    bookedAt: atTime(yesterday, 6, 40).toISOString(),
+  },
+  {
+    id: "reservation-yesterday-5",
+    sessionId: "session-yesterday-2",
+    clientName: "Owen Carter",
+    clientTotalVisits: 5,
+    bookingSource: APP_NAME,
+    status: "attended",
+    bookedAt: atTime(yesterday, 8, 55).toISOString(),
+  },
+  {
+    id: "reservation-yesterday-6",
+    sessionId: "session-yesterday-2",
+    clientName: "Riley Green",
+    clientTotalVisits: 13,
+    bookingSource: APP_NAME,
+    status: "late_cancelled",
+    bookedAt: atTime(yesterday, 9, 0).toISOString(),
+  },
+  {
+    id: "reservation-yesterday-7",
+    sessionId: "session-yesterday-3",
+    clientName: "Noah Reed",
+    clientTotalVisits: 32,
+    bookingSource: APP_NAME,
+    status: "attended",
+    bookedAt: atTime(yesterday, 17, 20).toISOString(),
+  },
+  {
+    id: "reservation-yesterday-8",
+    sessionId: "session-yesterday-3",
+    clientName: "Lena Ortiz",
+    clientTotalVisits: 4,
+    bookingSource: APP_NAME,
+    status: "attended",
+    bookedAt: atTime(yesterday, 17, 25).toISOString(),
+  },
+  {
+    id: "reservation-yesterday-9",
+    sessionId: "session-yesterday-3",
+    clientName: "Quinn Taylor",
+    clientTotalVisits: 19,
+    bookingSource: APP_NAME,
+    status: "no_show",
+    bookedAt: atTime(yesterday, 17, 30).toISOString(),
+  },
+  {
+    id: "reservation-yesterday-10",
+    sessionId: "session-yesterday-3",
+    clientName: "Iris Martin",
+    clientTotalVisits: 6,
+    bookingSource: APP_NAME,
+    status: "attended",
+    bookedAt: atTime(yesterday, 17, 35).toISOString(),
+  },
+  {
+    id: "reservation-yesterday-11",
+    sessionId: "session-yesterday-3",
+    clientName: "Theo James",
+    clientTotalVisits: 1,
+    bookingSource: APP_NAME,
+    status: "attended",
+    bookedAt: atTime(yesterday, 17, 40).toISOString(),
+  },
   {
     id: "reservation-1",
     sessionId: "session-1",
