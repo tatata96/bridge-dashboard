@@ -67,7 +67,9 @@ export function ScheduleDetailPanel({
               / {session.capacity} booked
             </span>
           </span>
-          <span className="text-muted-foreground">{spotsLeft} spots left</span>
+          <span className="text-muted-foreground">
+            {spotsLeft} {spotsLeft === 1 ? "spot" : "spots"} left
+          </span>
         </div>
         <Progress value={bookedPercent} />
       </div>
