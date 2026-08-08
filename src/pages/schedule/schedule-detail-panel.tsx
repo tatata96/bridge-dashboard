@@ -1,9 +1,9 @@
 import { Separator } from "@/components/ui/separator";
 import { formatTime } from "@/lib/date.utils";
+import { Bookings } from "@/pages/schedule/bookings";
 import { CancelClassButton } from "@/pages/schedule/cancel-class-button";
 import { EditStaffModal } from "@/pages/schedule/edit-staff-modal";
 import type { ScheduleListEntry } from "@/pages/schedule/schedule-class-list";
-import { ScheduleDetailTabs } from "@/pages/schedule/tabs";
 import type { Instructor, Reservation } from "@/types/schedule";
 
 export function ScheduleDetailPanel({
@@ -54,7 +54,7 @@ export function ScheduleDetailPanel({
 
       <Separator />
 
-      <ScheduleDetailTabs reservations={reservations} />
+      <Bookings reservations={reservations} />
     </div>
   );
 }

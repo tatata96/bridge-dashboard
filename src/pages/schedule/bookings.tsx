@@ -9,12 +9,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { StatusIconBadge } from "@/components/ui/status-icon-badge";
-import { TabsContent } from "@/components/ui/tabs";
-import { AttendeesFilterPopover } from "@/pages/schedule/tabs/attendees-filter";
+import { AttendeesFilterPopover } from "@/pages/schedule/attendees-filter";
 import {
   defaultAttendeesFilter,
   type AttendeesFilter,
-} from "@/pages/schedule/tabs/attendees-filter.types";
+} from "@/pages/schedule/attendees-filter.types";
 import type { Reservation } from "@/types/schedule";
 
 function matchesFilter(reservation: Reservation, filter: AttendeesFilter) {
@@ -37,19 +36,16 @@ function matchesFilter(reservation: Reservation, filter: AttendeesFilter) {
   return statusMatches && userTypeMatches;
 }
 
-export function BookingsTab({ reservations }: { reservations: Reservation[] }) {
+export function Bookings({ reservations }: { reservations: Reservation[] }) {
   const [filter, setFilter] = useState<AttendeesFilter>(defaultAttendeesFilter);
 
   if (reservations.length === 0) {
     return (
-      <TabsContent
-        value="bookings"
-        className="flex flex-1 flex-col items-center justify-center gap-2 text-center text-sm text-muted-foreground"
-      >
+      <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center text-sm text-muted-foreground">
         <CalendarIcon className="size-8 text-muted-foreground/50" />
         <p>This class has no reservations.</p>
         <p>Please check back later.</p>
-      </TabsContent>
+      </div>
     );
   }
 
@@ -64,7 +60,7 @@ export function BookingsTab({ reservations }: { reservations: Reservation[] }) {
   );
 
   return (
-    <TabsContent value="bookings" className="flex flex-1 flex-col gap-4">
+    <div className="flex flex-1 flex-col gap-4">
       <div className="grid grid-cols-3 gap-3">
         <StatTile label="Total Users" value={totalUsers} />
         <StatTile label="Returning Users" value={returningUsers} />
@@ -90,7 +86,7 @@ export function BookingsTab({ reservations }: { reservations: Reservation[] }) {
           </ul>
         )}
       </div>
-    </TabsContent>
+    </div>
   );
 }
 

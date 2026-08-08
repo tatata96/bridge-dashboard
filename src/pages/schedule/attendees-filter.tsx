@@ -13,7 +13,7 @@ import {
   type AttendeesFilter,
   type AttendeeStatusFilter,
   type AttendeeUserTypeFilter,
-} from "@/pages/schedule/tabs/attendees-filter.types";
+} from "@/pages/schedule/attendees-filter.types";
 
 const STATUS_OPTIONS: { value: AttendeeStatusFilter; label: string }[] = [
   { value: "all", label: "All" },
