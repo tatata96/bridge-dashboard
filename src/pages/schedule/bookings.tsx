@@ -49,24 +49,12 @@ export function Bookings({ reservations }: { reservations: Reservation[] }) {
     );
   }
 
-  const totalUsers = reservations.length;
-  const newUsers = reservations.filter(
-    (reservation) => reservation.clientTotalVisits === 1,
-  ).length;
-  const returningUsers = totalUsers - newUsers;
-
   const filteredReservations = reservations.filter((reservation) =>
     matchesFilter(reservation, filter),
   );
 
   return (
     <div className="flex flex-1 flex-col gap-4">
-      <div className="grid grid-cols-3 gap-3">
-        <StatTile label="Total Users" value={totalUsers} />
-        <StatTile label="Returning Users" value={returningUsers} />
-        <StatTile label="New Users" value={newUsers} />
-      </div>
-
       <div className="flex flex-1 flex-col rounded-lg border border-border">
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <h3 className="text-sm font-semibold text-foreground">Attendees</h3>
@@ -86,15 +74,6 @@ export function Bookings({ reservations }: { reservations: Reservation[] }) {
           </ul>
         )}
       </div>
-    </div>
-  );
-}
-
-function StatTile({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="flex flex-col items-center gap-1 rounded-lg border border-border py-3">
-      <span className="text-xs text-muted-foreground">{label}</span>
-      <span className="text-lg font-semibold text-foreground">{value}</span>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { formatTime } from "@/lib/date.utils";
 import { Bookings } from "@/pages/schedule/bookings";
@@ -28,6 +29,9 @@ export function ScheduleDetailPanel({
   }
 
   const { session, className, instructorName } = entry;
+  const spotsLeft = session.capacity - session.reservedCount;
+  const bookedPercent =
+    session.capacity > 0 ? (session.reservedCount / session.capacity) * 100 : 0;
 
   return (
     <div className="flex flex-1 flex-col gap-4 rounded-lg border border-border bg-background p-4">
@@ -53,6 +57,20 @@ export function ScheduleDetailPanel({
       </div>
 
       <Separator />
+
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-foreground">
+            <span className="font-semibold">{session.reservedCount}</span>
+            <span className="text-muted-foreground">
+              {" "}
+              / {session.capacity} booked
+            </span>
+          </span>
+          <span className="text-muted-foreground">{spotsLeft} spots left</span>
+        </div>
+        <Progress value={bookedPercent} />
+      </div>
 
       <Bookings reservations={reservations} />
     </div>
