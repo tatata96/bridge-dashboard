@@ -14,6 +14,8 @@ export function ScheduleDetailPanel({
   onSaveClass,
   onCancelSession,
   onCheckIn,
+  onUndoCheckIn,
+  onCancelBooking,
   classHasEnded,
 }: {
   entry: ScheduleListEntry | undefined;
@@ -25,6 +27,8 @@ export function ScheduleDetailPanel({
   ) => void;
   onCancelSession: (sessionId: string) => void;
   onCheckIn: (reservationId: string) => void;
+  onUndoCheckIn: (reservationId: string) => void;
+  onCancelBooking: (reservationId: string) => void;
   classHasEnded: boolean;
 }) {
   if (!entry) {
@@ -90,6 +94,8 @@ export function ScheduleDetailPanel({
         reservations={reservations}
         classHasEnded={classHasEnded}
         onCheckIn={onCheckIn}
+        onUndoCheckIn={onUndoCheckIn}
+        onCancelBooking={onCancelBooking}
       />
     </div>
   );

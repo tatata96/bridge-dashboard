@@ -14,6 +14,7 @@ import {
   defaultAttendeesFilter,
   type AttendeesFilter,
 } from "@/schedule/types/attendees-filter.types";
+import { CancelBookingModal } from "@/schedule/components/CancelBookingModal";
 import type { Reservation } from "@/types/schedule";
 
 function matchesFilter(reservation: Reservation, filter: AttendeesFilter) {
@@ -40,10 +41,14 @@ export function Bookings({
   reservations,
   classHasEnded,
   onCheckIn,
+  onUndoCheckIn,
+  onCancelBooking,
 }: {
   reservations: Reservation[];
   classHasEnded: boolean;
   onCheckIn: (reservationId: string) => void;
+  onUndoCheckIn: (reservationId: string) => void;
+  onCancelBooking: (reservationId: string) => void;
 }) {
   const [filter, setFilter] = useState<AttendeesFilter>(defaultAttendeesFilter);
 
@@ -82,6 +87,8 @@ export function Bookings({
                 reservation={reservation}
                 classHasEnded={classHasEnded}
                 onCheckIn={onCheckIn}
+                onUndoCheckIn={onUndoCheckIn}
+                onCancelBooking={onCancelBooking}
               />
             ))}
           </ul>
@@ -95,11 +102,17 @@ function BookingRow({
   reservation,
   classHasEnded,
   onCheckIn,
+  onUndoCheckIn,
+  onCancelBooking,
 }: {
   reservation: Reservation;
   classHasEnded: boolean;
   onCheckIn: (reservationId: string) => void;
+  onUndoCheckIn: (reservationId: string) => void;
+  onCancelBooking: (reservationId: string) => void;
 }) {
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+
   return (
     <li className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 items-center gap-3">
@@ -122,21 +135,42 @@ function BookingRow({
           classHasEnded={classHasEnded}
           onCheckIn={onCheckIn}
         />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-xs"
-              aria-label="More actions"
-            >
-              <MoreVerticalIcon />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem disabled>No actions yet</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {!classHasEnded ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-xs"
+                aria-label="More actions"
+              >
+                <MoreVerticalIcon />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {reservation.status === "attended" ? (
+                <DropdownMenuItem
+                  onSelect={() => onUndoCheckIn(reservation.id)}
+                >
+                  Undo check-in
+                </DropdownMenuItem>
+              ) : null}
+              <DropdownMenuItem
+                className="text-destructive focus:text-destructive"
+                onSelect={() => setCancelDialogOpen(true)}
+              >
+                Cancel booking
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : null}
+
+        <CancelBookingModal
+          reservation={reservation}
+          open={cancelDialogOpen}
+          onOpenChange={setCancelDialogOpen}
+          onConfirm={onCancelBooking}
+        />
       </div>
     </li>
   );
