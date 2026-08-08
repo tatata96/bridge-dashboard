@@ -1,4 +1,5 @@
 import { useCallback, useState, type ReactNode } from "react";
+import { Undo2Icon } from "lucide-react";
 
 import {
   Toast,
@@ -44,7 +45,7 @@ export function Toaster({ children }: { children: ReactNode }) {
               <ToastTitle>{item.title}</ToastTitle>
               {item.action ? (
                 <>
-                  <span className="text-muted-foreground" aria-hidden="true">
+                  <span className="text-white/50" aria-hidden="true">
                     ·
                   </span>
                   <ToastAction
@@ -53,7 +54,9 @@ export function Toaster({ children }: { children: ReactNode }) {
                       item.action?.onClick();
                       dismiss(item.id);
                     }}
+                    className="inline-flex items-center gap-1"
                   >
+                    <Undo2Icon className="size-3.5" aria-hidden="true" />
                     {item.action.label}
                   </ToastAction>
                 </>
