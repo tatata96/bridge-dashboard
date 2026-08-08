@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { NumberStepper } from "@/components/ui/number-stepper";
 import {
   Select,
   SelectContent,
@@ -24,26 +25,37 @@ import type { Instructor } from "@/types/schedule";
 
 const UNASSIGNED_INSTRUCTOR = "unassigned";
 
-export function EditStaffModal({
+export function EditClassModal({
   entry,
   instructors,
   onSave,
 }: {
   entry: ScheduleListEntry;
   instructors: Instructor[];
-  onSave: (sessionId: string, instructorId: string | null) => void;
+  onSave: (
+    sessionId: string,
+    changes: { instructorId: string | null; capacity: number },
+  ) => void;
 }) {
   const { session } = entry;
   const [open, setOpen] = useState(false);
   const [instructorId, setInstructorId] = useState(session.instructorId);
+  const [capacity, setCapacity] = useState(session.capacity);
+
+  const isDirty =
+    instructorId !== session.instructorId || capacity !== session.capacity;
+  const spotsLeft = capacity - session.reservedCount;
 
   function handleOpenChange(nextOpen: boolean) {
     setOpen(nextOpen);
-    if (nextOpen) setInstructorId(session.instructorId);
+    if (nextOpen) {
+      setInstructorId(session.instructorId);
+      setCapacity(session.capacity);
+    }
   }
 
   function handleSave() {
-    onSave(session.id, instructorId);
+    onSave(session.id, { instructorId, capacity });
     setOpen(false);
   }
 
@@ -52,13 +64,15 @@ export function EditStaffModal({
       <DialogTrigger asChild>
         <Button type="button" variant="outline" size="sm">
           <PencilIcon />
-          Edit staff
+          Edit class
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit staff</DialogTitle>
-          <DialogDescription>Who should teach this class?</DialogDescription>
+          <DialogTitle>Edit class</DialogTitle>
+          <DialogDescription>
+            Update the staff or capacity for this class.
+          </DialogDescription>
         </DialogHeader>
 
         <ClassSessionSummary entry={entry} />
@@ -89,8 +103,29 @@ export function EditStaffModal({
           </Select>
         </label>
 
+        <div className="flex flex-col gap-1.5 text-sm">
+          <span className="text-xs font-medium text-muted-foreground">
+            Capacity
+          </span>
+          <NumberStepper
+            value={capacity}
+            onChange={setCapacity}
+            min={session.reservedCount}
+            label="Capacity"
+          />
+          <span className="text-xs text-muted-foreground">
+            {session.reservedCount} booked · {spotsLeft}{" "}
+            {spotsLeft === 1 ? "spot" : "spots"} left
+          </span>
+        </div>
+
         <DialogFooter>
-          <Button type="button" size="sm" onClick={handleSave}>
+          <Button
+            type="button"
+            size="sm"
+            onClick={handleSave}
+            disabled={!isDirty}
+          >
             Save
           </Button>
         </DialogFooter>

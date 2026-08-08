@@ -3,7 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import { formatTime } from "@/lib/date.utils";
 import { Bookings } from "@/pages/schedule/bookings";
 import { CancelClassButton } from "@/pages/schedule/cancel-class-button";
-import { EditStaffModal } from "@/pages/schedule/edit-staff-modal";
+import { EditClassModal } from "@/pages/schedule/edit-class-modal";
 import type { ScheduleListEntry } from "@/pages/schedule/schedule-class-list";
 import type { Instructor, Reservation } from "@/types/schedule";
 
@@ -11,13 +11,16 @@ export function ScheduleDetailPanel({
   entry,
   reservations,
   instructors,
-  onSaveInstructor,
+  onSaveClass,
   onCancelSession,
 }: {
   entry: ScheduleListEntry | undefined;
   reservations: Reservation[];
   instructors: Instructor[];
-  onSaveInstructor: (sessionId: string, instructorId: string | null) => void;
+  onSaveClass: (
+    sessionId: string,
+    changes: { instructorId: string | null; capacity: number },
+  ) => void;
   onCancelSession: (sessionId: string) => void;
 }) {
   if (!entry) {
@@ -46,10 +49,10 @@ export function ScheduleDetailPanel({
         </div>
 
         <div className="flex items-center gap-2">
-          <EditStaffModal
+          <EditClassModal
             entry={entry}
             instructors={instructors}
-            onSave={onSaveInstructor}
+            onSave={onSaveClass}
           />
 
           <CancelClassButton entry={entry} onConfirm={onCancelSession} />

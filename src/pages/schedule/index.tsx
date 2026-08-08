@@ -25,13 +25,13 @@ export function SchedulePage() {
   );
   const [sessions, setSessions] = useState(() => mockClassSessions);
 
-  function updateSessionInstructor(
+  function updateSessionClass(
     sessionId: string,
-    instructorId: string | null,
+    changes: { instructorId: string | null; capacity: number },
   ) {
     setSessions((prev) =>
       prev.map((session) =>
-        session.id === sessionId ? { ...session, instructorId } : session,
+        session.id === sessionId ? { ...session, ...changes } : session,
       ),
     );
   }
@@ -92,7 +92,7 @@ export function SchedulePage() {
           entry={selectedEntry}
           reservations={selectedEntryReservations}
           instructors={mockInstructors}
-          onSaveInstructor={updateSessionInstructor}
+          onSaveClass={updateSessionClass}
           onCancelSession={cancelSession}
         />
       </div>
