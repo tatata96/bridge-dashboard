@@ -1,13 +1,13 @@
 import { type ComponentPropsWithoutRef, type ReactNode } from "react";
 
-import type { PageId } from "#config/navigation";
+import type { PageId } from "@/config/navigation";
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "#components/ui/sidebar";
+} from "@/components/ui/sidebar";
 
 export function NavSecondary({
   items,

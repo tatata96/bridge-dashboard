@@ -1,8 +1,13 @@
 import { type ComponentProps } from "react";
 
-import { NavMain } from "#components/nav-main";
-import { NavSecondary } from "#components/nav-secondary";
-import type { NavMainItem, NavSecondaryItem, PageId } from "#config/navigation";
+import { NavMain } from "@/components/NavMain";
+import { NavSecondary } from "@/components/NavSecondary";
+import { APP_NAME } from "@/config/constants";
+import type {
+  NavMainItem,
+  NavSecondaryItem,
+  PageId,
+} from "@/config/navigation";
 import {
   Sidebar,
   SidebarContent,
@@ -10,7 +15,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "#components/ui/sidebar";
+} from "@/components/ui/sidebar";
 
 export function AppSidebar({
   activePage,
@@ -33,7 +38,7 @@ export function AppSidebar({
               <a href="#">
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate text-xl font-semibold tracking-normal">
-                    classpass
+                    {APP_NAME}
                   </span>
                 </div>
               </a>

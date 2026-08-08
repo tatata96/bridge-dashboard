@@ -1,6 +1,6 @@
-import { Button } from "#components/ui/button";
-import { Separator } from "#components/ui/separator";
-import { useSidebar } from "#components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { useSidebar } from "@/components/ui/sidebar";
 import { PanelLeftIcon } from "lucide-react";
 
 export function SiteHeader({ title }: { title: string }) {

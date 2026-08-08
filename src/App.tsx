@@ -1,10 +1,12 @@
 import { useState, type CSSProperties } from "react";
 
-import { AppSidebar } from "#components/app-sidebar";
-import { SiteHeader } from "#components/site-header";
-import { SidebarInset, SidebarProvider } from "#components/ui/sidebar";
-import { TooltipProvider } from "#components/ui/tooltip";
-import { sidebarNavigation, type PageId } from "#config/navigation";
+import { AppSidebar } from "@/components/AppSidebar";
+import { SiteHeader } from "@/components/SiteHeader";
+import { Toaster } from "@/components/Toaster";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { sidebarNavigation, type PageId } from "@/config/navigation";
+import { SchedulePage } from "@/pages/Schedule";
 
 const pageTitles: Record<PageId, string> = {
   home: "Home",
@@ -26,36 +28,46 @@ const pageTitles: Record<PageId, string> = {
   internal: "Internal",
 };
 
+function PageContentRenderer({ activePage }: { activePage: PageId }) {
+  if (activePage === "schedule") {
+    return <SchedulePage />;
+  }
+
+  return (
+    <main className="p-6">
+      <h2 className="text-2xl font-semibold tracking-normal">
+        {pageTitles[activePage]}
+      </h2>
+    </main>
+  );
+}
+
 function App() {
   const [activePage, setActivePage] = useState<PageId>("schedule-settings");
 
   return (
     <TooltipProvider>
-      <SidebarProvider
-        style={
-          {
-            "--header-height": "4.5rem",
-            "--sidebar-width": "13.75rem",
-          } as CSSProperties
-        }
-      >
-        <AppSidebar
-          activePage={activePage}
-          navMain={sidebarNavigation.navMain}
-          navSecondary={sidebarNavigation.navSecondary}
-          onNavigate={setActivePage}
-        />
-        <SidebarInset className="min-h-svh bg-muted/30">
-          <SiteHeader title={pageTitles[activePage]} />
-          <div className="p-6">
-            <section className="min-h-112 border bg-background p-8">
-              <h2 className="text-2xl font-semibold tracking-normal">
-                {pageTitles[activePage]}
-              </h2>
-            </section>
-          </div>
-        </SidebarInset>
-      </SidebarProvider>
+      <Toaster>
+        <SidebarProvider
+          style={
+            {
+              "--header-height": "4.5rem",
+              "--sidebar-width": "13.75rem",
+            } as CSSProperties
+          }
+        >
+          <AppSidebar
+            activePage={activePage}
+            navMain={sidebarNavigation.navMain}
+            navSecondary={sidebarNavigation.navSecondary}
+            onNavigate={setActivePage}
+          />
+          <SidebarInset className="min-h-svh bg-muted/30">
+            <SiteHeader title={pageTitles[activePage]} />
+            <PageContentRenderer activePage={activePage} />
+          </SidebarInset>
+        </SidebarProvider>
+      </Toaster>
     </TooltipProvider>
   );
 }

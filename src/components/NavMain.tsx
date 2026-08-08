@@ -1,11 +1,11 @@
 import { type ReactNode } from "react";
 
-import type { PageId } from "#config/navigation";
+import type { PageId } from "@/config/navigation";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "#components/ui/collapsible";
+} from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarMenu,
@@ -15,7 +15,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "#components/ui/sidebar";
+} from "@/components/ui/sidebar";
 import { ChevronRightIcon } from "lucide-react";
 
 export function NavMain({
