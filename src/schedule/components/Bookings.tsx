@@ -72,7 +72,10 @@ export function Bookings({
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <h3 className="text-sm font-semibold text-foreground">Attendees</h3>
           <div className="flex items-center gap-3 text-muted-foreground">
-            <AttendeesFilterPopover filter={filter} onApply={setFilter} />
+            <AttendeesFilterPopover
+              filter={filter}
+              onFilterChange={setFilter}
+            />
           </div>
         </div>
         {filteredReservations.length === 0 ? (

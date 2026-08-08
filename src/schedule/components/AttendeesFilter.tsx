@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { SlidersHorizontalIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -30,22 +29,13 @@ const USER_TYPE_OPTIONS: { value: AttendeeUserTypeFilter; label: string }[] = [
 
 export function AttendeesFilterPopover({
   filter,
-  onApply,
+  onFilterChange,
 }: {
   filter: AttendeesFilter;
-  onApply: (filter: AttendeesFilter) => void;
+  onFilterChange: (filter: AttendeesFilter) => void;
 }) {
-  const [open, setOpen] = useState(false);
-  const [draft, setDraft] = useState(filter);
-
   return (
-    <Popover
-      open={open}
-      onOpenChange={(nextOpen) => {
-        setOpen(nextOpen);
-        if (nextOpen) setDraft(filter);
-      }}
-    >
+    <Popover>
       <PopoverTrigger asChild>
         <button
           type="button"
@@ -74,12 +64,12 @@ export function AttendeesFilterPopover({
             Status
           </span>
           <RadioGroup
-            value={draft.status}
+            value={filter.status}
             onValueChange={(value) =>
-              setDraft((prev) => ({
-                ...prev,
+              onFilterChange({
+                ...filter,
                 status: value as AttendeeStatusFilter,
-              }))
+              })
             }
           >
             {STATUS_OPTIONS.map((option) => (
@@ -99,12 +89,12 @@ export function AttendeesFilterPopover({
             User type
           </span>
           <RadioGroup
-            value={draft.userType}
+            value={filter.userType}
             onValueChange={(value) =>
-              setDraft((prev) => ({
-                ...prev,
+              onFilterChange({
+                ...filter,
                 userType: value as AttendeeUserTypeFilter,
-              }))
+              })
             }
           >
             {USER_TYPE_OPTIONS.map((option) => (
@@ -119,24 +109,14 @@ export function AttendeesFilterPopover({
           </RadioGroup>
         </div>
 
-        <div className="flex items-center justify-end gap-2">
+        <div className="flex items-center justify-end">
           <Button
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => setDraft(defaultAttendeesFilter)}
+            onClick={() => onFilterChange(defaultAttendeesFilter)}
           >
             Clear
-          </Button>
-          <Button
-            type="button"
-            size="sm"
-            onClick={() => {
-              onApply(draft);
-              setOpen(false);
-            }}
-          >
-            Apply
           </Button>
         </div>
       </PopoverContent>
