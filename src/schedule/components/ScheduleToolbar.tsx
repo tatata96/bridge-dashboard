@@ -35,7 +35,7 @@ export function ScheduleToolbar({
     <div className="flex flex-wrap items-center gap-3">
       <div className="flex h-9 w-60 items-center gap-2 rounded-4xl border border-input bg-input/30 px-3 text-sm">
         <span className="text-muted-foreground">Date</span>
-        <span className="min-w-24 flex-1 font-medium text-primary">
+        <span className="min-w-24 flex-1 font-medium">
           {formatShortDate(selectedDate)}
         </span>
         <div className="flex items-center">

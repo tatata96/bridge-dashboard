@@ -66,12 +66,12 @@ export function EditClassModal({
       <DialogTrigger asChild>
         <Button type="button" variant="outline" size="sm">
           <PencilIcon />
-          Edit class
+          Edit this class
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit class</DialogTitle>
+          <DialogTitle>Edit this class</DialogTitle>
           <DialogDescription>
             Update the staff or capacity for this session.
           </DialogDescription>
