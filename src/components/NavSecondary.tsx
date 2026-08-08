@@ -1,6 +1,6 @@
 import { type ComponentPropsWithoutRef, type ReactNode } from "react";
 
-import type { PageId } from "@/config/navigation";
+import { getPagePath, type PageId } from "@/config/navigation";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -34,10 +34,16 @@ export function NavSecondary({
                 size="sm"
                 isActive={item.id === activePage}
               >
-                <button type="button" onClick={() => onNavigate(item.id)}>
+                <a
+                  href={getPagePath(item.id)}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    onNavigate(item.id);
+                  }}
+                >
                   {item.icon}
                   <span>{item.title}</span>
-                </button>
+                </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}

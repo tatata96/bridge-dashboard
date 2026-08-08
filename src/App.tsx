@@ -1,31 +1,25 @@
-import { useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 
 import { AppSidebar } from "@/components/AppSidebar";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Toaster } from "@/components/Toaster";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { sidebarNavigation, type PageId } from "@/config/navigation";
+import {
+  getPageFromPathname,
+  getPagePath,
+  sidebarNavigation,
+  type PageId,
+} from "@/config/navigation";
 import { SchedulePage } from "@/pages/Schedule";
 
 const pageTitles: Record<PageId, string> = {
-  home: "Home",
   schedule: "Schedule",
-  appointments: "Appointments",
-  performance: "Performance",
-  ratings: "Ratings & reviews",
-  campaigns: "Campaigns",
   "business-profile": "Business profile",
-  "schedule-settings": "Schedule settings",
   classes: "Classes",
-  services: "Services",
   instructors: "Instructors",
-  practitioners: "Practitioners",
-  equipment: "Equipment",
-  smarttools: "SmartTools",
   support: "Support",
   account: "Account",
-  internal: "Internal",
 };
 
 function PageContentRenderer({ activePage }: { activePage: PageId }) {
@@ -43,7 +37,31 @@ function PageContentRenderer({ activePage }: { activePage: PageId }) {
 }
 
 function App() {
-  const [activePage, setActivePage] = useState<PageId>("schedule-settings");
+  const [activePage, setActivePage] = useState<PageId>(() =>
+    getPageFromPathname(window.location.pathname),
+  );
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setActivePage(getPageFromPathname(window.location.pathname));
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
+
+  function handleNavigate(page: PageId) {
+    const nextPath = getPagePath(page);
+
+    if (window.location.pathname !== nextPath) {
+      window.history.pushState(null, "", nextPath);
+    }
+
+    setActivePage(page);
+  }
 
   return (
     <TooltipProvider>
@@ -60,7 +78,7 @@ function App() {
             activePage={activePage}
             navMain={sidebarNavigation.navMain}
             navSecondary={sidebarNavigation.navSecondary}
-            onNavigate={setActivePage}
+            onNavigate={handleNavigate}
           />
           <SidebarInset className="min-h-svh bg-muted/30">
             <SiteHeader title={pageTitles[activePage]} />

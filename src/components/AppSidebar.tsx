@@ -8,6 +8,7 @@ import type {
   NavSecondaryItem,
   PageId,
 } from "@/config/navigation";
+import { getPagePath } from "@/config/navigation";
 import {
   Sidebar,
   SidebarContent,
@@ -35,7 +36,13 @@ export function AppSidebar({
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="#">
+              <a
+                href={getPagePath("schedule")}
+                onClick={(event) => {
+                  event.preventDefault();
+                  onNavigate("schedule");
+                }}
+              >
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate text-xl font-semibold tracking-normal">
                     {APP_NAME}
