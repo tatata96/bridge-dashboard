@@ -1,5 +1,38 @@
 # Coding Conventions
 
+## Project Structure
+
+Keep route entry files separate from domain-specific implementation details.
+
+Use `src/pages` for page entry files only. A page file should compose the
+screen and connect state/data, but it should not contain a large set of
+page-specific child components in the `pages` folder.
+
+Use a domain folder for code that belongs to one product area. For example,
+Schedule-specific implementation belongs under `src/schedule`.
+
+```txt
+src/pages/schedule.tsx
+src/schedule/components/schedule-toolbar.tsx
+src/schedule/components/schedule-class-list.tsx
+src/schedule/data/schedule.mock-data.ts
+src/schedule/types/attendees-filter.types.ts
+```
+
+Use `src/components/ui` for shadcn/base UI primitives only.
+
+Use `src/components` for shared app components that are not tied to one
+domain, such as the app shell, navigation, reusable empty states, shared
+dialogs, or generic page headers.
+
+A practical rule:
+
+- If it is a route entry, put it in `src/pages`.
+- If it depends on schedule data or only makes sense in Schedule, put it in
+  `src/schedule`.
+- If it is a raw shadcn primitive, put it in `src/components/ui`.
+- If it is reusable across multiple product areas, put it in `src/components`.
+
 ## React Imports
 
 Do not import React just because a file contains JSX. Import from React only
