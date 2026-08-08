@@ -5,15 +5,15 @@ import { addDays, isSameDay } from "@/lib/date.utils";
 import {
   ScheduleClassList,
   type ScheduleListEntry,
-} from "@/pages/schedule/schedule-class-list";
-import { ScheduleDetailPanel } from "@/pages/schedule/schedule-detail-panel";
+} from "@/schedule/components/ScheduleClassList";
+import { ScheduleDetailPanel } from "@/schedule/components/ScheduleDetailPanel";
 import {
   mockClasses,
   mockClassSessions,
   mockInstructors,
   mockReservations,
-} from "@/pages/schedule/schedule.mock-data";
-import { ScheduleToolbar } from "@/pages/schedule/schedule-toolbar";
+} from "@/schedule/data/schedule.mock-data";
+import { ScheduleToolbar } from "@/schedule/components/ScheduleToolbar";
 
 const classesById = new Map(mockClasses.map((c) => [c.id, c]));
 const instructorsById = new Map(mockInstructors.map((i) => [i.id, i]));

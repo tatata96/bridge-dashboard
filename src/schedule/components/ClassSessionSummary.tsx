@@ -1,5 +1,5 @@
 import { formatTime } from "@/lib/date.utils";
-import type { ScheduleListEntry } from "@/pages/schedule/schedule-class-list";
+import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
 
 export function ClassSessionSummary({ entry }: { entry: ScheduleListEntry }) {
   const { session, className, instructorName } = entry;

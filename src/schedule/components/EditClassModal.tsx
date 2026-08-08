@@ -19,8 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ClassSessionSummary } from "@/pages/schedule/class-session-summary";
-import type { ScheduleListEntry } from "@/pages/schedule/schedule-class-list";
+import { ClassSessionSummary } from "@/schedule/components/ClassSessionSummary";
+import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
 import type { Instructor } from "@/types/schedule";
 
 const UNASSIGNED_INSTRUCTOR = "unassigned";

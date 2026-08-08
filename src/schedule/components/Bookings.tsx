@@ -9,11 +9,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/classnames.utils";
-import { AttendeesFilterPopover } from "@/pages/schedule/attendees-filter";
+import { AttendeesFilterPopover } from "@/schedule/components/AttendeesFilter";
 import {
   defaultAttendeesFilter,
   type AttendeesFilter,
-} from "@/pages/schedule/attendees-filter.types";
+} from "@/schedule/types/attendees-filter.types";
 import type { Reservation } from "@/types/schedule";
 
 function matchesFilter(reservation: Reservation, filter: AttendeesFilter) {

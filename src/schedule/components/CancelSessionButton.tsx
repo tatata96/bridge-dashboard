@@ -10,8 +10,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ClassSessionSummary } from "@/pages/schedule/class-session-summary";
-import type { ScheduleListEntry } from "@/pages/schedule/schedule-class-list";
+import { ClassSessionSummary } from "@/schedule/components/ClassSessionSummary";
+import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
 
 export function CancelSessionButton({
   entry,

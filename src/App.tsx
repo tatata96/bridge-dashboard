@@ -1,12 +1,12 @@
 import { useState, type CSSProperties } from "react";
 
-import { AppSidebar } from "@/components/app-sidebar";
-import { SiteHeader } from "@/components/site-header";
-import { Toaster } from "@/components/toaster";
+import { AppSidebar } from "@/components/AppSidebar";
+import { SiteHeader } from "@/components/SiteHeader";
+import { Toaster } from "@/components/Toaster";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { sidebarNavigation, type PageId } from "@/config/navigation";
-import { SchedulePage } from "@/pages/schedule";
+import { SchedulePage } from "@/pages/Schedule";
 
 const pageTitles: Record<PageId, string> = {
   home: "Home",

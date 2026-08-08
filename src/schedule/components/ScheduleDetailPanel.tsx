@@ -1,10 +1,10 @@
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { formatTime } from "@/lib/date.utils";
-import { Bookings } from "@/pages/schedule/bookings";
-import { CancelSessionButton } from "@/pages/schedule/cancel-session-button";
-import { EditClassModal } from "@/pages/schedule/edit-class-modal";
-import type { ScheduleListEntry } from "@/pages/schedule/schedule-class-list";
+import { Bookings } from "@/schedule/components/Bookings";
+import { CancelSessionButton } from "@/schedule/components/CancelSessionButton";
+import { EditClassModal } from "@/schedule/components/EditClassModal";
+import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
 import type { Instructor, Reservation } from "@/types/schedule";
 
 export function ScheduleDetailPanel({

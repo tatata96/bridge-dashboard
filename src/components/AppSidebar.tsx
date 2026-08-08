@@ -1,7 +1,7 @@
 import { type ComponentProps } from "react";
 
-import { NavMain } from "@/components/nav-main";
-import { NavSecondary } from "@/components/nav-secondary";
+import { NavMain } from "@/components/NavMain";
+import { NavSecondary } from "@/components/NavSecondary";
 import { APP_NAME } from "@/config/constants";
 import type {
   NavMainItem,
