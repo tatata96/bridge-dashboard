@@ -17,6 +17,7 @@ export function ScheduleDetailPanel({
   onUndoCheckIn,
   onCancelBooking,
   classHasEnded,
+  classHasStarted,
 }: {
   entry: ScheduleListEntry | undefined;
   reservations: Reservation[];
@@ -30,6 +31,7 @@ export function ScheduleDetailPanel({
   onUndoCheckIn: (reservationId: string) => void;
   onCancelBooking: (reservationId: string) => void;
   classHasEnded: boolean;
+  classHasStarted: boolean;
 }) {
   if (!entry) {
     return (
@@ -56,20 +58,26 @@ export function ScheduleDetailPanel({
           </span>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <EditClassModal
-            entry={entry}
-            instructors={instructors}
-            onSave={onSaveClass}
-          />
+        {classHasStarted ? (
+          <span className="inline-flex h-8 shrink-0 items-center rounded-full border border-border bg-muted/50 px-3 text-sm font-medium text-muted-foreground">
+            {classHasEnded ? "Completed" : "In progress"}
+          </span>
+        ) : (
+          <div className="flex flex-wrap items-center gap-3">
+            <EditClassModal
+              entry={entry}
+              instructors={instructors}
+              onSave={onSaveClass}
+            />
 
-          <span
-            className="hidden h-4 w-px bg-border sm:block"
-            aria-hidden="true"
-          />
+            <span
+              className="hidden h-4 w-px bg-border sm:block"
+              aria-hidden="true"
+            />
 
-          <CancelSessionButton entry={entry} onConfirm={onCancelSession} />
-        </div>
+            <CancelSessionButton entry={entry} onConfirm={onCancelSession} />
+          </div>
+        )}
       </div>
 
       <Separator />

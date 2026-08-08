@@ -20,9 +20,19 @@ import type { ClassSession } from "@/types/schedule";
 const classesById = new Map(mockClasses.map((c) => [c.id, c]));
 const instructorsById = new Map(mockInstructors.map((i) => [i.id, i]));
 
+function hasSessionStarted(session: ClassSession) {
+  return Date.now() >= new Date(session.startAt).getTime();
+}
+
+function hasSessionEnded(session: ClassSession) {
+  return (
+    Date.now() >=
+    new Date(session.startAt).getTime() + session.durationMinutes * 60_000
+  );
+}
+
 export function SchedulePage() {
   const { toast } = useToast();
-  const [now] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const [typeFilter, setTypeFilter] = useState("all");
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
@@ -53,6 +63,11 @@ export function SchedulePage() {
     const originalSession = sessions.find(
       (session) => session.id === sessionId,
     );
+    if (!originalSession) {
+      console.warn(`Cannot update missing session: ${sessionId}`);
+      return;
+    }
+    if (hasSessionStarted(originalSession)) return;
 
     setSessions((prev) =>
       prev.map((session) =>
@@ -79,6 +94,7 @@ export function SchedulePage() {
   function cancelSession(sessionId: string) {
     const session = sessions.find((s) => s.id === sessionId);
     if (!session) return;
+    if (hasSessionStarted(session)) return;
 
     const visibleSessions = getVisibleSessions(sessions);
     const cancelledIndex = visibleSessions.findIndex((s) => s.id === sessionId);
@@ -95,15 +111,6 @@ export function SchedulePage() {
 
     toast({
       title: "Session cancelled",
-      action: {
-        label: "Undo",
-        onClick: () => {
-          setSessions((prev) =>
-            prev.some((s) => s.id === sessionId) ? prev : [...prev, session],
-          );
-          setSelectedSessionId(sessionId);
-        },
-      },
     });
   }
 
@@ -217,9 +224,10 @@ export function SchedulePage() {
     : [];
 
   const classHasEnded = selectedEntry
-    ? now.getTime() >=
-      new Date(selectedEntry.session.startAt).getTime() +
-        selectedEntry.session.durationMinutes * 60_000
+    ? hasSessionEnded(selectedEntry.session)
+    : false;
+  const classHasStarted = selectedEntry
+    ? hasSessionStarted(selectedEntry.session)
     : false;
 
   return (
@@ -250,6 +258,7 @@ export function SchedulePage() {
           onUndoCheckIn={undoCheckInReservation}
           onCancelBooking={cancelBooking}
           classHasEnded={classHasEnded}
+          classHasStarted={classHasStarted}
         />
       </div>
     </main>
