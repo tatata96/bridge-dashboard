@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/classnames.utils";
 import { ClassSessionSummary } from "@/schedule/components/ClassSessionSummary";
 import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
 import type { Instructor } from "@/types/schedule";
@@ -45,6 +46,7 @@ export function EditClassModal({
   const isDirty =
     instructorId !== session.instructorId || capacity !== session.capacity;
   const spotsLeft = capacity - session.reservedCount;
+  const isAtFloor = capacity <= session.reservedCount;
 
   function handleOpenChange(nextOpen: boolean) {
     setOpen(nextOpen);
@@ -71,7 +73,7 @@ export function EditClassModal({
         <DialogHeader>
           <DialogTitle>Edit class</DialogTitle>
           <DialogDescription>
-            Update the staff or capacity for this class.
+            Update the staff or capacity for this session.
           </DialogDescription>
         </DialogHeader>
 
@@ -113,9 +115,18 @@ export function EditClassModal({
             min={session.reservedCount}
             label="Capacity"
           />
-          <span className="text-xs text-muted-foreground">
-            {session.reservedCount} booked · {spotsLeft}{" "}
-            {spotsLeft === 1 ? "spot" : "spots"} left
+          <span
+            className={cn(
+              "text-xs",
+              isAtFloor
+                ? "text-amber-600 dark:text-amber-400"
+                : "text-muted-foreground",
+            )}
+            aria-live="polite"
+          >
+            {isAtFloor
+              ? `${session.reservedCount} already booked — can't go lower`
+              : `${session.reservedCount} booked · ${spotsLeft} ${spotsLeft === 1 ? "spot" : "spots"} left`}
           </span>
         </div>
 
