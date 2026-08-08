@@ -50,11 +50,30 @@ export function SchedulePage() {
     sessionId: string,
     changes: { instructorId: string | null; capacity: number },
   ) {
+    const originalSession = sessions.find(
+      (session) => session.id === sessionId,
+    );
+
     setSessions((prev) =>
       prev.map((session) =>
         session.id === sessionId ? { ...session, ...changes } : session,
       ),
     );
+
+    toast({
+      title: "Session updated",
+      action: {
+        label: "Undo",
+        onClick: () => {
+          setSessions((prev) =>
+            prev.map((session) =>
+              session.id === sessionId ? originalSession : session,
+            ),
+          );
+          setSelectedSessionId(sessionId);
+        },
+      },
+    });
   }
 
   function cancelSession(sessionId: string) {
