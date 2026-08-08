@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { CalendarIcon, MoreVerticalIcon } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { StatusIconBadge } from "@/components/ui/status-icon-badge";
 import { TabsContent } from "@/components/ui/tabs";
 import { AttendeesFilterPopover } from "@/pages/schedule/tabs/attendees-filter";
@@ -130,7 +137,21 @@ function BookingRow({ reservation }: { reservation: Reservation }) {
             label={attendanceLabel}
           />
         ) : null}
-        <MoreVerticalIcon className="size-4 text-muted-foreground" />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-xs"
+              aria-label="More actions"
+            >
+              <MoreVerticalIcon />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem disabled>No actions yet</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </li>
   );

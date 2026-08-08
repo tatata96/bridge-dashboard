@@ -25,15 +25,19 @@ export function SchedulePage() {
   );
   const [sessions, setSessions] = useState(() => mockClassSessions);
 
-  function updateSessionclassCapacity(
+  function updateSessionInstructor(
     sessionId: string,
-    classCapacity: number,
+    instructorId: string | null,
   ) {
     setSessions((prev) =>
       prev.map((session) =>
-        session.id === sessionId ? { ...session, classCapacity } : session,
+        session.id === sessionId ? { ...session, instructorId } : session,
       ),
     );
+  }
+
+  function cancelSession(sessionId: string) {
+    setSessions((prev) => prev.filter((session) => session.id !== sessionId));
   }
 
   const entries: ScheduleListEntry[] = sessions
@@ -86,8 +90,10 @@ export function SchedulePage() {
         </div>
         <ScheduleDetailPanel
           entry={selectedEntry}
-          onclassCapacityChange={updateSessionclassCapacity}
           reservations={selectedEntryReservations}
+          instructors={mockInstructors}
+          onSaveInstructor={updateSessionInstructor}
+          onCancelSession={cancelSession}
         />
       </div>
     </main>

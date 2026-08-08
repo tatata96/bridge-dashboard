@@ -1,25 +1,23 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { APP_NAME } from "@/config/constants";
 import { formatTime } from "@/lib/date.utils";
+import { CancelClassButton } from "@/pages/schedule/cancel-class-button";
+import { EditStaffModal } from "@/pages/schedule/edit-staff-modal";
 import type { ScheduleListEntry } from "@/pages/schedule/schedule-class-list";
 import { ScheduleDetailTabs } from "@/pages/schedule/tabs";
-import type { Reservation } from "@/types/schedule";
+import type { Instructor, Reservation } from "@/types/schedule";
 
 export function ScheduleDetailPanel({
   entry,
-  onclassCapacityChange,
   reservations,
+  instructors,
+  onSaveInstructor,
+  onCancelSession,
 }: {
   entry: ScheduleListEntry | undefined;
-  onclassCapacityChange: (sessionId: string, capacity: number) => void;
   reservations: Reservation[];
+  instructors: Instructor[];
+  onSaveInstructor: (sessionId: string, instructorId: string | null) => void;
+  onCancelSession: (sessionId: string) => void;
 }) {
   if (!entry) {
     return (
@@ -30,60 +28,27 @@ export function ScheduleDetailPanel({
   }
 
   const { session, className, instructorName } = entry;
-  const capacityOptions = Array.from(
-    { length: session.capacity + 1 },
-    (_, capacity) => capacity,
-  );
 
   return (
     <div className="flex flex-1 flex-col gap-4 rounded-lg border border-border bg-background p-4">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex items-start gap-4">
-          <div className="flex flex-col gap-0.5">
-            <span className="text-sm font-semibold text-foreground">
-              {formatTime(new Date(session.startAt))}
-            </span>
-            <span className="text-sm text-muted-foreground">
-              {session.durationMinutes} min
-            </span>
-          </div>
-          <div className="flex flex-col gap-0.5">
-            <h2 className="text-base font-semibold text-foreground">
-              {className}
-            </h2>
-            <span className="text-sm text-muted-foreground">
-              {instructorName}
-            </span>
-          </div>
+        <div className="flex flex-col gap-0.5">
+          <h2 className="text-base font-semibold text-foreground">
+            {formatTime(new Date(session.startAt))} {className}
+          </h2>
+          <span className="text-sm text-muted-foreground">
+            {session.durationMinutes} min · {instructorName}
+          </span>
         </div>
 
-        <div className="flex items-center gap-2 text-sm">
-          <span className="font-medium text-foreground">{APP_NAME}</span>
-          <span className="font-medium text-foreground">
-            {session.classReservedCount}
-          </span>
-          <span className="text-muted-foreground">of</span>
-          <Select
-            value={String(session.classCapacity)}
-            onValueChange={(value) =>
-              onclassCapacityChange(session.id, Number(value))
-            }
-          >
-            <SelectTrigger
-              size="sm"
-              className="w-16"
-              aria-label={`${APP_NAME} capacity`}
-            >
-              <SelectValue>{session.classCapacity}</SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {capacityOptions.map((capacity) => (
-                <SelectItem key={capacity} value={String(capacity)}>
-                  {capacity}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="flex items-center gap-2">
+          <EditStaffModal
+            entry={entry}
+            instructors={instructors}
+            onSave={onSaveInstructor}
+          />
+
+          <CancelClassButton entry={entry} onConfirm={onCancelSession} />
         </div>
       </div>
 
