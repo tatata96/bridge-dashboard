@@ -42,6 +42,8 @@ export function CancelSessionButton({
   const keepSessionButtonRef = useRef<HTMLButtonElement>(null);
   const attendeeCount = entry.session.reservedCount;
   const refundCredits = attendeeCount * 2;
+  const attendeeLabel = attendeeCount === 1 ? "attendee" : "attendees";
+  const creditLabel = refundCredits === 1 ? "credit" : "credits";
 
   function handleOpenChange(nextOpen: boolean) {
     setOpen(nextOpen);
@@ -67,10 +69,9 @@ export function CancelSessionButton({
           <DialogTitle>Cancel this session?</DialogTitle>
           {attendeeCount > 0 ? (
             <DialogDescription>
-              {attendeeCount} {attendeeCount === 1 ? "attendee" : "attendees"}{" "}
-              will be notified and refunded {refundCredits}{" "}
-              {refundCredits === 1 ? "credit" : "credits"}. This can't be
-              undone.
+              {attendeeCount} {attendeeLabel} will be notified and refunded{" "}
+              {refundCredits} {creditLabel}. <br />
+              This can't be undone.
             </DialogDescription>
           ) : null}
         </DialogHeader>
