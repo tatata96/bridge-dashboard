@@ -1,4 +1,5 @@
 import { type ComponentProps } from "react";
+import { Link } from "react-router-dom";
 
 import { NavMain } from "@/components/NavMain";
 import { NavSecondary } from "@/components/NavSecondary";
@@ -22,13 +23,11 @@ export function AppSidebar({
   activePage,
   navMain,
   navSecondary,
-  onNavigate,
   ...props
 }: ComponentProps<typeof Sidebar> & {
   activePage: PageId;
   navMain: NavMainItem[];
   navSecondary: NavSecondaryItem[];
-  onNavigate: (page: PageId) => void;
 }) {
   return (
     <Sidebar collapsible="icon" className="border-r" {...props}>
@@ -36,33 +35,22 @@ export function AppSidebar({
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a
-                href={getPagePath("schedule")}
-                onClick={(event) => {
-                  event.preventDefault();
-                  onNavigate("schedule");
-                }}
-              >
+              <Link to={getPagePath("schedule")}>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate text-xl font-semibold tracking-normal">
                     {APP_NAME}
                   </span>
                 </div>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain
-          items={navMain}
-          activePage={activePage}
-          onNavigate={onNavigate}
-        />
+        <NavMain items={navMain} activePage={activePage} />
         <NavSecondary
           items={navSecondary}
           activePage={activePage}
-          onNavigate={onNavigate}
           className="mt-auto px-2"
         />
       </SidebarContent>

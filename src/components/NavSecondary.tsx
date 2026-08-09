@@ -1,4 +1,5 @@
 import { type ComponentPropsWithoutRef, type ReactNode } from "react";
+import { Link } from "react-router-dom";
 
 import { getPagePath, type PageId } from "@/config/navigation";
 import {
@@ -12,7 +13,6 @@ import {
 export function NavSecondary({
   items,
   activePage,
-  onNavigate,
   ...props
 }: {
   items: {
@@ -21,7 +21,6 @@ export function NavSecondary({
     icon: ReactNode;
   }[];
   activePage: PageId;
-  onNavigate: (page: PageId) => void;
 } & ComponentPropsWithoutRef<typeof SidebarGroup>) {
   return (
     <SidebarGroup {...props}>
@@ -34,16 +33,10 @@ export function NavSecondary({
                 size="sm"
                 isActive={item.id === activePage}
               >
-                <a
-                  href={getPagePath(item.id)}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    onNavigate(item.id);
-                  }}
-                >
+                <Link to={getPagePath(item.id)}>
                   {item.icon}
                   <span>{item.title}</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}

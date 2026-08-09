@@ -1,4 +1,5 @@
-import { useEffect, useState, type CSSProperties } from "react";
+import { type CSSProperties } from "react";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import { AppSidebar } from "@/components/AppSidebar";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -6,6 +7,7 @@ import { Toaster } from "@/components/Toaster";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import {
+  defaultPageId,
   getPageFromPathname,
   getPagePath,
   sidebarNavigation,
@@ -18,15 +20,13 @@ const pageTitles: Record<PageId, string> = {
   "business-profile": "Business profile",
   classes: "Classes",
   instructors: "Instructors",
+  performance: "Performance",
+  "ratings-and-reviews": "Ratings & reviews",
   support: "Support",
   account: "Account",
 };
 
-function PageContentRenderer({ activePage }: { activePage: PageId }) {
-  if (activePage === "schedule") {
-    return <SchedulePage />;
-  }
-
+function PlaceholderPage({ activePage }: { activePage: PageId }) {
   return (
     <main className="p-6">
       <h2 className="text-2xl font-semibold tracking-normal">
@@ -37,31 +37,8 @@ function PageContentRenderer({ activePage }: { activePage: PageId }) {
 }
 
 function App() {
-  const [activePage, setActivePage] = useState<PageId>(() =>
-    getPageFromPathname(window.location.pathname),
-  );
-
-  useEffect(() => {
-    const handlePopState = () => {
-      setActivePage(getPageFromPathname(window.location.pathname));
-    };
-
-    window.addEventListener("popstate", handlePopState);
-
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-    };
-  }, []);
-
-  function handleNavigate(page: PageId) {
-    const nextPath = getPagePath(page);
-
-    if (window.location.pathname !== nextPath) {
-      window.history.pushState(null, "", nextPath);
-    }
-
-    setActivePage(page);
-  }
+  const location = useLocation();
+  const activePage = getPageFromPathname(location.pathname);
 
   return (
     <TooltipProvider>
@@ -78,11 +55,47 @@ function App() {
             activePage={activePage}
             navMain={sidebarNavigation.navMain}
             navSecondary={sidebarNavigation.navSecondary}
-            onNavigate={handleNavigate}
           />
           <SidebarInset className="min-h-svh bg-muted/30">
             <SiteHeader title={pageTitles[activePage]} />
-            <PageContentRenderer activePage={activePage} />
+            <Routes>
+              <Route
+                path={getPagePath("schedule")}
+                element={<SchedulePage />}
+              />
+              <Route
+                path={getPagePath("business-profile")}
+                element={<PlaceholderPage activePage="business-profile" />}
+              />
+              <Route
+                path={getPagePath("classes")}
+                element={<PlaceholderPage activePage="classes" />}
+              />
+              <Route
+                path={getPagePath("instructors")}
+                element={<PlaceholderPage activePage="instructors" />}
+              />
+              <Route
+                path={getPagePath("performance")}
+                element={<PlaceholderPage activePage="performance" />}
+              />
+              <Route
+                path={getPagePath("ratings-and-reviews")}
+                element={<PlaceholderPage activePage="ratings-and-reviews" />}
+              />
+              <Route
+                path={getPagePath("support")}
+                element={<PlaceholderPage activePage="support" />}
+              />
+              <Route
+                path={getPagePath("account")}
+                element={<PlaceholderPage activePage="account" />}
+              />
+              <Route
+                path="*"
+                element={<Navigate to={getPagePath(defaultPageId)} replace />}
+              />
+            </Routes>
           </SidebarInset>
         </SidebarProvider>
       </Toaster>

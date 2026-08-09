@@ -5,6 +5,7 @@ import {
   CalendarDaysIcon,
   PencilLineIcon,
   SettingsIcon,
+  StarIcon,
   UserCircleIcon,
   UsersIcon,
 } from "lucide-react";
@@ -14,23 +15,18 @@ export type PageId =
   | "business-profile"
   | "classes"
   | "instructors"
+  | "performance"
+  | "ratings-and-reviews"
   | "support"
   | "account";
 
-export type NavMainItem =
-  | {
-      id: PageId;
-      title: string;
-      icon: ReactNode;
-      disabled?: false;
-    }
-  | {
-      id: "performance";
-      title: string;
-      icon: ReactNode;
-      disabled: true;
-      tooltip: string;
-    };
+export type NavMainItem = {
+  id: PageId;
+  title: string;
+  icon: ReactNode;
+  disabled?: boolean;
+  tooltip?: string;
+};
 
 export type NavSecondaryItem = {
   id: PageId;
@@ -42,9 +38,11 @@ export const defaultPageId: PageId = "schedule";
 
 export const pagePaths: Record<PageId, string> = {
   schedule: "/",
-  "business-profile": "/manage/business-profile",
-  classes: "/manage/classes",
-  instructors: "/manage/instructors",
+  "business-profile": "/business-profile",
+  classes: "/classes",
+  instructors: "/instructors",
+  performance: "/performance",
+  "ratings-and-reviews": "/ratings-and-reviews",
   support: "/support",
   account: "/account",
 };
@@ -94,8 +92,11 @@ export const sidebarNavigation: {
       id: "performance",
       title: "Performance",
       icon: <BarChart3Icon />,
-      disabled: true,
-      tooltip: "Coming soon",
+    },
+    {
+      id: "ratings-and-reviews",
+      title: "Ratings & reviews",
+      icon: <StarIcon />,
     },
   ],
   navSecondary: [

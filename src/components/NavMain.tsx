@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 import {
   getPagePath,
   type NavMainItem,
@@ -13,11 +15,9 @@ import {
 export function NavMain({
   items,
   activePage,
-  onNavigate,
 }: {
   items: NavMainItem[];
   activePage: PageId;
-  onNavigate: (page: PageId) => void;
 }) {
   return (
     <SidebarGroup className="px-2">
@@ -44,16 +44,10 @@ export function NavMain({
                   <span>{item.title}</span>
                 </span>
               ) : (
-                <a
-                  href={getPagePath(item.id)}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    onNavigate(item.id);
-                  }}
-                >
+                <Link to={getPagePath(item.id)}>
                   {item.icon}
                   <span>{item.title}</span>
-                </a>
+                </Link>
               )}
             </SidebarMenuButton>
           </SidebarMenuItem>
