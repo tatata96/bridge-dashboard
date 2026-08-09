@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { APP_NAME } from "@/config/constants";
 import { useToast } from "@/hooks/use-toast";
 import { addDays, isSameDay } from "@/lib/date.utils";
 import {
@@ -8,19 +9,21 @@ import {
 } from "@/schedule/components/ScheduleClassList";
 import { ScheduleDetailPanel } from "@/schedule/components/ScheduleDetailPanel";
 import {
-  mockClasses,
   mockClassSessions,
   mockInstructors,
   mockReservations,
 } from "@/schedule/data/schedule.mock-data";
 import { ScheduleToolbar } from "@/schedule/components/ScheduleToolbar";
-
-const classesById = new Map(mockClasses.map((c) => [c.id, c]));
-const instructorsById = new Map(mockInstructors.map((i) => [i.id, i]));
+import {
+  classesById,
+  getInstructorName,
+  hasSessionEnded,
+  hasSessionStarted,
+} from "@/schedule/utils/schedule.utils";
+import type { ClassSession } from "@/types/schedule";
 
 export function SchedulePage() {
   const { toast } = useToast();
-  const [now] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const [typeFilter, setTypeFilter] = useState("all");
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
@@ -29,34 +32,88 @@ export function SchedulePage() {
   const [sessions, setSessions] = useState(() => mockClassSessions);
   const [reservations, setReservations] = useState(() => mockReservations);
 
+  function getVisibleSessions(sourceSessions: ClassSession[]) {
+    return sourceSessions
+      .filter((session) => isSameDay(new Date(session.startAt), selectedDate))
+      .filter((session) => {
+        if (typeFilter === "all") return true;
+        return (
+          classesById.get(session.classId)?.category.toLowerCase() ===
+          typeFilter
+        );
+      })
+      .sort(
+        (a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
+      );
+  }
+
   function updateSessionClass(
     sessionId: string,
     changes: { instructorId: string | null; capacity: number },
   ) {
+    const originalSession = sessions.find(
+      (session) => session.id === sessionId,
+    );
+    if (!originalSession) {
+      console.warn(`Cannot update missing session: ${sessionId}`);
+      return;
+    }
+    if (hasSessionStarted(originalSession)) return;
+
     setSessions((prev) =>
       prev.map((session) =>
         session.id === sessionId ? { ...session, ...changes } : session,
       ),
     );
+
+    const changeMessages: string[] = [];
+    if (changes.capacity !== originalSession.capacity) {
+      changeMessages.push(
+        `Capacity changed from ${originalSession.capacity} to ${changes.capacity}`,
+      );
+    }
+    if (changes.instructorId !== originalSession.instructorId) {
+      changeMessages.push(
+        `Instructor is now ${getInstructorName(changes.instructorId)}`,
+      );
+    }
+
+    toast({
+      title: changeMessages.join(". ") || "Class changes saved",
+      action: {
+        label: "Undo",
+        onClick: () => {
+          setSessions((prev) =>
+            prev.map((session) =>
+              session.id === sessionId ? originalSession : session,
+            ),
+          );
+          setSelectedSessionId(sessionId);
+        },
+      },
+    });
   }
 
   function cancelSession(sessionId: string) {
     const session = sessions.find((s) => s.id === sessionId);
     if (!session) return;
+    if (hasSessionStarted(session)) return;
+
+    const visibleSessions = getVisibleSessions(sessions);
+    const cancelledIndex = visibleSessions.findIndex((s) => s.id === sessionId);
+    const nextVisibleSessions = visibleSessions.filter(
+      (session) => session.id !== sessionId,
+    );
+    const nextSelectedSession =
+      nextVisibleSessions[cancelledIndex] ??
+      nextVisibleSessions[cancelledIndex - 1] ??
+      null;
 
     setSessions((prev) => prev.filter((session) => session.id !== sessionId));
+    setSelectedSessionId(nextSelectedSession?.id ?? null);
 
     toast({
       title: "Session cancelled",
-      action: {
-        label: "Undo",
-        onClick: () => {
-          setSessions((prev) =>
-            prev.some((s) => s.id === sessionId) ? prev : [...prev, session],
-          );
-          setSelectedSessionId(sessionId);
-        },
-      },
     });
   }
 
@@ -75,36 +132,86 @@ export function SchedulePage() {
       title: `${firstName} checked in`,
       action: {
         label: "Undo",
+        onClick: () => undoCheckInReservation(reservationId),
+      },
+    });
+  }
+
+  function undoCheckInReservation(reservationId: string) {
+    const reservation = reservations.find((r) => r.id === reservationId);
+
+    setReservations((prev) =>
+      prev.map((r) =>
+        r.id === reservationId ? { ...r, status: "booked" } : r,
+      ),
+    );
+
+    if (!reservation) return;
+
+    const firstName = reservation.clientName.split(" ")[0];
+    toast({
+      title: `${firstName}'s check-in undone`,
+    });
+  }
+
+  function cancelBooking(reservationId: string) {
+    const reservation = reservations.find((r) => r.id === reservationId);
+    if (!reservation) return;
+
+    const firstName = reservation.clientName.split(" ")[0];
+
+    setReservations((prev) => prev.filter((r) => r.id !== reservationId));
+    setSessions((prev) =>
+      prev.map((session) => {
+        if (session.id !== reservation.sessionId) return session;
+
+        return {
+          ...session,
+          reservedCount: Math.max(0, session.reservedCount - 1),
+          classReservedCount:
+            reservation.bookingSource === APP_NAME
+              ? Math.max(0, session.classReservedCount - 1)
+              : session.classReservedCount,
+        };
+      }),
+    );
+
+    toast({
+      title: `${firstName}'s booking cancelled`,
+      action: {
+        label: "Undo",
         onClick: () => {
           setReservations((prev) =>
-            prev.map((r) =>
-              r.id === reservationId ? { ...r, status: "booked" } : r,
-            ),
+            prev.some((r) => r.id === reservationId)
+              ? prev
+              : [...prev, reservation],
+          );
+          setSessions((prev) =>
+            prev.map((session) => {
+              if (session.id !== reservation.sessionId) return session;
+
+              return {
+                ...session,
+                reservedCount: session.reservedCount + 1,
+                classReservedCount:
+                  reservation.bookingSource === APP_NAME
+                    ? session.classReservedCount + 1
+                    : session.classReservedCount,
+              };
+            }),
           );
         },
       },
     });
   }
 
-  const entries: ScheduleListEntry[] = sessions
-    .filter((session) => isSameDay(new Date(session.startAt), selectedDate))
-    .filter((session) => {
-      if (typeFilter === "all") return true;
-      return (
-        classesById.get(session.classId)?.category.toLowerCase() === typeFilter
-      );
-    })
-    .sort(
-      (a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
-    )
-    .map((session) => ({
+  const entries: ScheduleListEntry[] = getVisibleSessions(sessions).map(
+    (session) => ({
       session,
       className: classesById.get(session.classId)?.name ?? "Unknown class",
-      instructorName: session.instructorId
-        ? (instructorsById.get(session.instructorId)?.name ??
-          "Unknown instructor")
-        : "No Staff Specified",
-    }));
+      instructorName: getInstructorName(session.instructorId),
+    }),
+  );
 
   const selectedEntry =
     entries.find((entry) => entry.session.id === selectedSessionId) ??
@@ -117,9 +224,10 @@ export function SchedulePage() {
     : [];
 
   const classHasEnded = selectedEntry
-    ? now.getTime() >=
-      new Date(selectedEntry.session.startAt).getTime() +
-        selectedEntry.session.durationMinutes * 60_000
+    ? hasSessionEnded(selectedEntry.session)
+    : false;
+  const classHasStarted = selectedEntry
+    ? hasSessionStarted(selectedEntry.session)
     : false;
 
   return (
@@ -133,7 +241,7 @@ export function SchedulePage() {
       />
 
       <div className="flex min-w-0 flex-1 flex-col gap-4 xl:flex-row">
-        <div className="flex w-full min-w-0 flex-col xl:max-w-64">
+        <div className="flex w-full min-w-0 flex-col xl:w-[clamp(22rem,34vw,39rem)] xl:flex-none">
           <ScheduleClassList
             entries={entries}
             selectedSessionId={selectedEntry?.session.id ?? null}
@@ -147,7 +255,10 @@ export function SchedulePage() {
           onSaveClass={updateSessionClass}
           onCancelSession={cancelSession}
           onCheckIn={checkInReservation}
+          onUndoCheckIn={undoCheckInReservation}
+          onCancelBooking={cancelBooking}
           classHasEnded={classHasEnded}
+          classHasStarted={classHasStarted}
         />
       </div>
     </main>

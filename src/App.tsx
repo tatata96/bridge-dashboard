@@ -1,38 +1,32 @@
-import { useState, type CSSProperties } from "react";
+import { type CSSProperties } from "react";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import { AppSidebar } from "@/components/AppSidebar";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Toaster } from "@/components/Toaster";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { sidebarNavigation, type PageId } from "@/config/navigation";
+import {
+  defaultPageId,
+  getPageFromPathname,
+  getPagePath,
+  sidebarNavigation,
+  type PageId,
+} from "@/config/navigation";
 import { SchedulePage } from "@/pages/Schedule";
 
 const pageTitles: Record<PageId, string> = {
-  home: "Home",
   schedule: "Schedule",
-  appointments: "Appointments",
-  performance: "Performance",
-  ratings: "Ratings & reviews",
-  campaigns: "Campaigns",
   "business-profile": "Business profile",
-  "schedule-settings": "Schedule settings",
   classes: "Classes",
-  services: "Services",
   instructors: "Instructors",
-  practitioners: "Practitioners",
-  equipment: "Equipment",
-  smarttools: "SmartTools",
+  performance: "Performance",
+  "ratings-and-reviews": "Ratings & reviews",
   support: "Support",
   account: "Account",
-  internal: "Internal",
 };
 
-function PageContentRenderer({ activePage }: { activePage: PageId }) {
-  if (activePage === "schedule") {
-    return <SchedulePage />;
-  }
-
+function PlaceholderPage({ activePage }: { activePage: PageId }) {
   return (
     <main className="p-6">
       <h2 className="text-2xl font-semibold tracking-normal">
@@ -43,7 +37,8 @@ function PageContentRenderer({ activePage }: { activePage: PageId }) {
 }
 
 function App() {
-  const [activePage, setActivePage] = useState<PageId>("schedule-settings");
+  const location = useLocation();
+  const activePage = getPageFromPathname(location.pathname);
 
   return (
     <TooltipProvider>
@@ -60,11 +55,47 @@ function App() {
             activePage={activePage}
             navMain={sidebarNavigation.navMain}
             navSecondary={sidebarNavigation.navSecondary}
-            onNavigate={setActivePage}
           />
           <SidebarInset className="min-h-svh bg-muted/30">
             <SiteHeader title={pageTitles[activePage]} />
-            <PageContentRenderer activePage={activePage} />
+            <Routes>
+              <Route
+                path={getPagePath("schedule")}
+                element={<SchedulePage />}
+              />
+              <Route
+                path={getPagePath("business-profile")}
+                element={<PlaceholderPage activePage="business-profile" />}
+              />
+              <Route
+                path={getPagePath("classes")}
+                element={<PlaceholderPage activePage="classes" />}
+              />
+              <Route
+                path={getPagePath("instructors")}
+                element={<PlaceholderPage activePage="instructors" />}
+              />
+              <Route
+                path={getPagePath("performance")}
+                element={<PlaceholderPage activePage="performance" />}
+              />
+              <Route
+                path={getPagePath("ratings-and-reviews")}
+                element={<PlaceholderPage activePage="ratings-and-reviews" />}
+              />
+              <Route
+                path={getPagePath("support")}
+                element={<PlaceholderPage activePage="support" />}
+              />
+              <Route
+                path={getPagePath("account")}
+                element={<PlaceholderPage activePage="account" />}
+              />
+              <Route
+                path="*"
+                element={<Navigate to={getPagePath(defaultPageId)} replace />}
+              />
+            </Routes>
           </SidebarInset>
         </SidebarProvider>
       </Toaster>

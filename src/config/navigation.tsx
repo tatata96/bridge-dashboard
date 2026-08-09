@@ -1,45 +1,31 @@
 import { type ReactNode } from "react";
 import {
   BarChart3Icon,
-  BriefcaseBusinessIcon,
+  BookOpenIcon,
   CalendarDaysIcon,
-  ChevronDownIcon,
-  HomeIcon,
-  MegaphoneIcon,
   PencilLineIcon,
   SettingsIcon,
   StarIcon,
   UserCircleIcon,
+  UsersIcon,
 } from "lucide-react";
 
 export type PageId =
-  | "home"
   | "schedule"
-  | "appointments"
-  | "performance"
-  | "ratings"
-  | "campaigns"
   | "business-profile"
-  | "schedule-settings"
   | "classes"
-  | "services"
   | "instructors"
-  | "practitioners"
-  | "equipment"
-  | "smarttools"
+  | "performance"
+  | "ratings-and-reviews"
   | "support"
-  | "account"
-  | "internal";
+  | "account";
 
 export type NavMainItem = {
   id: PageId;
   title: string;
   icon: ReactNode;
-  isActive?: boolean;
-  items?: {
-    id: PageId;
-    title: string;
-  }[];
+  disabled?: boolean;
+  tooltip?: string;
 };
 
 export type NavSecondaryItem = {
@@ -48,86 +34,69 @@ export type NavSecondaryItem = {
   icon: ReactNode;
 };
 
+export const defaultPageId: PageId = "schedule";
+
+export const pagePaths: Record<PageId, string> = {
+  schedule: "/",
+  "business-profile": "/business-profile",
+  classes: "/classes",
+  instructors: "/instructors",
+  performance: "/performance",
+  "ratings-and-reviews": "/ratings-and-reviews",
+  support: "/support",
+  account: "/account",
+};
+
+const pathPageIds = Object.entries(pagePaths).reduce<Record<string, PageId>>(
+  (paths, [pageId, path]) => {
+    paths[path] = pageId as PageId;
+    return paths;
+  },
+  {},
+);
+
+export function getPagePath(pageId: PageId) {
+  return pagePaths[pageId];
+}
+
+export function getPageFromPathname(pathname: string): PageId {
+  return pathPageIds[pathname] ?? defaultPageId;
+}
+
 export const sidebarNavigation: {
   navMain: NavMainItem[];
   navSecondary: NavSecondaryItem[];
 } = {
   navMain: [
     {
-      id: "home",
-      title: "Home",
-      icon: <HomeIcon />,
-    },
-    {
       id: "schedule",
       title: "Schedule",
       icon: <CalendarDaysIcon />,
     },
     {
-      id: "appointments",
-      title: "Appointments",
-      icon: <BriefcaseBusinessIcon />,
+      id: "business-profile",
+      title: "Business profile",
+      icon: <PencilLineIcon />,
+    },
+    {
+      id: "classes",
+      title: "Classes",
+      icon: <BookOpenIcon />,
+    },
+    {
+      id: "instructors",
+      title: "Instructors",
+      icon: <UsersIcon />,
     },
     {
       id: "performance",
       title: "Performance",
       icon: <BarChart3Icon />,
-      items: [
-        {
-          id: "performance",
-          title: "Overview",
-        },
-      ],
     },
     {
-      id: "ratings",
+      id: "ratings-and-reviews",
       title: "Ratings & reviews",
       icon: <StarIcon />,
-    },
-    {
-      id: "campaigns",
-      title: "Campaigns",
-      icon: <MegaphoneIcon />,
-    },
-    {
-      id: "business-profile",
-      title: "Manage",
-      icon: <PencilLineIcon />,
-      isActive: true,
-      items: [
-        {
-          id: "business-profile",
-          title: "Business profile",
-        },
-        {
-          id: "schedule-settings",
-          title: "Schedule settings",
-        },
-        {
-          id: "classes",
-          title: "Classes",
-        },
-        {
-          id: "services",
-          title: "Services",
-        },
-        {
-          id: "instructors",
-          title: "Instructors",
-        },
-        {
-          id: "practitioners",
-          title: "Practitioners",
-        },
-        {
-          id: "equipment",
-          title: "Equipment",
-        },
-        {
-          id: "smarttools",
-          title: "SmartTools",
-        },
-      ],
     },
   ],
   navSecondary: [
@@ -140,11 +109,6 @@ export const sidebarNavigation: {
       id: "account",
       title: "Account",
       icon: <SettingsIcon />,
-    },
-    {
-      id: "internal",
-      title: "Internal",
-      icon: <ChevronDownIcon />,
     },
   ],
 };

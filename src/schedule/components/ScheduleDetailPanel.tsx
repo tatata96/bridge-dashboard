@@ -14,7 +14,10 @@ export function ScheduleDetailPanel({
   onSaveClass,
   onCancelSession,
   onCheckIn,
+  onUndoCheckIn,
+  onCancelBooking,
   classHasEnded,
+  classHasStarted,
 }: {
   entry: ScheduleListEntry | undefined;
   reservations: Reservation[];
@@ -25,7 +28,10 @@ export function ScheduleDetailPanel({
   ) => void;
   onCancelSession: (sessionId: string) => void;
   onCheckIn: (reservationId: string) => void;
+  onUndoCheckIn: (reservationId: string) => void;
+  onCancelBooking: (reservationId: string) => void;
   classHasEnded: boolean;
+  classHasStarted: boolean;
 }) {
   if (!entry) {
     return (
@@ -52,20 +58,38 @@ export function ScheduleDetailPanel({
           </span>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <EditClassModal
-            entry={entry}
-            instructors={instructors}
-            onSave={onSaveClass}
-          />
-
+        {classHasStarted ? (
           <span
-            className="hidden h-4 w-px bg-border sm:block"
-            aria-hidden="true"
-          />
+            className={
+              classHasEnded
+                ? "inline-flex h-8 shrink-0 items-center rounded-md bg-muted/50 px-3 text-sm font-medium text-secondary-foreground"
+                : "inline-flex h-8 shrink-0 items-center gap-2 rounded-md bg-blue-50 px-3 text-sm font-medium text-blue-800"
+            }
+          >
+            {classHasEnded ? null : (
+              <span
+                className="size-1.5 rounded-full bg-blue-600"
+                aria-hidden="true"
+              />
+            )}
+            {classHasEnded ? "Completed" : "In progress"}
+          </span>
+        ) : (
+          <div className="flex flex-wrap items-center gap-3">
+            <EditClassModal
+              entry={entry}
+              instructors={instructors}
+              onSave={onSaveClass}
+            />
 
-          <CancelSessionButton entry={entry} onConfirm={onCancelSession} />
-        </div>
+            <span
+              className="hidden h-4 w-px bg-border sm:block"
+              aria-hidden="true"
+            />
+
+            <CancelSessionButton entry={entry} onConfirm={onCancelSession} />
+          </div>
+        )}
       </div>
 
       <Separator />
@@ -90,6 +114,8 @@ export function ScheduleDetailPanel({
         reservations={reservations}
         classHasEnded={classHasEnded}
         onCheckIn={onCheckIn}
+        onUndoCheckIn={onUndoCheckIn}
+        onCancelBooking={onCancelBooking}
       />
     </div>
   );
