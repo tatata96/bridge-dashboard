@@ -34,4 +34,5 @@ export type ClassListEntry = {
   instructorName: string;
   startTime: string;
   repeatOn: Weekday[];
+  capacity: number;
 };

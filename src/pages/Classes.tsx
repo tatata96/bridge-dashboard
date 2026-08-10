@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-import { ClassesDetailPanel } from "@/classes/components/ClassesDetailPanel";
 import { ClassesTable } from "@/classes/components/ClassesTable";
 import { ClassesToolbar } from "@/classes/components/ClassesToolbar";
 import {
@@ -30,6 +29,7 @@ const NEW_CLASS_ENTRY: ClassListEntry = {
   instructorName: "",
   startTime: "",
   repeatOn: [],
+  capacity: 0,
 };
 
 function getInstructorName(
@@ -69,6 +69,7 @@ function toClassListEntries({
       instructorName: getInstructorName(recurrence.instructorId, instructors),
       startTime: recurrence.startTime,
       repeatOn: recurrence.repeatOn,
+      capacity: recurrence.capacity,
     };
   });
 }
@@ -107,10 +108,6 @@ export function ClassesPage() {
     ? [NEW_CLASS_ENTRY, ...filteredEntries]
     : filteredEntries;
 
-  const selectedEntry = tableEntries.find(
-    (entry) => entry.id === selectedEntryId,
-  );
-
   function addClass() {
     setIsCreatingClass(true);
     setSelectedEntryId(NEW_CLASS_ENTRY.id);
@@ -127,26 +124,20 @@ export function ClassesPage() {
 
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-4 p-4">
-      <div className="flex min-w-0 flex-1 flex-col gap-4 xl:flex-row">
-        <div className="flex w-full min-w-0 flex-col gap-4 xl:w-[clamp(34rem,52vw,58rem)] xl:flex-none">
-          <ClassesToolbar
-            classes={mockClasses}
-            instructors={mockInstructors}
-            filters={filters}
-            onFilterChange={setFilters}
-            onAddClass={addClass}
-          />
-          <ClassesTable
-            entries={tableEntries}
-            selectedEntryId={selectedEntryId}
-            onSelectEntry={selectEntry}
-            isFiltering={isFiltering}
-            onClearFilters={clearFilters}
-          />
-        </div>
-        <ClassesDetailPanel
-          mode={isCreatingClass ? "create" : selectedEntry ? "view" : "empty"}
+      <div className="flex w-full min-w-0 flex-col gap-4">
+        <ClassesToolbar
+          classes={mockClasses}
+          instructors={mockInstructors}
+          filters={filters}
+          onFilterChange={setFilters}
           onAddClass={addClass}
+        />
+        <ClassesTable
+          entries={tableEntries}
+          selectedEntryId={selectedEntryId}
+          onSelectEntry={selectEntry}
+          isFiltering={isFiltering}
+          onClearFilters={clearFilters}
         />
       </div>
     </main>

@@ -2,6 +2,11 @@ import { cn } from "@/lib/classnames.utils";
 import { useI18n } from "@/i18n/i18n";
 import type { ClassListEntry } from "@/types/classes";
 
+const statusLabelKeys = {
+  active: "classes.active",
+  paused: "classes.paused",
+} as const;
+
 export function ClassesTable({
   entries,
   selectedEntryId,
@@ -33,14 +38,20 @@ export function ClassesTable({
             <th scope="col" className="w-[18%] px-2 py-3 sm:px-4">
               {t("classes.time")}
             </th>
-            <th scope="col" className="w-[30%] px-2 py-3 sm:px-4">
+            <th scope="col" className="w-[24%] px-2 py-3 sm:px-4">
               {t("classes.className")}
             </th>
-            <th scope="col" className="w-[26%] px-2 py-3 sm:px-4">
+            <th scope="col" className="w-[18%] px-2 py-3 sm:px-4">
               {t("classes.staff")}
             </th>
-            <th scope="col" className="w-[26%] px-2 py-3 sm:px-4">
+            <th scope="col" className="w-[16%] px-2 py-3 sm:px-4">
               {t("classes.repeatOn")}
+            </th>
+            <th scope="col" className="w-[7%] px-2 py-3 sm:px-4">
+              {t("classes.capacity")}
+            </th>
+            <th scope="col" className="w-[10%] px-2 py-3 sm:px-4">
+              {t("classes.status")}
             </th>
           </tr>
         </thead>
@@ -48,7 +59,7 @@ export function ClassesTable({
           {entries.length === 0 ? (
             <tr>
               <td
-                colSpan={4}
+                colSpan={6}
                 className="px-4 py-6 text-center text-sm text-muted-foreground"
               >
                 <span>{t("classes.noFilterMatches")}</span>
@@ -64,6 +75,7 @@ export function ClassesTable({
           ) : (
             entries.map((entry) => {
               const isSelected = entry.id === selectedEntryId;
+              const isPlaceholder = entry.classId === "new-class";
 
               return (
                 <tr
@@ -86,6 +98,12 @@ export function ClassesTable({
                   </td>
                   <td className="px-2 py-2 text-muted-foreground sm:px-4">
                     {entry.repeatOn.join(", ")}
+                  </td>
+                  <td className="px-2 py-2 text-muted-foreground sm:px-4">
+                    {isPlaceholder ? "" : entry.capacity}
+                  </td>
+                  <td className="px-2 py-2 text-muted-foreground sm:px-4">
+                    {isPlaceholder ? "" : t(statusLabelKeys[entry.status])}
                   </td>
                 </tr>
               );
