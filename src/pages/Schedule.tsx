@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { APP_NAME } from "@/config/constants";
 import { useToast } from "@/hooks/use-toast";
+import { useI18n } from "@/i18n/i18n";
 import { addDays, isSameDay } from "@/lib/date.utils";
 import {
   ScheduleClassList,
@@ -24,6 +25,7 @@ import type { ClassSession } from "@/types/schedule";
 
 export function SchedulePage() {
   const { toast } = useToast();
+  const { t } = useI18n();
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const [typeFilter, setTypeFilter] = useState("all");
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
@@ -69,19 +71,24 @@ export function SchedulePage() {
     const changeMessages: string[] = [];
     if (changes.capacity !== originalSession.capacity) {
       changeMessages.push(
-        `Capacity changed from ${originalSession.capacity} to ${changes.capacity}`,
+        t("toast.capacityChanged", {
+          from: originalSession.capacity,
+          to: changes.capacity,
+        }),
       );
     }
     if (changes.instructorId !== originalSession.instructorId) {
       changeMessages.push(
-        `Instructor is now ${getInstructorName(changes.instructorId)}`,
+        t("toast.instructorChanged", {
+          instructor: getInstructorName(changes.instructorId),
+        }),
       );
     }
 
     toast({
-      title: changeMessages.join(". ") || "Class changes saved",
+      title: changeMessages.join(". ") || t("toast.classChangesSaved"),
       action: {
-        label: "Undo",
+        label: t("common.undo"),
         onClick: () => {
           setSessions((prev) =>
             prev.map((session) =>
@@ -113,7 +120,7 @@ export function SchedulePage() {
     setSelectedSessionId(nextSelectedSession?.id ?? null);
 
     toast({
-      title: "Session cancelled",
+      title: t("toast.sessionCancelled"),
     });
   }
 
@@ -129,9 +136,9 @@ export function SchedulePage() {
 
     const firstName = reservation.clientName.split(" ")[0];
     toast({
-      title: `${firstName} checked in`,
+      title: t("toast.checkedIn", { name: firstName }),
       action: {
-        label: "Undo",
+        label: t("common.undo"),
         onClick: () => undoCheckInReservation(reservationId),
       },
     });
@@ -150,7 +157,7 @@ export function SchedulePage() {
 
     const firstName = reservation.clientName.split(" ")[0];
     toast({
-      title: `${firstName}'s check-in undone`,
+      title: t("toast.checkInUndone", { name: firstName }),
     });
   }
 
@@ -177,9 +184,9 @@ export function SchedulePage() {
     );
 
     toast({
-      title: `${firstName}'s booking cancelled`,
+      title: t("toast.bookingCancelled", { name: firstName }),
       action: {
-        label: "Undo",
+        label: t("common.undo"),
         onClick: () => {
           setReservations((prev) =>
             prev.some((r) => r.id === reservationId)
@@ -208,7 +215,8 @@ export function SchedulePage() {
   const entries: ScheduleListEntry[] = getVisibleSessions(sessions).map(
     (session) => ({
       session,
-      className: classesById.get(session.classId)?.name ?? "Unknown class",
+      className:
+        classesById.get(session.classId)?.name ?? t("schedule.unknownClass"),
       instructorName: getInstructorName(session.instructorId),
     }),
   );

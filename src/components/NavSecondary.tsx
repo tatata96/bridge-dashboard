@@ -1,7 +1,8 @@
 import { type ComponentPropsWithoutRef, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 
-import { getPagePath, type PageId } from "@/config/navigation";
+import { getPagePath, pageTitleKeys, type PageId } from "@/config/navigation";
+import { useI18n } from "@/i18n/i18n";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -17,17 +18,18 @@ export function NavSecondary({
 }: {
   items: {
     id: PageId;
-    title: string;
     icon: ReactNode;
   }[];
   activePage: PageId;
 } & ComponentPropsWithoutRef<typeof SidebarGroup>) {
+  const { t } = useI18n();
+
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent>
         <SidebarMenu>
           {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
+            <SidebarMenuItem key={item.id}>
               <SidebarMenuButton
                 asChild
                 size="sm"
@@ -35,7 +37,7 @@ export function NavSecondary({
               >
                 <Link to={getPagePath(item.id)}>
                   {item.icon}
-                  <span>{item.title}</span>
+                  <span>{t(pageTitleKeys[item.id])}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

@@ -7,6 +7,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useI18n, type TranslationKey } from "@/i18n/i18n";
 import {
   defaultAttendeesFilter,
   type AttendeesFilter,
@@ -14,18 +15,18 @@ import {
   type AttendeeUserTypeFilter,
 } from "@/schedule/types/attendees-filter.types";
 
-const STATUS_OPTIONS: { value: AttendeeStatusFilter; label: string }[] = [
-  { value: "all", label: "All" },
-  { value: "unmarked", label: "Unmarked" },
-  { value: "attended", label: "Attended" },
-  { value: "no_show", label: "No-show" },
-];
+const STATUS_OPTIONS = [
+  { value: "all", labelKey: "filters.all" },
+  { value: "unmarked", labelKey: "filters.unmarked" },
+  { value: "attended", labelKey: "filters.attended" },
+  { value: "no_show", labelKey: "filters.noShow" },
+] satisfies { value: AttendeeStatusFilter; labelKey: TranslationKey }[];
 
-const USER_TYPE_OPTIONS: { value: AttendeeUserTypeFilter; label: string }[] = [
-  { value: "all", label: "All" },
-  { value: "new", label: "New user" },
-  { value: "returning", label: "Returning user" },
-];
+const USER_TYPE_OPTIONS = [
+  { value: "all", labelKey: "filters.all" },
+  { value: "new", labelKey: "filters.newUser" },
+  { value: "returning", labelKey: "filters.returningUser" },
+] satisfies { value: AttendeeUserTypeFilter; labelKey: TranslationKey }[];
 
 export function AttendeesFilterPopover({
   filter,
@@ -34,12 +35,14 @@ export function AttendeesFilterPopover({
   filter: AttendeesFilter;
   onFilterChange: (filter: AttendeesFilter) => void;
 }) {
+  const { t } = useI18n();
+
   return (
     <Popover>
       <PopoverTrigger asChild>
         <button
           type="button"
-          aria-label="Filter attendees"
+          aria-label={t("filters.filterAttendees")}
           className="cursor-pointer text-muted-foreground hover:text-foreground"
         >
           <SlidersHorizontalIcon className="size-4" />
@@ -56,12 +59,12 @@ export function AttendeesFilterPopover({
           id="attendees-filter-title"
           className="text-sm font-semibold text-foreground"
         >
-          Filter attendees
+          {t("filters.filterAttendees")}
         </p>
 
         <div className="flex flex-col gap-2">
           <span className="text-xs font-medium text-muted-foreground">
-            Status
+            {t("filters.status")}
           </span>
           <RadioGroup
             value={filter.status}
@@ -78,7 +81,7 @@ export function AttendeesFilterPopover({
                 className="flex cursor-pointer items-center gap-2 text-sm text-foreground"
               >
                 <RadioGroupItem value={option.value} />
-                {option.label}
+                {t(option.labelKey)}
               </label>
             ))}
           </RadioGroup>
@@ -86,7 +89,7 @@ export function AttendeesFilterPopover({
 
         <div className="flex flex-col gap-2">
           <span className="text-xs font-medium text-muted-foreground">
-            User type
+            {t("filters.userType")}
           </span>
           <RadioGroup
             value={filter.userType}
@@ -103,7 +106,7 @@ export function AttendeesFilterPopover({
                 className="flex cursor-pointer items-center gap-2 text-sm text-foreground"
               >
                 <RadioGroupItem value={option.value} />
-                {option.label}
+                {t(option.labelKey)}
               </label>
             ))}
           </RadioGroup>
@@ -116,7 +119,7 @@ export function AttendeesFilterPopover({
             size="sm"
             onClick={() => onFilterChange(defaultAttendeesFilter)}
           >
-            Clear
+            {t("filters.clear")}
           </Button>
         </div>
       </PopoverContent>

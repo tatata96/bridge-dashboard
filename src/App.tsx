@@ -10,27 +10,20 @@ import {
   defaultPageId,
   getPageFromPathname,
   getPagePath,
+  pageTitleKeys,
   sidebarNavigation,
   type PageId,
 } from "@/config/navigation";
+import { useI18n } from "@/i18n/i18n";
 import { SchedulePage } from "@/pages/Schedule";
 
-const pageTitles: Record<PageId, string> = {
-  schedule: "Schedule",
-  "business-profile": "Business profile",
-  classes: "Classes",
-  instructors: "Instructors",
-  performance: "Performance",
-  "ratings-and-reviews": "Ratings & reviews",
-  support: "Support",
-  account: "Account",
-};
-
 function PlaceholderPage({ activePage }: { activePage: PageId }) {
+  const { t } = useI18n();
+
   return (
     <main className="p-6">
       <h2 className="text-2xl font-semibold tracking-normal">
-        {pageTitles[activePage]}
+        {t(pageTitleKeys[activePage])}
       </h2>
     </main>
   );
@@ -38,7 +31,9 @@ function PlaceholderPage({ activePage }: { activePage: PageId }) {
 
 function App() {
   const location = useLocation();
+  const { t } = useI18n();
   const activePage = getPageFromPathname(location.pathname);
+  const activePageTitle = t(pageTitleKeys[activePage]);
 
   return (
     <TooltipProvider>
@@ -57,7 +52,7 @@ function App() {
             navSecondary={sidebarNavigation.navSecondary}
           />
           <SidebarInset className="min-h-svh bg-muted/30">
-            <SiteHeader title={pageTitles[activePage]} />
+            <SiteHeader title={activePageTitle} />
             <Routes>
               <Route
                 path={getPagePath("schedule")}

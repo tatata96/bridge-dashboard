@@ -1,4 +1,5 @@
 import { cn } from "@/lib/classnames.utils";
+import { useI18n } from "@/i18n/i18n";
 import { formatTime } from "@/lib/date.utils";
 import type { ClassSession } from "@/types/schedule";
 
@@ -17,10 +18,12 @@ export function ScheduleClassList({
   selectedSessionId: string | null;
   onSelectSession: (sessionId: string) => void;
 }) {
+  const { dateLocale, t } = useI18n();
+
   if (entries.length === 0) {
     return (
       <div className="flex min-h-24 flex-1 items-center justify-center rounded-lg border border-border bg-background p-6 text-sm text-muted-foreground">
-        No classes scheduled for this day.
+        {t("schedule.noClasses")}
       </div>
     );
   }
@@ -44,7 +47,7 @@ export function ScheduleClassList({
             >
               <div className="flex min-w-0 flex-col gap-0.5">
                 <span className="text-sm font-medium text-foreground">
-                  {formatTime(new Date(session.startAt))}
+                  {formatTime(new Date(session.startAt), dateLocale)}
                 </span>
                 <span className="text-sm font-semibold text-foreground">
                   {className}

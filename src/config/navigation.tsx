@@ -10,6 +10,8 @@ import {
   UsersIcon,
 } from "lucide-react";
 
+import type { TranslationKey } from "@/i18n/i18n";
+
 export type PageId =
   | "schedule"
   | "business-profile"
@@ -22,15 +24,12 @@ export type PageId =
 
 export type NavMainItem = {
   id: PageId;
-  title: string;
   icon: ReactNode;
   disabled?: boolean;
-  tooltip?: string;
 };
 
 export type NavSecondaryItem = {
   id: PageId;
-  title: string;
   icon: ReactNode;
 };
 
@@ -46,6 +45,17 @@ export const pagePaths: Record<PageId, string> = {
   support: "/support",
   account: "/account",
 };
+
+export const pageTitleKeys = {
+  schedule: "nav.schedule",
+  "business-profile": "nav.businessProfile",
+  classes: "nav.classes",
+  instructors: "nav.instructors",
+  performance: "nav.performance",
+  "ratings-and-reviews": "nav.ratingsAndReviews",
+  support: "nav.support",
+  account: "nav.account",
+} satisfies Record<PageId, TranslationKey>;
 
 const pathPageIds = Object.entries(pagePaths).reduce<Record<string, PageId>>(
   (paths, [pageId, path]) => {
@@ -70,44 +80,36 @@ export const sidebarNavigation: {
   navMain: [
     {
       id: "schedule",
-      title: "Schedule",
       icon: <CalendarDaysIcon />,
     },
     {
       id: "business-profile",
-      title: "Business profile",
       icon: <PencilLineIcon />,
     },
     {
       id: "classes",
-      title: "Classes",
       icon: <BookOpenIcon />,
     },
     {
       id: "instructors",
-      title: "Instructors",
       icon: <UsersIcon />,
     },
     {
       id: "performance",
-      title: "Performance",
       icon: <BarChart3Icon />,
     },
     {
       id: "ratings-and-reviews",
-      title: "Ratings & reviews",
       icon: <StarIcon />,
     },
   ],
   navSecondary: [
     {
       id: "support",
-      title: "Support",
       icon: <UserCircleIcon />,
     },
     {
       id: "account",
-      title: "Account",
       icon: <SettingsIcon />,
     },
   ],

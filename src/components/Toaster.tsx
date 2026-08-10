@@ -14,9 +14,11 @@ import {
   type ToastActionConfig,
   type ToastItem,
 } from "@/hooks/use-toast";
+import { useI18n } from "@/i18n/i18n";
 
 export function Toaster({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const { t } = useI18n();
 
   const toast = useCallback(
     (input: { title: string; action?: ToastActionConfig }) => {
@@ -62,7 +64,7 @@ export function Toaster({ children }: { children: ReactNode }) {
                 </>
               ) : null}
             </div>
-            <ToastClose aria-label="Dismiss" />
+            <ToastClose aria-label={t("common.dismiss")} />
           </Toast>
         ))}
         <ToastViewport />
