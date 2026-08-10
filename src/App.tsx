@@ -15,6 +15,7 @@ import {
   type PageId,
 } from "@/config/navigation";
 import { useI18n } from "@/i18n/i18n";
+import { AccountPage } from "@/pages/secondary-pages/Account";
 import { SchedulePage } from "@/pages/Schedule";
 
 function PlaceholderPage({ activePage }: { activePage: PageId }) {
@@ -82,10 +83,7 @@ function App() {
                 path={getPagePath("support")}
                 element={<PlaceholderPage activePage="support" />}
               />
-              <Route
-                path={getPagePath("account")}
-                element={<PlaceholderPage activePage="account" />}
-              />
+              <Route path={getPagePath("account")} element={<AccountPage />} />
               <Route
                 path="*"
                 element={<Navigate to={getPagePath(defaultPageId)} replace />}
