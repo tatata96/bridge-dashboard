@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useI18n } from "@/i18n/i18n";
 import type { Reservation } from "@/types/schedule";
 
 export function CancelBookingModal({
@@ -21,15 +22,15 @@ export function CancelBookingModal({
   onConfirm: (reservationId: string) => void;
 }) {
   const firstName = reservation.clientName.split(" ")[0];
+  const { t } = useI18n();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Cancel booking</DialogTitle>
+          <DialogTitle>{t("bookings.cancelBooking")}</DialogTitle>
           <DialogDescription>
-            {firstName} will be notified and 2 credits refunded. The spot
-            reopens.
+            {t("bookings.cancelBookingDescription", { name: firstName })}
           </DialogDescription>
         </DialogHeader>
 
@@ -38,7 +39,9 @@ export function CancelBookingModal({
             {reservation.clientName}
           </p>
           <p className="text-muted-foreground">
-            {reservation.clientTotalVisits}x total visits
+            {t("bookings.totalVisits", {
+              count: reservation.clientTotalVisits,
+            })}
           </p>
         </div>
 
@@ -49,7 +52,7 @@ export function CancelBookingModal({
             size="sm"
             onClick={() => onOpenChange(false)}
           >
-            Keep booking
+            {t("bookings.keepBooking")}
           </Button>
           <Button
             type="button"
@@ -60,7 +63,7 @@ export function CancelBookingModal({
               onOpenChange(false);
             }}
           >
-            Cancel booking
+            {t("bookings.cancelBooking")}
           </Button>
         </DialogFooter>
       </DialogContent>

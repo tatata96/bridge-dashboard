@@ -6,8 +6,8 @@ export function addDays(date: Date, days: number) {
 }
 
 // Formats a date as "Thu, Jun 15".
-export function formatShortDate(date: Date) {
-  return new Intl.DateTimeFormat("en-US", {
+export function formatShortDate(date: Date, locale = "en-US") {
+  return new Intl.DateTimeFormat(locale, {
     weekday: "short",
     month: "short",
     day: "numeric",
@@ -15,8 +15,8 @@ export function formatShortDate(date: Date) {
 }
 
 // Formats a date's time as "7:00 AM".
-export function formatTime(date: Date) {
-  return new Intl.DateTimeFormat("en-US", {
+export function formatTime(date: Date, locale = "en-US") {
+  return new Intl.DateTimeFormat(locale, {
     hour: "numeric",
     minute: "2-digit",
   }).format(date);

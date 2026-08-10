@@ -1,5 +1,6 @@
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import { useI18n } from "@/i18n/i18n";
 import { formatTime } from "@/lib/date.utils";
 import { Bookings } from "@/schedule/components/Bookings";
 import { CancelSessionButton } from "@/schedule/components/CancelSessionButton";
@@ -33,10 +34,12 @@ export function ScheduleDetailPanel({
   classHasEnded: boolean;
   classHasStarted: boolean;
 }) {
+  const { dateLocale, t } = useI18n();
+
   if (!entry) {
     return (
       <div className="flex min-h-80 flex-1 items-center justify-center rounded-lg border border-border bg-background p-6 text-sm text-muted-foreground">
-        Select a class to see its details.
+        {t("schedule.selectClass")}
       </div>
     );
   }
@@ -51,10 +54,11 @@ export function ScheduleDetailPanel({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex min-w-0 flex-col gap-0.5">
           <h2 className="text-base font-semibold text-foreground">
-            {formatTime(new Date(session.startAt))} {className}
+            {formatTime(new Date(session.startAt), dateLocale)} {className}
           </h2>
           <span className="text-sm text-muted-foreground">
-            {session.durationMinutes} min · {instructorName}
+            {session.durationMinutes} {t("schedule.minuteShort")} ·{" "}
+            {instructorName}
           </span>
         </div>
 
@@ -72,7 +76,7 @@ export function ScheduleDetailPanel({
                 aria-hidden="true"
               />
             )}
-            {classHasEnded ? "Completed" : "In progress"}
+            {classHasEnded ? t("schedule.completed") : t("schedule.inProgress")}
           </span>
         ) : (
           <div className="flex flex-wrap items-center gap-3">
@@ -100,11 +104,12 @@ export function ScheduleDetailPanel({
             <span className="font-semibold">{session.reservedCount}</span>
             <span className="text-muted-foreground">
               {" "}
-              / {session.capacity} booked
+              / {session.capacity} {t("schedule.booked")}
             </span>
           </span>
           <span className="text-muted-foreground">
-            {spotsLeft} {spotsLeft === 1 ? "spot" : "spots"} left
+            {spotsLeft}{" "}
+            {t(spotsLeft === 1 ? "schedule.spotLeft" : "schedule.spotsLeft")}
           </span>
         </div>
         <Progress value={bookedPercent} />

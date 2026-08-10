@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useSidebar } from "@/components/ui/sidebar";
+import { useI18n } from "@/i18n/i18n";
 import { PanelLeftIcon } from "lucide-react";
 
 export function SiteHeader({ title }: { title: string }) {
   const { toggleSidebar } = useSidebar();
+  const { t } = useI18n();
 
   return (
     <header className="sticky top-0 z-50 flex w-full items-center border-b bg-background shadow-xs">
@@ -14,6 +16,7 @@ export function SiteHeader({ title }: { title: string }) {
           variant="ghost"
           size="icon"
           onClick={toggleSidebar}
+          aria-label={t("common.toggleSidebar")}
         >
           <PanelLeftIcon />
         </Button>
@@ -21,7 +24,9 @@ export function SiteHeader({ title }: { title: string }) {
           orientation="vertical"
           className="mr-2 data-vertical:h-4 data-vertical:self-auto"
         />
-        <h1 className="text-xl font-semibold tracking-normal">{title}</h1>
+        <h1 className="min-w-0 flex-1 truncate text-xl font-semibold tracking-normal">
+          {title}
+        </h1>
       </div>
     </header>
   );

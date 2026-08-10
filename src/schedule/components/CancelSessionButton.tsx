@@ -17,16 +17,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useI18n, type TranslationKey } from "@/i18n/i18n";
 import { ClassSessionSummary } from "@/schedule/components/ClassSessionSummary";
 import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
 
 const cancellationReasons = [
-  "Low attendance",
-  "Instructor unavailable",
-  "Facility issue",
-  "Schedule conflict",
-  "Other",
-];
+  { value: "low-attendance", labelKey: "class.reason.lowAttendance" },
+  {
+    value: "instructor-unavailable",
+    labelKey: "class.reason.instructorUnavailable",
+  },
+  { value: "facility-issue", labelKey: "class.reason.facilityIssue" },
+  { value: "schedule-conflict", labelKey: "class.reason.scheduleConflict" },
+  { value: "other", labelKey: "class.reason.other" },
+] satisfies { value: string; labelKey: TranslationKey }[];
 
 export function CancelSessionButton({
   entry,
@@ -37,18 +41,21 @@ export function CancelSessionButton({
 }) {
   const [open, setOpen] = useState(false);
   const [cancellationReason, setCancellationReason] = useState(
-    cancellationReasons[0],
+    cancellationReasons[0].value,
   );
+  const { t } = useI18n();
   const keepSessionButtonRef = useRef<HTMLButtonElement>(null);
   const attendeeCount = entry.session.reservedCount;
   const refundCredits = attendeeCount * 2;
-  const attendeeLabel = attendeeCount === 1 ? "attendee" : "attendees";
-  const creditLabel = refundCredits === 1 ? "credit" : "credits";
+  const attendeeLabel = t(
+    attendeeCount === 1 ? "class.attendee" : "class.attendees",
+  );
+  const creditLabel = t(refundCredits === 1 ? "class.credit" : "class.credits");
 
   function handleOpenChange(nextOpen: boolean) {
     setOpen(nextOpen);
     if (nextOpen) {
-      setCancellationReason(cancellationReasons[0]);
+      setCancellationReason(cancellationReasons[0].value);
     }
   }
 
@@ -56,7 +63,7 @@ export function CancelSessionButton({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button type="button" variant="destructive-link" size="sm">
-          Cancel session
+          {t("class.cancelSession")}
         </Button>
       </DialogTrigger>
       <DialogContent
@@ -66,12 +73,17 @@ export function CancelSessionButton({
         }}
       >
         <DialogHeader>
-          <DialogTitle>Cancel this session?</DialogTitle>
+          <DialogTitle>{t("class.cancelQuestion")}</DialogTitle>
           {attendeeCount > 0 ? (
             <DialogDescription>
-              {attendeeCount} {attendeeLabel} will be notified and refunded{" "}
-              {refundCredits} {creditLabel}. <br />
-              This can't be undone.
+              {t("class.cancelDescription", {
+                attendeeCount,
+                attendeeLabel,
+                creditCount: refundCredits,
+                creditLabel,
+              })}
+              <br />
+              {t("class.cantBeUndone")}
             </DialogDescription>
           ) : null}
         </DialogHeader>
@@ -80,7 +92,7 @@ export function CancelSessionButton({
 
         <label className="flex flex-col gap-1.5 text-sm">
           <span className="text-xs font-medium text-muted-foreground">
-            Cancellation reason
+            {t("class.cancellationReason")}
           </span>
           <Select
             value={cancellationReason}
@@ -91,8 +103,8 @@ export function CancelSessionButton({
             </SelectTrigger>
             <SelectContent>
               {cancellationReasons.map((reason) => (
-                <SelectItem key={reason} value={reason}>
-                  {reason}
+                <SelectItem key={reason.value} value={reason.value}>
+                  {t(reason.labelKey)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -107,7 +119,7 @@ export function CancelSessionButton({
             size="sm"
             onClick={() => setOpen(false)}
           >
-            Keep session
+            {t("class.keepSession")}
           </Button>
           <Button
             type="button"
@@ -118,7 +130,7 @@ export function CancelSessionButton({
               setOpen(false);
             }}
           >
-            Cancel session
+            {t("class.cancelSession")}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/classnames.utils";
 import { ClassSessionSummary } from "@/schedule/components/ClassSessionSummary";
 import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
@@ -42,11 +43,13 @@ export function EditClassModal({
   const [open, setOpen] = useState(false);
   const [instructorId, setInstructorId] = useState(session.instructorId);
   const [capacity, setCapacity] = useState(session.capacity);
+  const { t } = useI18n();
 
   const isDirty =
     instructorId !== session.instructorId || capacity !== session.capacity;
   const spotsLeft = capacity - session.reservedCount;
   const isAtFloor = capacity <= session.reservedCount;
+  const spotLabel = t(spotsLeft === 1 ? "schedule.spot" : "schedule.spots");
 
   function handleOpenChange(nextOpen: boolean) {
     setOpen(nextOpen);
@@ -66,22 +69,20 @@ export function EditClassModal({
       <DialogTrigger asChild>
         <Button type="button" variant="outline" size="sm">
           <PencilIcon />
-          Edit this class
+          {t("class.edit")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit this class</DialogTitle>
-          <DialogDescription>
-            Update the staff or capacity for this session.
-          </DialogDescription>
+          <DialogTitle>{t("class.edit")}</DialogTitle>
+          <DialogDescription>{t("class.editDescription")}</DialogDescription>
         </DialogHeader>
 
         <ClassSessionSummary entry={entry} />
 
         <label className="flex flex-col gap-1.5 text-sm">
           <span className="text-xs font-medium text-muted-foreground">
-            Instructor
+            {t("class.instructor")}
           </span>
           <Select
             value={instructorId ?? UNASSIGNED_INSTRUCTOR}
@@ -94,7 +95,7 @@ export function EditClassModal({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value={UNASSIGNED_INSTRUCTOR}>
-                No staff specified
+                {t("class.noStaff")}
               </SelectItem>
               {instructors.map((instructor) => (
                 <SelectItem key={instructor.id} value={instructor.id}>
@@ -107,13 +108,13 @@ export function EditClassModal({
 
         <div className="flex flex-col gap-1.5 text-sm">
           <span className="text-xs font-medium text-muted-foreground">
-            Capacity
+            {t("class.capacity")}
           </span>
           <NumberStepper
             value={capacity}
             onChange={setCapacity}
             min={session.reservedCount}
-            label="Capacity"
+            label={t("class.capacity")}
           />
           <span
             className={cn(
@@ -125,8 +126,14 @@ export function EditClassModal({
             aria-live="polite"
           >
             {isAtFloor
-              ? `${session.reservedCount} already booked — can't go lower`
-              : `${session.reservedCount} booked · ${spotsLeft} ${spotsLeft === 1 ? "spot" : "spots"} left`}
+              ? t("class.alreadyBookedCantGoLower", {
+                  count: session.reservedCount,
+                })
+              : t("class.bookedSpotsLeft", {
+                  booked: session.reservedCount,
+                  spotsLeft,
+                  spotLabel,
+                })}
           </span>
         </div>
 
@@ -137,7 +144,7 @@ export function EditClassModal({
             onClick={handleSave}
             disabled={!isDirty}
           >
-            Save
+            {t("common.save")}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/classnames.utils";
 import { AttendeesFilterPopover } from "@/schedule/components/AttendeesFilter";
 import {
@@ -51,13 +52,14 @@ export function Bookings({
   onCancelBooking: (reservationId: string) => void;
 }) {
   const [filter, setFilter] = useState<AttendeesFilter>(defaultAttendeesFilter);
+  const { t } = useI18n();
 
   if (reservations.length === 0) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center text-sm text-muted-foreground">
         <CalendarIcon className="size-8 text-muted-foreground/50" />
-        <p>This class has no reservations.</p>
-        <p>Please check back later.</p>
+        <p>{t("bookings.noReservations")}</p>
+        <p>{t("bookings.checkBack")}</p>
       </div>
     );
   }
@@ -70,7 +72,9 @@ export function Bookings({
     <div className="flex min-w-0 flex-1 flex-col gap-4">
       <div className="flex flex-1 flex-col rounded-lg border border-border">
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
-          <h3 className="text-sm font-semibold text-foreground">Attendees</h3>
+          <h3 className="text-sm font-semibold text-foreground">
+            {t("bookings.attendees")}
+          </h3>
           <div className="flex items-center gap-3 text-muted-foreground">
             <AttendeesFilterPopover
               filter={filter}
@@ -80,7 +84,7 @@ export function Bookings({
         </div>
         {filteredReservations.length === 0 ? (
           <p className="flex flex-1 items-center justify-center p-6 text-center text-sm text-muted-foreground">
-            No attendees match the selected filters.
+            {t("bookings.noFilterMatches")}
           </p>
         ) : (
           <ul className="flex flex-col divide-y divide-border">
@@ -115,6 +119,7 @@ function BookingRow({
   onCancelBooking: (reservationId: string) => void;
 }) {
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const { t } = useI18n();
 
   return (
     <li className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
@@ -127,7 +132,9 @@ function BookingRow({
             {reservation.clientName}
           </span>
           <span className="text-xs text-muted-foreground">
-            {reservation.clientTotalVisits}x total visits
+            {t("bookings.totalVisits", {
+              count: reservation.clientTotalVisits,
+            })}
           </span>
         </div>
       </div>
@@ -145,7 +152,7 @@ function BookingRow({
                 type="button"
                 variant="ghost"
                 size="icon-xs"
-                aria-label="More actions"
+                aria-label={t("common.moreActions")}
               >
                 <MoreVerticalIcon />
               </Button>
@@ -155,14 +162,14 @@ function BookingRow({
                 <DropdownMenuItem
                   onSelect={() => onUndoCheckIn(reservation.id)}
                 >
-                  Undo check-in
+                  {t("bookings.undoCheckIn")}
                 </DropdownMenuItem>
               ) : null}
               <DropdownMenuItem
                 className="text-destructive focus:text-destructive"
                 onSelect={() => setCancelDialogOpen(true)}
               >
-                Cancel booking
+                {t("bookings.cancelBooking")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -188,6 +195,8 @@ function AttendanceStatus({
   classHasEnded: boolean;
   onCheckIn: (reservationId: string) => void;
 }) {
+  const { t } = useI18n();
+
   if (reservation.status === "attended") {
     return (
       <span
@@ -197,7 +206,7 @@ function AttendanceStatus({
         )}
       >
         <CheckIcon className="size-3.5" aria-hidden="true" />
-        Checked in
+        {t("bookings.checkedIn")}
       </span>
     );
   }
@@ -210,14 +219,14 @@ function AttendanceStatus({
         size="sm"
         onClick={() => onCheckIn(reservation.id)}
       >
-        Check in
+        {t("bookings.checkIn")}
       </Button>
     );
   }
 
   return (
     <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
-      Not checked in
+      {t("bookings.notCheckedIn")}
     </span>
   );
 }
