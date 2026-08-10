@@ -1,37 +1,55 @@
-import type { Class } from "@/types/schedule";
+import type { Class, ClassRecurrence } from "@/types/classes";
 
-export type ClassListEntry = {
-  id: string;
-  classId: Class["id"];
-  className: string;
-  instructorName: string;
-  startTime: string;
-  repeatOn: string[];
-};
-
-export const mockClassListEntries: ClassListEntry[] = [
+export const mockClasses: Class[] = [
   {
-    id: "class-list-1",
+    id: "class-1",
+    name: "Advanced CrossFit",
+    category: "CrossFit",
+    labels: [],
+    status: "active",
+  },
+  {
+    id: "class-2",
+    name: "Basic Crossfit",
+    category: "CrossFit",
+    labels: [],
+    status: "active",
+  },
+  {
+    id: "class-3",
+    name: "Salsa",
+    category: "Dance",
+    labels: [],
+    status: "paused",
+  },
+];
+
+export const mockClassRecurrences: ClassRecurrence[] = [
+  {
+    id: "class-recurrence-1",
     classId: "class-1",
-    className: "Advanced CrossFit",
-    instructorName: "Betty White",
+    instructorId: "instructor-1",
     startTime: "07:00",
+    durationMinutes: 60,
     repeatOn: ["Mon", "Wed", "Fri"],
+    capacity: 8,
   },
   {
-    id: "class-list-2",
+    id: "class-recurrence-2",
     classId: "class-2",
-    className: "Basic Crossfit",
-    instructorName: "No staff specified",
+    instructorId: null,
     startTime: "07:00",
+    durationMinutes: 60,
     repeatOn: ["Tue", "Thu"],
+    capacity: 6,
   },
   {
-    id: "class-list-3",
+    id: "class-recurrence-3",
     classId: "class-3",
-    className: "Salsa",
-    instructorName: "Betty White",
+    instructorId: "instructor-1",
     startTime: "18:00",
+    durationMinutes: 60,
     repeatOn: ["Sat"],
+    capacity: 10,
   },
 ];

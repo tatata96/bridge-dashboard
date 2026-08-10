@@ -1,28 +1,12 @@
 import { APP_NAME } from "@/config/constants";
 import { addDays, atTime } from "@/lib/date.utils";
-import type {
-  Class,
-  ClassSession,
-  Instructor,
-  Reservation,
-} from "@/types/schedule";
+import type { ClassSession, Instructor, Reservation } from "@/types/schedule";
 
 const today = new Date();
 const yesterday = addDays(today, -1);
 
 export const mockInstructors: Instructor[] = [
   { id: "instructor-1", name: "Betty White" },
-];
-
-export const mockClasses: Class[] = [
-  {
-    id: "class-1",
-    name: "Advanced CrossFit",
-    category: "CrossFit",
-    labels: [],
-  },
-  { id: "class-2", name: "Basic Crossfit", category: "CrossFit", labels: [] },
-  { id: "class-3", name: "Salsa", category: "Dance", labels: [] },
 ];
 
 export const mockClassSessions: ClassSession[] = [
