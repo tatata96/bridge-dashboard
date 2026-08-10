@@ -18,8 +18,6 @@ export const mockClassSessions: ClassSession[] = [
     durationMinutes: 60,
     capacity: 8,
     reservedCount: 4,
-    classCapacity: 8,
-    classReservedCount: 4,
   },
   {
     id: "session-yesterday-2",
@@ -29,8 +27,6 @@ export const mockClassSessions: ClassSession[] = [
     durationMinutes: 45,
     capacity: 6,
     reservedCount: 2,
-    classCapacity: 6,
-    classReservedCount: 2,
   },
   {
     id: "session-yesterday-3",
@@ -40,8 +36,6 @@ export const mockClassSessions: ClassSession[] = [
     durationMinutes: 60,
     capacity: 10,
     reservedCount: 5,
-    classCapacity: 10,
-    classReservedCount: 5,
   },
   {
     id: "session-1",
@@ -51,8 +45,6 @@ export const mockClassSessions: ClassSession[] = [
     durationMinutes: 60,
     capacity: 3,
     reservedCount: 3,
-    classCapacity: 3,
-    classReservedCount: 3,
   },
   {
     id: "session-2",
@@ -62,8 +54,6 @@ export const mockClassSessions: ClassSession[] = [
     durationMinutes: 60,
     capacity: 5,
     reservedCount: 0,
-    classCapacity: 5,
-    classReservedCount: 0,
   },
   {
     id: "session-3",
@@ -73,8 +63,6 @@ export const mockClassSessions: ClassSession[] = [
     durationMinutes: 60,
     capacity: 3,
     reservedCount: 0,
-    classCapacity: 3,
-    classReservedCount: 0,
   },
   {
     id: "session-4",
@@ -84,8 +72,6 @@ export const mockClassSessions: ClassSession[] = [
     durationMinutes: 60,
     capacity: 10,
     reservedCount: 0,
-    classCapacity: 10,
-    classReservedCount: 0,
   },
   {
     id: "session-5",
@@ -95,8 +81,6 @@ export const mockClassSessions: ClassSession[] = [
     durationMinutes: 60,
     capacity: 4,
     reservedCount: 0,
-    classCapacity: 4,
-    classReservedCount: 0,
   },
   {
     id: "session-6",
@@ -110,8 +94,6 @@ export const mockClassSessions: ClassSession[] = [
     durationMinutes: 60,
     capacity: 8,
     reservedCount: 6,
-    classCapacity: 8,
-    classReservedCount: 6,
   },
 ];
 

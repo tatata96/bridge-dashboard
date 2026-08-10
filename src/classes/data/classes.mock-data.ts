@@ -1,55 +1,58 @@
-import type { Class, ClassRecurrence } from "@/types/classes";
+import type { Class } from "@/types/classes";
 
 export const mockClasses: Class[] = [
   {
     id: "class-1",
     name: "Advanced CrossFit",
     category: "CrossFit",
-    labels: [],
     status: "active",
+    description: "High-intensity strength and conditioning class.",
+    instructorId: "instructor-1",
+    schedule: {
+      type: "recurring",
+      repeatOn: ["monday", "wednesday", "friday"],
+      startDate: "2026-01-01",
+      endDate: null,
+    },
+    startTime: "07:00",
+    durationMinutes: 60,
+    capacity: 8,
+    priceCredits: 2,
   },
   {
     id: "class-2",
     name: "Basic Crossfit",
     category: "CrossFit",
-    labels: [],
     status: "active",
+    description: "Beginner-friendly CrossFit fundamentals class.",
+    instructorId: null,
+    schedule: {
+      type: "recurring",
+      repeatOn: ["tuesday", "thursday"],
+      startDate: "2026-01-01",
+      endDate: null,
+    },
+    startTime: "07:00",
+    durationMinutes: 60,
+    capacity: 6,
+    priceCredits: 1,
   },
   {
     id: "class-3",
     name: "Salsa",
     category: "Dance",
-    labels: [],
     status: "paused",
-  },
-];
-
-export const mockClassRecurrences: ClassRecurrence[] = [
-  {
-    id: "class-recurrence-1",
-    classId: "class-1",
+    description: "Partner dance class focused on salsa basics and rhythm.",
     instructorId: "instructor-1",
-    startTime: "07:00",
-    durationMinutes: 60,
-    repeatOn: ["monday", "wednesday", "friday"],
-    capacity: 8,
-  },
-  {
-    id: "class-recurrence-2",
-    classId: "class-2",
-    instructorId: null,
-    startTime: "07:00",
-    durationMinutes: 60,
-    repeatOn: ["tuesday", "thursday"],
-    capacity: 6,
-  },
-  {
-    id: "class-recurrence-3",
-    classId: "class-3",
-    instructorId: "instructor-1",
+    schedule: {
+      type: "recurring",
+      repeatOn: ["saturday"],
+      startDate: "2026-01-01",
+      endDate: null,
+    },
     startTime: "18:00",
     durationMinutes: 60,
-    repeatOn: ["saturday"],
     capacity: 10,
+    priceCredits: 2,
   },
 ];

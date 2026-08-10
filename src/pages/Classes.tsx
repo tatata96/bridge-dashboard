@@ -2,86 +2,37 @@ import { useState } from "react";
 
 import { ClassesTable } from "@/classes/components/ClassesTable";
 import { ClassesToolbar } from "@/classes/components/ClassesToolbar";
-import {
-  mockClasses,
-  mockClassRecurrences,
-} from "@/classes/data/classes.mock-data";
+import { mockClasses } from "@/classes/data/classes.mock-data";
 import { mockInstructors } from "@/schedule/data/schedule.mock-data";
-import type {
-  Class,
-  ClassFilters,
-  ClassListEntry,
-  ClassRecurrence,
-} from "@/types/classes";
-import type { Instructor } from "@/types/schedule";
+import type { Class, ClassFilters } from "@/types/classes";
 
 const DEFAULT_FILTERS: ClassFilters = {
   classId: "all",
   instructorId: "all",
 };
 
-const NEW_CLASS_ENTRY: ClassListEntry = {
+const NEW_CLASS: Class = {
   id: "new-class",
-  classId: "new-class",
-  className: "New class",
+  name: "New class",
+  category: "",
+  description: "",
   status: "active",
   instructorId: null,
-  instructorName: "",
+  schedule: {
+    type: "recurring",
+    repeatOn: [],
+    startDate: "",
+    endDate: null,
+  },
   startTime: "",
-  repeatOn: [],
+  durationMinutes: 60,
   capacity: 0,
+  priceCredits: 0,
 };
 
-function getInstructorName(
-  instructorId: string | null,
-  instructors: Instructor[],
-) {
-  if (!instructorId) return "No staff specified";
-  return (
-    instructors.find((instructor) => instructor.id === instructorId)?.name ??
-    "Unknown instructor"
-  );
-}
-
-function toClassListEntries({
-  classes,
-  recurrences,
-  instructors,
-}: {
-  classes: Class[];
-  recurrences: ClassRecurrence[];
-  instructors: Instructor[];
-}): ClassListEntry[] {
-  const classesById = new Map(
-    classes.map((classItem) => [classItem.id, classItem]),
-  );
-
-  return recurrences.flatMap((recurrence) => {
-    const classItem = classesById.get(recurrence.classId);
-    if (!classItem) return [];
-
-    return {
-      id: recurrence.id,
-      classId: classItem.id,
-      className: classItem.name,
-      status: classItem.status,
-      instructorId: recurrence.instructorId,
-      instructorName: getInstructorName(recurrence.instructorId, instructors),
-      startTime: recurrence.startTime,
-      repeatOn: recurrence.repeatOn,
-      capacity: recurrence.capacity,
-    };
-  });
-}
-
 export function ClassesPage() {
-  const classListEntries = toClassListEntries({
-    classes: mockClasses,
-    recurrences: mockClassRecurrences,
-    instructors: mockInstructors,
-  });
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(
-    classListEntries[0]?.id ?? null,
+    mockClasses[0]?.id ?? null,
   );
   const [filters, setFilters] = useState<ClassFilters>(DEFAULT_FILTERS);
   const [isCreatingClass, setIsCreatingClass] = useState(false);
@@ -90,31 +41,31 @@ export function ClassesPage() {
     filters.classId !== DEFAULT_FILTERS.classId ||
     filters.instructorId !== DEFAULT_FILTERS.instructorId;
 
-  const filteredEntries = classListEntries.filter((entry) => {
-    if (filters.classId !== "all" && entry.classId !== filters.classId) {
+  const filteredEntries = mockClasses.filter((classItem) => {
+    if (filters.classId !== "all" && classItem.id !== filters.classId) {
       return false;
     }
     if (filters.instructorId === "none") {
-      return entry.instructorId === null;
+      return classItem.instructorId === null;
     }
     if (filters.instructorId !== "all") {
-      return entry.instructorId === filters.instructorId;
+      return classItem.instructorId === filters.instructorId;
     }
 
     return true;
   });
 
   const tableEntries = isCreatingClass
-    ? [NEW_CLASS_ENTRY, ...filteredEntries]
+    ? [NEW_CLASS, ...filteredEntries]
     : filteredEntries;
 
   function addClass() {
     setIsCreatingClass(true);
-    setSelectedEntryId(NEW_CLASS_ENTRY.id);
+    setSelectedEntryId(NEW_CLASS.id);
   }
 
   function selectEntry(entryId: string) {
-    setIsCreatingClass(entryId === NEW_CLASS_ENTRY.id);
+    setIsCreatingClass(entryId === NEW_CLASS.id);
     setSelectedEntryId(entryId);
   }
 
@@ -134,6 +85,7 @@ export function ClassesPage() {
         />
         <ClassesTable
           entries={tableEntries}
+          instructors={mockInstructors}
           selectedEntryId={selectedEntryId}
           onSelectEntry={selectEntry}
           isFiltering={isFiltering}

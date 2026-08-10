@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-import { APP_NAME } from "@/config/constants";
 import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/i18n/i18n";
 import { addDays, isSameDay } from "@/lib/date.utils";
@@ -175,10 +174,6 @@ export function SchedulePage() {
         return {
           ...session,
           reservedCount: Math.max(0, session.reservedCount - 1),
-          classReservedCount:
-            reservation.bookingSource === APP_NAME
-              ? Math.max(0, session.classReservedCount - 1)
-              : session.classReservedCount,
         };
       }),
     );
@@ -200,10 +195,6 @@ export function SchedulePage() {
               return {
                 ...session,
                 reservedCount: session.reservedCount + 1,
-                classReservedCount:
-                  reservation.bookingSource === APP_NAME
-                    ? session.classReservedCount + 1
-                    : session.classReservedCount,
               };
             }),
           );

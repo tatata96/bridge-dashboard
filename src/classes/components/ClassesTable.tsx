@@ -4,16 +4,30 @@ import {
   weekdayShortLabelKeys,
 } from "@/config/class-labels";
 import { useI18n } from "@/i18n/i18n";
-import type { ClassListEntry } from "@/types/classes";
+import type { Class } from "@/types/classes";
+import type { Instructor } from "@/types/schedule";
+
+function getInstructorName(
+  instructorId: string | null,
+  instructors: Instructor[],
+) {
+  if (!instructorId) return "No staff specified";
+  return (
+    instructors.find((instructor) => instructor.id === instructorId)?.name ??
+    "Unknown instructor"
+  );
+}
 
 export function ClassesTable({
   entries,
+  instructors,
   selectedEntryId,
   onSelectEntry,
   isFiltering,
   onClearFilters,
 }: {
-  entries: ClassListEntry[];
+  entries: Class[];
+  instructors: Instructor[];
   selectedEntryId: string | null;
   onSelectEntry: (entryId: string) => void;
   isFiltering: boolean;
@@ -74,7 +88,13 @@ export function ClassesTable({
           ) : (
             entries.map((entry) => {
               const isSelected = entry.id === selectedEntryId;
-              const isPlaceholder = entry.classId === "new-class";
+              const isPlaceholder = entry.id === "new-class";
+              const scheduleLabel =
+                entry.schedule.type === "recurring"
+                  ? entry.schedule.repeatOn
+                      .map((weekday) => t(weekdayShortLabelKeys[weekday]))
+                      .join(", ")
+                  : entry.schedule.date;
 
               return (
                 <tr
@@ -90,15 +110,13 @@ export function ClassesTable({
                     {entry.startTime}
                   </td>
                   <td className="px-2 py-2 font-semibold text-foreground sm:px-4">
-                    {entry.className}
+                    {entry.name}
                   </td>
                   <td className="px-2 py-2 text-muted-foreground sm:px-4">
-                    {entry.instructorName}
+                    {getInstructorName(entry.instructorId, instructors)}
                   </td>
                   <td className="px-2 py-2 text-muted-foreground sm:px-4">
-                    {entry.repeatOn
-                      .map((weekday) => t(weekdayShortLabelKeys[weekday]))
-                      .join(", ")}
+                    {scheduleLabel}
                   </td>
                   <td className="px-2 py-2 text-muted-foreground sm:px-4">
                     {isPlaceholder ? "" : entry.capacity}

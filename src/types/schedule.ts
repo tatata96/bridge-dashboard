@@ -14,8 +14,6 @@ export type ClassSession = {
   durationMinutes: number;
   capacity: number;
   reservedCount: number;
-  classCapacity: number; // spots allocated to the Classiva marketplace
-  classReservedCount: number; // of classCapacity, how many are currently booked
 };
 
 export type BookingSource = typeof APP_NAME | "direct";

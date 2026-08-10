@@ -9,37 +9,33 @@ export type Weekday =
   | "saturday"
   | "sunday";
 
+export type ClassSchedule =
+  | {
+      type: "recurring";
+      repeatOn: Weekday[];
+      startDate: string; // YYYY-MM-DD
+      endDate: string | null; // null means no planned end date
+    }
+  | {
+      type: "one_time";
+      date: string; // YYYY-MM-DD
+    };
+
 export type Class = {
   id: string;
-  name: string; // e.g. "Advanced CrossFit"
-  category: string; // e.g. "CrossFit", "Salsa" - drives the Type filter dropdown
-  labels: string[]; // e.g. "Beginner friendly", "New"
+  name: string;
+  category: string;
+  description: string;
   status: ClassStatus;
-};
-
-export type ClassRecurrence = {
-  id: string;
-  classId: Class["id"];
   instructorId: string | null;
+  schedule: ClassSchedule;
   startTime: string; // HH:mm local business time
   durationMinutes: number;
-  repeatOn: Weekday[];
   capacity: number;
+  priceCredits: number;
 };
 
 export type ClassFilters = {
   classId: string;
   instructorId: string;
-};
-
-export type ClassListEntry = {
-  id: string;
-  classId: Class["id"];
-  className: string;
-  status: ClassStatus;
-  instructorId: string | null;
-  instructorName: string;
-  startTime: string;
-  repeatOn: Weekday[];
-  capacity: number;
 };
