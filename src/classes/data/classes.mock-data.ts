@@ -31,7 +31,7 @@ export const mockClassRecurrences: ClassRecurrence[] = [
     instructorId: "instructor-1",
     startTime: "07:00",
     durationMinutes: 60,
-    repeatOn: ["Mon", "Wed", "Fri"],
+    repeatOn: ["monday", "wednesday", "friday"],
     capacity: 8,
   },
   {
@@ -40,7 +40,7 @@ export const mockClassRecurrences: ClassRecurrence[] = [
     instructorId: null,
     startTime: "07:00",
     durationMinutes: 60,
-    repeatOn: ["Tue", "Thu"],
+    repeatOn: ["tuesday", "thursday"],
     capacity: 6,
   },
   {
@@ -49,7 +49,7 @@ export const mockClassRecurrences: ClassRecurrence[] = [
     instructorId: "instructor-1",
     startTime: "18:00",
     durationMinutes: 60,
-    repeatOn: ["Sat"],
+    repeatOn: ["saturday"],
     capacity: 10,
   },
 ];

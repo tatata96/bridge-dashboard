@@ -1,11 +1,10 @@
 import { cn } from "@/lib/classnames.utils";
+import {
+  classStatusLabelKeys,
+  weekdayShortLabelKeys,
+} from "@/config/class-labels";
 import { useI18n } from "@/i18n/i18n";
 import type { ClassListEntry } from "@/types/classes";
-
-const statusLabelKeys = {
-  active: "classes.active",
-  paused: "classes.paused",
-} as const;
 
 export function ClassesTable({
   entries,
@@ -97,13 +96,15 @@ export function ClassesTable({
                     {entry.instructorName}
                   </td>
                   <td className="px-2 py-2 text-muted-foreground sm:px-4">
-                    {entry.repeatOn.join(", ")}
+                    {entry.repeatOn
+                      .map((weekday) => t(weekdayShortLabelKeys[weekday]))
+                      .join(", ")}
                   </td>
                   <td className="px-2 py-2 text-muted-foreground sm:px-4">
                     {isPlaceholder ? "" : entry.capacity}
                   </td>
                   <td className="px-2 py-2 text-muted-foreground sm:px-4">
-                    {isPlaceholder ? "" : t(statusLabelKeys[entry.status])}
+                    {isPlaceholder ? "" : t(classStatusLabelKeys[entry.status])}
                   </td>
                 </tr>
               );
