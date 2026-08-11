@@ -109,6 +109,10 @@ export function ClassFormPage() {
     toast({ title: t("toast.classChangesSaved") });
   }
 
+  function handleFreeze() {
+    toast({ title: t("common.comingSoon") });
+  }
+
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-4 p-4">
       <div className="flex w-full min-w-0 flex-col gap-4">
@@ -310,7 +314,17 @@ export function ClassFormPage() {
             </div>
           </div>
 
-          <div className="mt-8 flex justify-end border-t border-border pt-4">
+          <div className="mt-8 flex justify-end gap-2 border-t border-border pt-4">
+            {isEditMode && (
+              <Button
+                type="button"
+                variant="outline"
+                className="h-9"
+                onClick={handleFreeze}
+              >
+                {t("common.freeze")}
+              </Button>
+            )}
             <Button type="button" className="h-9" onClick={handleSave}>
               {t("common.save")}
             </Button>

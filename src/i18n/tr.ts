@@ -4,6 +4,7 @@ export const tr = {
   "common.comingSoon": "Yakında",
   "common.undo": "Geri al",
   "common.save": "Kaydet",
+  "common.freeze": "Dondur",
   "common.language": "Dil",
   "common.english": "İngilizce",
   "common.turkish": "Türkçe",

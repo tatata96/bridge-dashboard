@@ -2,6 +2,7 @@ export const en = {
   "common.comingSoon": "Coming soon",
   "common.undo": "Undo",
   "common.save": "Save",
+  "common.freeze": "Freeze",
   "common.language": "Language",
   "common.english": "English",
   "common.turkish": "Turkish",
