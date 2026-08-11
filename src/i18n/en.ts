@@ -45,7 +45,7 @@ export const en = {
   "classes.allInstructors": "All instructors",
   "classes.noInstructorAssigned": "No instructor assigned",
   "classes.addClass": "Add class plan",
-  "classes.editClass": "Edit session",
+  "classes.editClass": "Edit class plan",
   "classes.addClassDescription": "Add class details will be set up here.",
   "classes.backToClasses": "Back to class plans",
   "classes.class": "Class",

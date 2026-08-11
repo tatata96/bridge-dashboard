@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getPagePath } from "@/config/navigation";
+import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/i18n/i18n";
 import { mockInstructors } from "@/schedule/data/schedule.mock-data";
 import type { ClassSchedule, Weekday } from "@/types/classes";
@@ -52,6 +53,7 @@ function formatTimeLabel(value: string, locale: string) {
 
 export function ClassFormPage() {
   const { t, dateLocale } = useI18n();
+  const { toast } = useToast();
   const { classId } = useParams();
   const classToEdit = useMemo(
     () => mockClasses.find((classItem) => classItem.id === classId) ?? null,
@@ -99,6 +101,10 @@ export function ClassFormPage() {
 
   if (isEditMode && !classToEdit) {
     return <Navigate to={getPagePath("classes")} replace />;
+  }
+
+  function handleSave() {
+    toast({ title: t("toast.classChangesSaved") });
   }
 
   return (
@@ -291,7 +297,7 @@ export function ClassFormPage() {
           </div>
 
           <div className="flex justify-end border-t border-border pt-4">
-            <Button type="button" className="h-9">
+            <Button type="button" className="h-9" onClick={handleSave}>
               {t("common.save")}
             </Button>
           </div>
