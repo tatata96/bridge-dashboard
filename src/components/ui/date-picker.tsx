@@ -28,6 +28,7 @@ type DatePickerProps = {
   locale?: string;
   placeholder?: string;
   clearLabel?: string;
+  mutedPlaceholder?: boolean;
   todayLabel?: boolean;
   className?: string;
   stepper?: {
@@ -69,6 +70,7 @@ function DatePicker({
   locale = "en-US",
   placeholder = label,
   clearLabel,
+  mutedPlaceholder = true,
   todayLabel = true,
   className,
   stepper,
@@ -120,7 +122,7 @@ function DatePicker({
               <span
                 className={cn(
                   "min-w-0 truncate",
-                  !value && "text-muted-foreground",
+                  !value && mutedPlaceholder && "text-muted-foreground",
                 )}
               >
                 {value ? formatShortDate(value, locale) : placeholder}
@@ -157,7 +159,11 @@ function DatePicker({
             aria-label={label}
           >
             <CalendarIcon data-icon="inline-start" />
-            <span className={cn(!value && "text-muted-foreground")}>
+            <span
+              className={cn(
+                !value && mutedPlaceholder && "text-muted-foreground",
+              )}
+            >
               {value ? formatShortDate(value, locale) : placeholder}
             </span>
           </Button>

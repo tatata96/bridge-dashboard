@@ -183,8 +183,13 @@ export function ClassFormPage() {
 
                 {classType === "recurring" && (
                   <div className="flex min-w-0 flex-col gap-4">
-                    <span className="text-sm font-medium text-muted-foreground">
-                      {t("classes.endDate")}
+                    <span className="flex items-center justify-between gap-3">
+                      <span className="text-sm font-medium text-muted-foreground">
+                        {t("classes.endDate")}
+                      </span>
+                      <span className="text-xs font-normal text-muted-foreground">
+                        {t("classes.optional")}
+                      </span>
                     </span>
                     <DatePicker
                       value={endDate}
@@ -193,6 +198,7 @@ export function ClassFormPage() {
                       locale={dateLocale}
                       placeholder={t("classes.noEndDate")}
                       clearLabel={t("filters.clear")}
+                      mutedPlaceholder={false}
                     />
                   </div>
                 )}
