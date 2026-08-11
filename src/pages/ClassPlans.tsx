@@ -15,9 +15,6 @@ const DEFAULT_FILTERS: ClassFilters = {
 
 export function ClassPlansPage() {
   const navigate = useNavigate();
-  const [selectedEntryId, setSelectedEntryId] = useState<string | null>(
-    mockClasses[0]?.id ?? null,
-  );
   const [filters, setFilters] = useState<ClassFilters>(DEFAULT_FILTERS);
 
   const isFiltering =
@@ -45,8 +42,7 @@ export function ClassPlansPage() {
     navigate(`${getPagePath("classes")}/add`);
   }
 
-  function selectEntry(entryId: string) {
-    setSelectedEntryId(entryId);
+  function editEntry(entryId: string) {
     navigate(`${getPagePath("classes")}/${entryId}/edit`);
   }
 
@@ -67,8 +63,7 @@ export function ClassPlansPage() {
         <ClassesTable
           entries={filteredEntries}
           instructors={mockInstructors}
-          selectedEntryId={selectedEntryId}
-          onSelectEntry={selectEntry}
+          onEditEntry={editEntry}
           isFiltering={isFiltering}
           onClearFilters={clearFilters}
         />

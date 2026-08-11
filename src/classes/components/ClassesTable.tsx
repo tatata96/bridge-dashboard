@@ -1,4 +1,3 @@
-import { cn } from "@/lib/classnames.utils";
 import {
   classStatusLabelKeys,
   weekdayShortLabelKeys,
@@ -21,15 +20,13 @@ function getInstructorName(
 export function ClassesTable({
   entries,
   instructors,
-  selectedEntryId,
-  onSelectEntry,
+  onEditEntry,
   isFiltering,
   onClearFilters,
 }: {
   entries: ClassPlan[];
   instructors: Instructor[];
-  selectedEntryId: string | null;
-  onSelectEntry: (entryId: string) => void;
+  onEditEntry: (entryId: string) => void;
   isFiltering: boolean;
   onClearFilters: () => void;
 }) {
@@ -87,7 +84,6 @@ export function ClassesTable({
             </tr>
           ) : (
             entries.map((entry) => {
-              const isSelected = entry.id === selectedEntryId;
               const isPlaceholder = entry.id === "new-class";
               const scheduleLabel =
                 entry.schedule.type === "recurring"
@@ -99,12 +95,8 @@ export function ClassesTable({
               return (
                 <tr
                   key={entry.id}
-                  aria-current={isSelected ? "true" : undefined}
-                  onClick={() => onSelectEntry(entry.id)}
-                  className={cn(
-                    "cursor-pointer transition-colors hover:bg-primary/20",
-                    isSelected && "bg-primary/20",
-                  )}
+                  onClick={() => onEditEntry(entry.id)}
+                  className="cursor-pointer transition-colors hover:bg-primary/20"
                 >
                   <td className="px-2 py-2 font-semibold text-foreground sm:px-4">
                     {entry.name}
