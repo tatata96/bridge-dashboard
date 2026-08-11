@@ -289,6 +289,12 @@ export function ClassFormPage() {
               )}
             </div>
           </div>
+
+          <div className="flex justify-end border-t border-border pt-4">
+            <Button type="button" className="h-9">
+              {t("common.save")}
+            </Button>
+          </div>
         </section>
       </div>
     </main>
