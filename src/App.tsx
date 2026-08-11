@@ -16,9 +16,9 @@ import {
 } from "@/config/navigation";
 import { useI18n } from "@/i18n/i18n";
 import { AddClassPage } from "@/pages/classes/AddClass";
-import { ClassesPage } from "@/pages/Classes";
 import { AccountPage } from "@/pages/secondary-pages/Account";
 import { SchedulePage } from "@/pages/Schedule";
+import { ClassPlansPage } from "./pages/ClassPlans";
 
 function PlaceholderPage({ activePage }: { activePage: PageId }) {
   const { t } = useI18n();
@@ -65,7 +65,10 @@ function App() {
                 path={getPagePath("business-profile")}
                 element={<PlaceholderPage activePage="business-profile" />}
               />
-              <Route path={getPagePath("classes")} element={<ClassesPage />} />
+              <Route
+                path={getPagePath("classes")}
+                element={<ClassPlansPage />}
+              />
               <Route
                 path={`${getPagePath("classes")}/add`}
                 element={<AddClassPage />}

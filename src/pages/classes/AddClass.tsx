@@ -29,6 +29,7 @@ import type { ClassSchedule, Weekday } from "@/types/classes";
 
 const startTimeOptions = ["07:00", "08:00", "09:00", "10:00", "18:00"];
 const uniqueClasses = getUniqueClassesByName(mockClasses);
+const noStaffValue = "none";
 
 function formatTimeLabel(value: string, locale: string) {
   const [hours = "0", minutes = "0"] = value.split(":");
@@ -44,8 +45,10 @@ export function AddClassPage() {
   const { t, dateLocale } = useI18n();
   const [classType, setClassType] =
     useState<ClassSchedule["type"]>("recurring");
-  const [selectedClassId, setSelectedClassId] = useState<string | undefined>();
-  const [selectedStaffId, setSelectedStaffId] = useState<string | undefined>();
+  const [selectedClassId, setSelectedClassId] = useState(
+    uniqueClasses[0]?.id ?? "",
+  );
+  const [selectedStaffId, setSelectedStaffId] = useState(noStaffValue);
   const [startDate, setStartDate] = useState(() => new Date());
   const [hasNoEndDate, setHasNoEndDate] = useState(true);
   const [repeatOn, setRepeatOn] = useState<Weekday[]>([]);
@@ -95,14 +98,16 @@ export function AddClassPage() {
               </fieldset>
             </div>
 
-            <label className="flex min-w-0 flex-col gap-2 text-sm font-medium text-muted-foreground">
-              {t("classes.class")}
+            <div className="flex min-w-0 flex-col gap-2">
+              <span className="text-sm font-medium text-muted-foreground">
+                {t("classes.class")}
+              </span>
               <Select
                 value={selectedClassId}
                 onValueChange={setSelectedClassId}
               >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={t("classes.selectClass")} />
+                <SelectTrigger className="h-9 w-full">
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {uniqueClasses.map((classItem) => (
@@ -112,7 +117,7 @@ export function AddClassPage() {
                   ))}
                 </SelectContent>
               </Select>
-            </label>
+            </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="flex min-w-0 flex-col gap-2 text-sm font-medium text-muted-foreground">
@@ -160,10 +165,12 @@ export function AddClassPage() {
               )}
             </div>
 
-            <label className="flex min-w-0 flex-col gap-2 text-sm font-medium text-muted-foreground">
+            <div className="flex min-w-0 flex-col gap-2">
               <span className="flex items-center justify-between gap-3">
-                {t("classes.staff")}
-                <span className="text-xs font-normal">
+                <span className="text-sm font-medium text-muted-foreground">
+                  {t("classes.staff")}
+                </span>
+                <span className="text-xs font-normal text-muted-foreground">
                   {t("classes.optional")}
                 </span>
               </span>
@@ -171,10 +178,13 @@ export function AddClassPage() {
                 value={selectedStaffId}
                 onValueChange={setSelectedStaffId}
               >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={t("classes.selectStaff")} />
+                <SelectTrigger className="h-9 w-full">
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value={noStaffValue}>
+                    {t("class.noStaff")}
+                  </SelectItem>
                   {mockInstructors.map((instructor) => (
                     <SelectItem key={instructor.id} value={instructor.id}>
                       {instructor.name}
@@ -182,7 +192,7 @@ export function AddClassPage() {
                   ))}
                 </SelectContent>
               </Select>
-            </label>
+            </div>
 
             {classType === "recurring" && (
               <>
@@ -197,10 +207,12 @@ export function AddClassPage() {
             )}
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <label className="flex min-w-0 flex-col gap-2 text-sm font-medium text-muted-foreground">
-                {t("classes.startTime")}
+              <div className="flex min-w-0 flex-col gap-2">
+                <span className="text-sm font-medium text-muted-foreground">
+                  {t("classes.startTime")}
+                </span>
                 <Select value={startTime} onValueChange={setStartTime}>
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="h-9 w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -211,7 +223,7 @@ export function AddClassPage() {
                     ))}
                   </SelectContent>
                 </Select>
-              </label>
+              </div>
 
               <label className="flex min-w-0 flex-col gap-2 text-sm font-medium text-muted-foreground">
                 {t("classes.durationMinutes")}

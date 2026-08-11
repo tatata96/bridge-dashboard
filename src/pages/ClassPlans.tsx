@@ -13,7 +13,7 @@ const DEFAULT_FILTERS: ClassFilters = {
   instructorId: "all",
 };
 
-export function ClassesPage() {
+export function ClassPlansPage() {
   const navigate = useNavigate();
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(
     mockClasses[0]?.id ?? null,
