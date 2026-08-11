@@ -15,6 +15,7 @@ import {
   type PageId,
 } from "@/config/navigation";
 import { useI18n } from "@/i18n/i18n";
+import { AddClassPage } from "@/pages/classes/AddClass";
 import { ClassesPage } from "@/pages/Classes";
 import { AccountPage } from "@/pages/secondary-pages/Account";
 import { SchedulePage } from "@/pages/Schedule";
@@ -65,6 +66,14 @@ function App() {
                 element={<PlaceholderPage activePage="business-profile" />}
               />
               <Route path={getPagePath("classes")} element={<ClassesPage />} />
+              <Route
+                path={`${getPagePath("classes")}/add`}
+                element={<AddClassPage />}
+              />
+              <Route
+                path={getPagePath("class-types")}
+                element={<PlaceholderPage activePage="class-types" />}
+              />
               <Route
                 path={getPagePath("instructors")}
                 element={<PlaceholderPage activePage="instructors" />}

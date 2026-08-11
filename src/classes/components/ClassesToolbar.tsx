@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { getUniqueClassesByName } from "@/classes/utils/classes.utils";
 import { useI18n } from "@/i18n/i18n";
 import type { Instructor } from "@/types/schedule";
 import type { Class, ClassFilters } from "@/types/classes";
@@ -26,6 +27,7 @@ export function ClassesToolbar({
   onAddClass: () => void;
 }) {
   const { t } = useI18n();
+  const uniqueClasses = getUniqueClassesByName(classes);
 
   function updateFilter(key: keyof ClassFilters, value: string) {
     onFilterChange({ ...filters, [key]: value });
@@ -43,7 +45,7 @@ export function ClassesToolbar({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t("classes.allClasses")}</SelectItem>
-            {classes.map((classItem) => (
+            {uniqueClasses.map((classItem) => (
               <SelectItem key={classItem.id} value={classItem.id}>
                 {classItem.name}
               </SelectItem>

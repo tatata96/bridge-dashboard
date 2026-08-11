@@ -8,34 +8,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { classTypes } from "@/config/class-types";
 import { useI18n } from "@/i18n/i18n";
 import { formatShortDate } from "@/lib/date.utils";
 
-// TODO: derive from the distinct categories in the loaded classes once mock/real data lands.
-const CLASS_TYPE_OPTIONS = [
-  { value: "all", labelKey: "schedule.allClasses" },
-  { value: "crossfit", labelKey: "schedule.crossfit" },
-  { value: "dance", labelKey: "schedule.dance" },
-  { value: "yoga", labelKey: "schedule.yoga" },
-] as const;
-
-const typeFilterLabels = {
-  all: "schedule.allClasses",
-  crossfit: "schedule.crossfit",
-  dance: "schedule.dance",
-  yoga: "schedule.yoga",
-} as const;
-
-type ClassTypeFilter = keyof typeof typeFilterLabels;
-
-function isClassTypeFilter(value: string): value is ClassTypeFilter {
-  return value in typeFilterLabels;
-}
-
 function TypeFilterValue({ value }: { value: string }) {
   const { t } = useI18n();
+  const classType = classTypes.find((option) => option.id === value);
 
-  return isClassTypeFilter(value) ? t(typeFilterLabels[value]) : value;
+  if (value === "all") return t("schedule.allClasses");
+
+  return classType ? t(classType.labelKey) : value;
 }
 
 export function ScheduleToolbar({
@@ -88,9 +71,10 @@ export function ScheduleToolbar({
           </SelectValue>
         </SelectTrigger>
         <SelectContent>
-          {CLASS_TYPE_OPTIONS.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {t(option.labelKey)}
+          <SelectItem value="all">{t("schedule.allClasses")}</SelectItem>
+          {classTypes.map((classType) => (
+            <SelectItem key={classType.id} value={classType.id}>
+              {t(classType.labelKey)}
             </SelectItem>
           ))}
         </SelectContent>

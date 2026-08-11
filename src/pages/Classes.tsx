@@ -1,48 +1,35 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { ClassesTable } from "@/classes/components/ClassesTable";
 import { ClassesToolbar } from "@/classes/components/ClassesToolbar";
 import { mockClasses } from "@/classes/data/classes.mock-data";
+import { getPagePath } from "@/config/navigation";
 import { mockInstructors } from "@/schedule/data/schedule.mock-data";
-import type { Class, ClassFilters } from "@/types/classes";
+import type { ClassFilters } from "@/types/classes";
 
 const DEFAULT_FILTERS: ClassFilters = {
   classId: "all",
   instructorId: "all",
 };
 
-const NEW_CLASS: Class = {
-  id: "new-class",
-  name: "New class",
-  category: "",
-  description: "",
-  status: "active",
-  instructorId: null,
-  schedule: {
-    type: "recurring",
-    repeatOn: [],
-    startDate: "",
-    endDate: null,
-  },
-  startTime: "",
-  durationMinutes: 60,
-  capacity: 0,
-  priceCredits: 0,
-};
-
 export function ClassesPage() {
+  const navigate = useNavigate();
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(
     mockClasses[0]?.id ?? null,
   );
   const [filters, setFilters] = useState<ClassFilters>(DEFAULT_FILTERS);
-  const [isCreatingClass, setIsCreatingClass] = useState(false);
 
   const isFiltering =
     filters.classId !== DEFAULT_FILTERS.classId ||
     filters.instructorId !== DEFAULT_FILTERS.instructorId;
+  const selectedClassFilter =
+    filters.classId === "all"
+      ? null
+      : mockClasses.find((classItem) => classItem.id === filters.classId);
 
   const filteredEntries = mockClasses.filter((classItem) => {
-    if (filters.classId !== "all" && classItem.id !== filters.classId) {
+    if (selectedClassFilter && classItem.name !== selectedClassFilter.name) {
       return false;
     }
     if (filters.instructorId === "none") {
@@ -55,17 +42,11 @@ export function ClassesPage() {
     return true;
   });
 
-  const tableEntries = isCreatingClass
-    ? [NEW_CLASS, ...filteredEntries]
-    : filteredEntries;
-
   function addClass() {
-    setIsCreatingClass(true);
-    setSelectedEntryId(NEW_CLASS.id);
+    navigate(`${getPagePath("classes")}/add`);
   }
 
   function selectEntry(entryId: string) {
-    setIsCreatingClass(entryId === NEW_CLASS.id);
     setSelectedEntryId(entryId);
   }
 
@@ -84,7 +65,7 @@ export function ClassesPage() {
           onAddClass={addClass}
         />
         <ClassesTable
-          entries={tableEntries}
+          entries={filteredEntries}
           instructors={mockInstructors}
           selectedEntryId={selectedEntryId}
           onSelectEntry={selectEntry}

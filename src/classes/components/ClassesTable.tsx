@@ -48,11 +48,11 @@ export function ClassesTable({
       <table className="w-full table-fixed text-left text-sm">
         <thead className="border-b border-border bg-muted/40 text-xs font-medium text-muted-foreground">
           <tr>
-            <th scope="col" className="w-[18%] px-2 py-3 sm:px-4">
-              {t("classes.time")}
-            </th>
             <th scope="col" className="w-[24%] px-2 py-3 sm:px-4">
               {t("classes.className")}
+            </th>
+            <th scope="col" className="w-[18%] px-2 py-3 sm:px-4">
+              {t("classes.time")}
             </th>
             <th scope="col" className="w-[18%] px-2 py-3 sm:px-4">
               {t("classes.staff")}
@@ -106,11 +106,11 @@ export function ClassesTable({
                     isSelected && "bg-primary/20",
                   )}
                 >
-                  <td className="px-2 py-2 font-medium text-foreground sm:px-4">
-                    {entry.startTime}
-                  </td>
                   <td className="px-2 py-2 font-semibold text-foreground sm:px-4">
                     {entry.name}
+                  </td>
+                  <td className="px-2 py-2 font-medium text-foreground sm:px-4">
+                    {entry.startTime}
                   </td>
                   <td className="px-2 py-2 text-muted-foreground sm:px-4">
                     {getInstructorName(entry.instructorId, instructors)}

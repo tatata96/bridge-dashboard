@@ -1,3 +1,5 @@
+import type { ClassTypeId } from "@/config/class-types";
+
 export type ClassStatus = "active" | "paused";
 
 export type Weekday =
@@ -24,7 +26,7 @@ export type ClassSchedule =
 export type Class = {
   id: string;
   name: string;
-  category: string;
+  classTypeId: ClassTypeId;
   description: string;
   status: ClassStatus;
   instructorId: string | null;

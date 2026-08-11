@@ -38,10 +38,7 @@ export function SchedulePage() {
       .filter((session) => isSameDay(new Date(session.startAt), selectedDate))
       .filter((session) => {
         if (typeFilter === "all") return true;
-        return (
-          classesById.get(session.classId)?.category.toLowerCase() ===
-          typeFilter
-        );
+        return classesById.get(session.classId)?.classTypeId === typeFilter;
       })
       .sort(
         (a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
