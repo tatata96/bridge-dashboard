@@ -9,7 +9,7 @@ import { mockInstructors } from "@/schedule/data/schedule.mock-data";
 import type { ClassFilters } from "@/types/classes";
 
 const DEFAULT_FILTERS: ClassFilters = {
-  classId: "all",
+  classTypeId: "all",
   instructorId: "all",
 };
 
@@ -21,15 +21,14 @@ export function ClassPlansPage() {
   const [filters, setFilters] = useState<ClassFilters>(DEFAULT_FILTERS);
 
   const isFiltering =
-    filters.classId !== DEFAULT_FILTERS.classId ||
+    filters.classTypeId !== DEFAULT_FILTERS.classTypeId ||
     filters.instructorId !== DEFAULT_FILTERS.instructorId;
-  const selectedClassFilter =
-    filters.classId === "all"
-      ? null
-      : mockClasses.find((classItem) => classItem.id === filters.classId);
 
   const filteredEntries = mockClasses.filter((classItem) => {
-    if (selectedClassFilter && classItem.name !== selectedClassFilter.name) {
+    if (
+      filters.classTypeId !== "all" &&
+      classItem.classTypeId !== filters.classTypeId
+    ) {
       return false;
     }
     if (filters.instructorId === "none") {

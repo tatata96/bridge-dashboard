@@ -1,6 +1,6 @@
-import type { Class } from "@/types/classes";
+import type { ClassPlan } from "@/types/classes";
 
-export const mockClasses: Class[] = [
+export const mockClasses: ClassPlan[] = [
   {
     id: "class-1",
     name: "Advanced CrossFit",

@@ -26,13 +26,15 @@ export type ClassSchedule =
 export type ClassPlan = {
   id: string;
   name: string;
-  classTypeId: ClassType["id"];
+  classTypeId: CategoryId;
+  description: string;
   status: ClassStatus;
   instructorId: string | null;
   schedule: ClassSchedule;
   startTime: string; // HH:mm local business time
   durationMinutes: number;
   capacity: number;
+  priceCredits: number;
 };
 
 export type ClassType = {
@@ -43,6 +45,6 @@ export type ClassType = {
 };
 
 export type ClassFilters = {
-  classId: string;
+  classTypeId: string;
   instructorId: string;
 };

@@ -4,7 +4,7 @@ import {
   weekdayShortLabelKeys,
 } from "@/config/class-labels";
 import { useI18n } from "@/i18n/i18n";
-import type { Class } from "@/types/classes";
+import type { ClassPlan } from "@/types/classes";
 import type { Instructor } from "@/types/schedule";
 
 function getInstructorName(
@@ -26,7 +26,7 @@ export function ClassesTable({
   isFiltering,
   onClearFilters,
 }: {
-  entries: Class[];
+  entries: ClassPlan[];
   instructors: Instructor[];
   selectedEntryId: string | null;
   onSelectEntry: (entryId: string) => void;

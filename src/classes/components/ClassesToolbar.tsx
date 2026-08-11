@@ -8,10 +8,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getUniqueClassesByName } from "@/classes/utils/classes.utils";
+import { categories } from "@/config/class-types";
 import { useI18n } from "@/i18n/i18n";
 import type { Instructor } from "@/types/schedule";
-import type { Class, ClassFilters } from "@/types/classes";
+import type { ClassFilters, ClassPlan } from "@/types/classes";
 
 export function ClassesToolbar({
   classes,
@@ -20,14 +20,16 @@ export function ClassesToolbar({
   onFilterChange,
   onAddClass,
 }: {
-  classes: Class[];
+  classes: ClassPlan[];
   instructors: Instructor[];
   filters: ClassFilters;
   onFilterChange: (filters: ClassFilters) => void;
   onAddClass: () => void;
 }) {
   const { t } = useI18n();
-  const uniqueClasses = getUniqueClassesByName(classes);
+  const categoryIdsWithClasses = new Set(
+    classes.map((classItem) => classItem.classTypeId),
+  );
 
   function updateFilter(key: keyof ClassFilters, value: string) {
     onFilterChange({ ...filters, [key]: value });
@@ -37,19 +39,21 @@ export function ClassesToolbar({
     <div className="flex w-full items-center justify-between gap-3 max-[1100px]:flex-col max-[1100px]:items-stretch">
       <div className="flex flex-wrap items-center gap-2">
         <Select
-          value={filters.classId}
-          onValueChange={(value) => updateFilter("classId", value)}
+          value={filters.classTypeId}
+          onValueChange={(value) => updateFilter("classTypeId", value)}
         >
           <SelectTrigger className="h-9 min-w-36">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t("classes.allClasses")}</SelectItem>
-            {uniqueClasses.map((classItem) => (
-              <SelectItem key={classItem.id} value={classItem.id}>
-                {classItem.name}
-              </SelectItem>
-            ))}
+            {categories
+              .filter((category) => categoryIdsWithClasses.has(category.id))
+              .map((category) => (
+                <SelectItem key={category.id} value={category.id}>
+                  {t(category.labelKey)}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
 

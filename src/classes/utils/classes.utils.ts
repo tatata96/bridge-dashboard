@@ -1,7 +1,7 @@
-import type { Class } from "@/types/classes";
+import type { ClassPlan } from "@/types/classes";
 
-export function getUniqueClassesByName(classes: Class[]) {
-  const classesByName = new Map<string, Class>();
+export function getUniqueClassesByName(classes: ClassPlan[]) {
+  const classesByName = new Map<string, ClassPlan>();
 
   for (const classItem of classes) {
     if (!classesByName.has(classItem.name)) {
