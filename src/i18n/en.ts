@@ -116,6 +116,11 @@ export const en = {
   "filters.clear": "Clear",
   "class.edit": "Edit this class",
   "class.editDescription": "Update the staff or capacity for this session.",
+  "class.editAppliesToSingleSession":
+    "Changes here apply only to this scheduled class.",
+  "class.editRecurringPrefix": "To change all recurring classes, go to ",
+  "class.editRecurringLink": "Class Plans",
+  "class.editRecurringSuffix": ".",
   "class.instructor": "Instructor",
   "class.noStaff": "No staff specified",
   "class.capacity": "Capacity",

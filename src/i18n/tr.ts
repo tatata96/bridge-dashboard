@@ -120,6 +120,11 @@ export const tr = {
   "class.edit": "Bu dersi düzenle",
   "class.editDescription":
     "Bu seans için personeli veya kapasiteyi güncelleyin.",
+  "class.editAppliesToSingleSession":
+    "Buradaki değişiklikler yalnızca bu planlanmış derse uygulanır.",
+  "class.editRecurringPrefix": "Tüm tekrarlı dersleri değiştirmek için ",
+  "class.editRecurringLink": "Ders Planları'na gidin",
+  "class.editRecurringSuffix": ".",
   "class.instructor": "Eğitmen",
   "class.noStaff": "Personel belirtilmedi",
   "class.capacity": "Kapasite",

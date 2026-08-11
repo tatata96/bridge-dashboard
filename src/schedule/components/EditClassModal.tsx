@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { PencilIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
+import { InfoNotice } from "@/components/ui/info-notice";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { getPagePath } from "@/config/navigation";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/classnames.utils";
 import { ClassSessionSummary } from "@/schedule/components/ClassSessionSummary";
@@ -79,6 +82,20 @@ export function EditClassModal({
         </DialogHeader>
 
         <ClassSessionSummary entry={entry} />
+
+        <InfoNotice>
+          <p>
+            {t("class.editAppliesToSingleSession")}{" "}
+            {t("class.editRecurringPrefix")}
+            <Link
+              to={getPagePath("classes")}
+              className="font-medium text-foreground underline underline-offset-4"
+            >
+              {t("class.editRecurringLink")}
+            </Link>
+            {t("class.editRecurringSuffix")}
+          </p>
+        </InfoNotice>
 
         <label className="flex flex-col gap-1.5 text-sm">
           <span className="text-xs font-medium text-muted-foreground">
