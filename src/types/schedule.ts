@@ -1,27 +1,19 @@
 import type { APP_NAME } from "@/config/constants";
+import type { ClassPlan } from "@/types/classes";
 
 export type Instructor = {
   id: string;
   name: string;
 };
 
-export type Class = {
-  id: string;
-  name: string; // e.g. "Advanced CrossFit"
-  category: string; // e.g. "CrossFit", "Salsa" — drives the Type filter dropdown
-  labels: string[]; // e.g. "Beginner friendly", "New"
-};
-
 export type ClassSession = {
   id: string;
-  classId: string;
+  classId: ClassPlan["id"];
   instructorId: string | null; // null => "No Staff Specified"
   startAt: string; // ISO 8601 datetime
   durationMinutes: number;
   capacity: number;
   reservedCount: number;
-  classCapacity: number; // spots allocated to the Classiva marketplace
-  classReservedCount: number; // of classCapacity, how many are currently booked
 };
 
 export type BookingSource = typeof APP_NAME | "direct";

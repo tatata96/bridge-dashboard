@@ -1,7 +1,5 @@
-import {
-  mockClasses,
-  mockInstructors,
-} from "@/schedule/data/schedule.mock-data";
+import { mockClasses } from "@/classes/data/classes.mock-data";
+import { mockInstructors } from "@/schedule/data/schedule.mock-data";
 import type { ClassSession } from "@/types/schedule";
 
 export const classesById = new Map(mockClasses.map((c) => [c.id, c]));

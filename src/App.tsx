@@ -15,8 +15,10 @@ import {
   type PageId,
 } from "@/config/navigation";
 import { useI18n } from "@/i18n/i18n";
+import { ClassFormPage } from "@/pages/class-plans/ClassForm";
 import { AccountPage } from "@/pages/secondary-pages/Account";
 import { SchedulePage } from "@/pages/Schedule";
+import { ClassPlansPage } from "./pages/ClassPlans";
 
 function PlaceholderPage({ activePage }: { activePage: PageId }) {
   const { t } = useI18n();
@@ -65,7 +67,19 @@ function App() {
               />
               <Route
                 path={getPagePath("classes")}
-                element={<PlaceholderPage activePage="classes" />}
+                element={<ClassPlansPage />}
+              />
+              <Route
+                path={`${getPagePath("classes")}/add`}
+                element={<ClassFormPage key={location.pathname} />}
+              />
+              <Route
+                path={`${getPagePath("classes")}/:classId/edit`}
+                element={<ClassFormPage key={location.pathname} />}
+              />
+              <Route
+                path={getPagePath("class-types")}
+                element={<PlaceholderPage activePage="class-types" />}
               />
               <Route
                 path={getPagePath("instructors")}

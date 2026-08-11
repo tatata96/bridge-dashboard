@@ -3,6 +3,7 @@ import {
   BarChart3Icon,
   BookOpenIcon,
   CalendarDaysIcon,
+  ListTreeIcon,
   PencilLineIcon,
   SettingsIcon,
   StarIcon,
@@ -16,6 +17,7 @@ export type PageId =
   | "schedule"
   | "business-profile"
   | "classes"
+  | "class-types"
   | "instructors"
   | "performance"
   | "ratings-and-reviews"
@@ -39,6 +41,7 @@ export const pagePaths: Record<PageId, string> = {
   schedule: "/",
   "business-profile": "/business-profile",
   classes: "/classes",
+  "class-types": "/class-types",
   instructors: "/instructors",
   performance: "/performance",
   "ratings-and-reviews": "/ratings-and-reviews",
@@ -50,6 +53,7 @@ export const pageTitleKeys = {
   schedule: "nav.schedule",
   "business-profile": "nav.businessProfile",
   classes: "nav.classes",
+  "class-types": "nav.classTypes",
   instructors: "nav.instructors",
   performance: "nav.performance",
   "ratings-and-reviews": "nav.ratingsAndReviews",
@@ -70,6 +74,10 @@ export function getPagePath(pageId: PageId) {
 }
 
 export function getPageFromPathname(pathname: string): PageId {
+  if (pathname.startsWith(`${pagePaths.classes}/`)) {
+    return "classes";
+  }
+
   return pathPageIds[pathname] ?? defaultPageId;
 }
 
@@ -89,6 +97,10 @@ export const sidebarNavigation: {
     {
       id: "classes",
       icon: <BookOpenIcon />,
+    },
+    {
+      id: "class-types",
+      icon: <ListTreeIcon />,
     },
     {
       id: "instructors",
