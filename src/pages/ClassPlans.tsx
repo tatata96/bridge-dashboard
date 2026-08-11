@@ -51,8 +51,8 @@ export function ClassPlansPage() {
   }
 
   return (
-    <main className="flex min-w-0 flex-1 flex-col gap-4 p-4">
-      <div className="flex w-full min-w-0 flex-col gap-4">
+    <main className="flex h-[calc(100svh-var(--header-height))] min-w-0 flex-col gap-4 overflow-hidden p-4">
+      <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col gap-4">
         <ClassesToolbar
           classes={mockClasses}
           instructors={mockInstructors}
