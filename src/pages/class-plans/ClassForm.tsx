@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ArrowLeftIcon, PlusIcon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 
 import { mockClasses } from "@/classes/data/classes.mock-data";
 import { WeekdaySelector } from "@/classes/components/WeekdaySelector";
@@ -22,9 +22,23 @@ import { useI18n } from "@/i18n/i18n";
 import { mockInstructors } from "@/schedule/data/schedule.mock-data";
 import type { ClassSchedule, Weekday } from "@/types/classes";
 
-const startTimeOptions = ["07:00", "08:00", "09:00", "10:00", "18:00"];
+const startTimeOptions = Array.from(
+  new Set([
+    "07:00",
+    "08:00",
+    "09:00",
+    "10:00",
+    "18:00",
+    ...mockClasses.map((classItem) => classItem.startTime),
+  ]),
+).sort();
 const uniqueClasses = getUniqueClassesByName(mockClasses);
 const noStaffValue = "none";
+
+function parseClassDate(value: string) {
+  const [year, month, day] = value.split("-").map(Number);
+  return new Date(year, month - 1, day);
+}
 
 function formatTimeLabel(value: string, locale: string) {
   const [hours = "0", minutes = "0"] = value.split(":");
@@ -36,22 +50,56 @@ function formatTimeLabel(value: string, locale: string) {
   }).format(date);
 }
 
-export function AddClassPage() {
+export function ClassFormPage() {
   const { t, dateLocale } = useI18n();
-  const [classType, setClassType] =
-    useState<ClassSchedule["type"]>("recurring");
-  const [selectedClassId, setSelectedClassId] = useState(
-    uniqueClasses[0]?.id ?? "",
+  const { classId } = useParams();
+  const classToEdit = useMemo(
+    () => mockClasses.find((classItem) => classItem.id === classId) ?? null,
+    [classId],
   );
-  const [selectedStaffId, setSelectedStaffId] = useState(noStaffValue);
-  const [startDate, setStartDate] = useState(() => new Date());
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  const [repeatOn, setRepeatOn] = useState<Weekday[]>([]);
-  const [startTime, setStartTime] = useState("07:00");
-  const [durationMinutes, setDurationMinutes] = useState(60);
-  const [capacity, setCapacity] = useState(0);
+  const isEditMode = Boolean(classId);
+
+  const [classType, setClassType] = useState<ClassSchedule["type"]>(
+    () => classToEdit?.schedule.type ?? "recurring",
+  );
+  const [selectedClassId, setSelectedClassId] = useState(
+    () => classToEdit?.id ?? uniqueClasses[0]?.id ?? "",
+  );
+  const [selectedStaffId, setSelectedStaffId] = useState(
+    () => classToEdit?.instructorId ?? noStaffValue,
+  );
+  const [startDate, setStartDate] = useState(() =>
+    classToEdit
+      ? parseClassDate(
+          classToEdit.schedule.type === "one_time"
+            ? classToEdit.schedule.date
+            : classToEdit.schedule.startDate,
+        )
+      : new Date(),
+  );
+  const [endDate, setEndDate] = useState<Date | null>(() =>
+    classToEdit?.schedule.type === "recurring" && classToEdit.schedule.endDate
+      ? parseClassDate(classToEdit.schedule.endDate)
+      : null,
+  );
+  const [repeatOn, setRepeatOn] = useState<Weekday[]>(() =>
+    classToEdit?.schedule.type === "recurring"
+      ? classToEdit.schedule.repeatOn
+      : [],
+  );
+  const [startTime, setStartTime] = useState(
+    () => classToEdit?.startTime ?? "07:00",
+  );
+  const [durationMinutes, setDurationMinutes] = useState(
+    () => classToEdit?.durationMinutes ?? 60,
+  );
+  const [capacity, setCapacity] = useState(() => classToEdit?.capacity ?? 0);
   const dateLabel =
     classType === "one_time" ? t("classes.date") : t("classes.startDate");
+
+  if (isEditMode && !classToEdit) {
+    return <Navigate to={getPagePath("classes")} replace />;
+  }
 
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-4 p-4">
@@ -65,7 +113,7 @@ export function AddClassPage() {
 
         <section className="flex min-h-80 flex-col gap-6 rounded-lg border border-border bg-background p-4 sm:p-6">
           <h2 className="text-base font-semibold text-foreground">
-            {t("classes.addClass")}
+            {isEditMode ? t("classes.editClass") : t("classes.addClass")}
           </h2>
 
           <div className="grid gap-x-8 gap-y-6 xl:grid-cols-2">

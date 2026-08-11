@@ -47,6 +47,7 @@ export function ClassPlansPage() {
 
   function selectEntry(entryId: string) {
     setSelectedEntryId(entryId);
+    navigate(`${getPagePath("classes")}/${entryId}/edit`);
   }
 
   function clearFilters() {

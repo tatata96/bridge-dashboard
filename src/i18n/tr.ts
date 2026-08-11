@@ -47,6 +47,7 @@ export const tr = {
   "classes.allInstructors": "Tüm eğitmenler",
   "classes.noInstructorAssigned": "Eğitmen atanmamış",
   "classes.addClass": "Seans ekle",
+  "classes.editClass": "Seansı düzenle",
   "classes.addClassDescription": "Ders detayları burada ayarlanacak.",
   "classes.backToClasses": "Derslere dön",
   "classes.class": "Ders",
