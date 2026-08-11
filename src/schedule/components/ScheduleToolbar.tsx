@@ -8,13 +8,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { classTypes } from "@/config/class-types";
+import { categories } from "@/config/class-types";
 import { useI18n } from "@/i18n/i18n";
 import { formatShortDate } from "@/lib/date.utils";
 
 function TypeFilterValue({ value }: { value: string }) {
   const { t } = useI18n();
-  const classType = classTypes.find((option) => option.id === value);
+  const classType = categories.find((option) => option.id === value);
 
   if (value === "all") return t("schedule.allClasses");
 
@@ -72,7 +72,7 @@ export function ScheduleToolbar({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">{t("schedule.allClasses")}</SelectItem>
-          {classTypes.map((classType) => (
+          {categories.map((classType) => (
             <SelectItem key={classType.id} value={classType.id}>
               {t(classType.labelKey)}
             </SelectItem>

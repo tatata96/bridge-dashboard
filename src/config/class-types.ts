@@ -1,6 +1,6 @@
 import type { TranslationKey } from "@/i18n/i18n";
 
-export const classTypes = [
+export const categories = [
   { id: "crossfit", labelKey: "classTypes.crossfit" },
   { id: "yoga", labelKey: "classTypes.yoga" },
   { id: "pilates", labelKey: "classTypes.pilates" },
@@ -12,4 +12,4 @@ export const classTypes = [
   labelKey: TranslationKey;
 }[];
 
-export type ClassTypeId = (typeof classTypes)[number]["id"];
+export type CategoryId = (typeof categories)[number]["id"];

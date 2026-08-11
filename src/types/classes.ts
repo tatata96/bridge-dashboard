@@ -1,4 +1,4 @@
-import type { ClassTypeId } from "@/config/class-types";
+import type { CategoryId } from "@/config/class-types";
 
 export type ClassStatus = "active" | "paused";
 
@@ -23,18 +23,23 @@ export type ClassSchedule =
       date: string; // YYYY-MM-DD
     };
 
-export type Class = {
+export type ClassPlan = {
   id: string;
   name: string;
-  classTypeId: ClassTypeId;
-  description: string;
+  classTypeId: ClassType["id"];
   status: ClassStatus;
   instructorId: string | null;
   schedule: ClassSchedule;
   startTime: string; // HH:mm local business time
   durationMinutes: number;
   capacity: number;
-  priceCredits: number;
+};
+
+export type ClassType = {
+  id: string;
+  name: string;
+  categoryId: CategoryId;
+  description: string;
 };
 
 export type ClassFilters = {

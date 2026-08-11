@@ -1,5 +1,5 @@
 import type { APP_NAME } from "@/config/constants";
-import type { Class } from "@/types/classes";
+import type { ClassPlan } from "@/types/classes";
 
 export type Instructor = {
   id: string;
@@ -8,7 +8,7 @@ export type Instructor = {
 
 export type ClassSession = {
   id: string;
-  classId: Class["id"];
+  classId: ClassPlan["id"];
   instructorId: string | null; // null => "No Staff Specified"
   startAt: string; // ISO 8601 datetime
   durationMinutes: number;
