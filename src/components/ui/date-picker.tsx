@@ -28,6 +28,7 @@ type DatePickerProps = {
   locale?: string;
   placeholder?: string;
   clearLabel?: string;
+  todayLabel?: boolean;
   className?: string;
   stepper?: {
     onPrevious: () => void;
@@ -68,6 +69,7 @@ function DatePicker({
   locale = "en-US",
   placeholder = label,
   clearLabel,
+  todayLabel = true,
   className,
   stepper,
 }: DatePickerProps) {
@@ -82,6 +84,7 @@ function DatePicker({
     [viewedMonth],
   );
   const weekdayLabels = useMemo(() => getWeekdayLabels(locale), [locale]);
+  const todayText = locale.toLowerCase().startsWith("tr") ? "Bugün" : "Today";
 
   function selectDate(date: Date) {
     onChange(date);
@@ -185,20 +188,33 @@ function DatePicker({
           </Button>
         </div>
 
-        {value && clearLabel && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="w-fit self-end"
-            onClick={() => {
-              onChange(null);
-              setOpen(false);
-            }}
-          >
-            <XIcon data-icon="inline-start" />
-            {clearLabel}
-          </Button>
+        {(todayLabel || (value && clearLabel)) && (
+          <div className="flex justify-end gap-2">
+            {todayLabel && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => selectDate(new Date())}
+              >
+                {todayText}
+              </Button>
+            )}
+            {value && clearLabel && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  onChange(null);
+                  setOpen(false);
+                }}
+              >
+                <XIcon data-icon="inline-start" />
+                {clearLabel}
+              </Button>
+            )}
+          </div>
         )}
 
         <div className="grid grid-cols-7 gap-1">
