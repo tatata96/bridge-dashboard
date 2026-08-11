@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { type ReactNode, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -35,11 +35,17 @@ const cancellationReasons = [
 export function CancelSessionButton({
   entry,
   onConfirm,
+  open,
+  onOpenChange,
+  trigger,
 }: {
   entry: ScheduleListEntry;
   onConfirm: (sessionId: string) => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  trigger?: ReactNode | null;
 }) {
-  const [open, setOpen] = useState(false);
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const [cancellationReason, setCancellationReason] = useState(
     cancellationReasons[0].value,
   );
@@ -51,21 +57,30 @@ export function CancelSessionButton({
     attendeeCount === 1 ? "class.attendee" : "class.attendees",
   );
   const creditLabel = t(refundCredits === 1 ? "class.credit" : "class.credits");
+  const isControlled = open !== undefined;
+  const dialogOpen = open ?? uncontrolledOpen;
 
   function handleOpenChange(nextOpen: boolean) {
-    setOpen(nextOpen);
+    if (!isControlled) {
+      setUncontrolledOpen(nextOpen);
+    }
+    onOpenChange?.(nextOpen);
     if (nextOpen) {
       setCancellationReason(cancellationReasons[0].value);
     }
   }
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button type="button" variant="destructive-link" size="sm">
-          {t("class.cancelSession")}
-        </Button>
-      </DialogTrigger>
+    <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>
+      {trigger !== null ? (
+        <DialogTrigger asChild>
+          {trigger ?? (
+            <Button type="button" variant="destructive-link" size="sm">
+              {t("class.cancelSession")}
+            </Button>
+          )}
+        </DialogTrigger>
+      ) : null}
       <DialogContent
         onOpenAutoFocus={(event) => {
           event.preventDefault();
@@ -117,7 +132,7 @@ export function CancelSessionButton({
             type="button"
             variant="outline"
             size="sm"
-            onClick={() => setOpen(false)}
+            onClick={() => handleOpenChange(false)}
           >
             {t("class.keepSession")}
           </Button>
@@ -127,7 +142,7 @@ export function CancelSessionButton({
             size="sm"
             onClick={() => {
               onConfirm(entry.session.id);
-              setOpen(false);
+              handleOpenChange(false);
             }}
           >
             {t("class.cancelSession")}
