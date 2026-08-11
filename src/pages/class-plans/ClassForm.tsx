@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { ArrowLeftIcon } from "lucide-react";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 
 import { mockClasses } from "@/classes/data/classes.mock-data";
 import { WeekdaySelector } from "@/classes/components/WeekdaySelector";
@@ -24,6 +24,7 @@ import { useI18n } from "@/i18n/i18n";
 import { mockInstructors } from "@/schedule/data/schedule.mock-data";
 import type { ClassSchedule, Weekday } from "@/types/classes";
 
+// TODO: make logical time options list
 const startTimeOptions = Array.from(
   new Set([
     "07:00",
@@ -55,6 +56,7 @@ function formatTimeLabel(value: string, locale: string) {
 export function ClassFormPage() {
   const { t, dateLocale } = useI18n();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const { classId } = useParams();
   const classToEdit = useMemo(
     () => mockClasses.find((classItem) => classItem.id === classId) ?? null,
@@ -97,7 +99,7 @@ export function ClassFormPage() {
   const [durationMinutes, setDurationMinutes] = useState(
     () => classToEdit?.durationMinutes ?? 60,
   );
-  const [capacity, setCapacity] = useState(() => classToEdit?.capacity ?? 0);
+  const [capacity, setCapacity] = useState(() => classToEdit?.capacity ?? 1);
   const dateLabel =
     classType === "one_time" ? t("classes.date") : t("classes.startDate");
 
@@ -107,6 +109,7 @@ export function ClassFormPage() {
 
   function handleSave() {
     toast({ title: t("toast.classChangesSaved") });
+    navigate(getPagePath("classes"));
   }
 
   function handleFreeze() {
@@ -306,7 +309,7 @@ export function ClassFormPage() {
                 <NumberStepper
                   value={capacity}
                   onChange={setCapacity}
-                  min={0}
+                  min={1}
                   label={t("classes.capacity")}
                   className="w-fit"
                 />
