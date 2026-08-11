@@ -29,6 +29,12 @@ type DatePickerProps = {
   placeholder?: string;
   clearLabel?: string;
   className?: string;
+  stepper?: {
+    onPrevious: () => void;
+    onNext: () => void;
+    previousLabel: string;
+    nextLabel: string;
+  };
 };
 
 function getCalendarDays(month: Date) {
@@ -63,6 +69,7 @@ function DatePicker({
   placeholder = label,
   clearLabel,
   className,
+  stepper,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const [viewedMonth, setViewedMonth] = useState(() =>
@@ -82,21 +89,77 @@ function DatePicker({
     setOpen(false);
   }
 
+  function handleOpenChange(nextOpen: boolean) {
+    if (nextOpen && value) {
+      setViewedMonth(new Date(value.getFullYear(), value.getMonth(), 1));
+    }
+
+    setOpen(nextOpen);
+  }
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          type="button"
-          variant="outline"
-          className={cn("w-full justify-start", className)}
-          aria-label={label}
+    <Popover open={open} onOpenChange={handleOpenChange}>
+      {stepper ? (
+        <div
+          className={cn(
+            "flex h-9 w-full items-center overflow-hidden rounded-4xl border border-border bg-input/30",
+            className,
+          )}
         >
-          <CalendarIcon data-icon="inline-start" />
-          <span className={cn(!value && "text-muted-foreground")}>
-            {value ? formatShortDate(value, locale) : placeholder}
-          </span>
-        </Button>
-      </PopoverTrigger>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              className="min-w-0 flex-1 justify-start rounded-none bg-transparent hover:bg-input/50"
+              aria-label={label}
+            >
+              <CalendarIcon data-icon="inline-start" />
+              <span
+                className={cn(
+                  "min-w-0 truncate",
+                  !value && "text-muted-foreground",
+                )}
+              >
+                {value ? formatShortDate(value, locale) : placeholder}
+              </span>
+            </Button>
+          </PopoverTrigger>
+          <div className="flex shrink-0 items-center px-1">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-xs"
+              aria-label={stepper.previousLabel}
+              onClick={stepper.onPrevious}
+            >
+              <ChevronLeftIcon />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-xs"
+              aria-label={stepper.nextLabel}
+              onClick={stepper.onNext}
+            >
+              <ChevronRightIcon />
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <PopoverTrigger asChild>
+          <Button
+            type="button"
+            variant="outline"
+            className={cn("w-full justify-start", className)}
+            aria-label={label}
+          >
+            <CalendarIcon data-icon="inline-start" />
+            <span className={cn(!value && "text-muted-foreground")}>
+              {value ? formatShortDate(value, locale) : placeholder}
+            </span>
+          </Button>
+        </PopoverTrigger>
+      )}
       <PopoverContent align="start" className="w-72 gap-3 rounded-lg p-3">
         <div className="flex items-center justify-between gap-2">
           <Button

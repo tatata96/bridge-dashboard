@@ -1,6 +1,4 @@
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   Select,
   SelectContent,
@@ -10,7 +8,6 @@ import {
 } from "@/components/ui/select";
 import { categories } from "@/config/class-types";
 import { useI18n } from "@/i18n/i18n";
-import { formatShortDate } from "@/lib/date.utils";
 
 function TypeFilterValue({ value }: { value: string }) {
   const { t } = useI18n();
@@ -23,12 +20,14 @@ function TypeFilterValue({ value }: { value: string }) {
 
 export function ScheduleToolbar({
   selectedDate,
+  onDateChange,
   onPrevDay,
   onNextDay,
   typeFilter,
   onTypeFilterChange,
 }: {
   selectedDate: Date;
+  onDateChange: (date: Date) => void;
   onPrevDay: () => void;
   onNextDay: () => void;
   typeFilter: string;
@@ -38,30 +37,21 @@ export function ScheduleToolbar({
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <div className="flex h-9 w-60 items-center gap-2 rounded-4xl border border-input bg-input/30 px-3 text-sm">
-        <span className="text-muted-foreground">{t("schedule.date")}</span>
-        <span className="min-w-24 flex-1 font-medium">
-          {formatShortDate(selectedDate, dateLocale)}
-        </span>
-        <div className="flex items-center">
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            aria-label={t("schedule.previousDay")}
-            onClick={onPrevDay}
-          >
-            <ChevronLeftIcon />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            aria-label={t("schedule.nextDay")}
-            onClick={onNextDay}
-          >
-            <ChevronRightIcon />
-          </Button>
-        </div>
-      </div>
+      <DatePicker
+        value={selectedDate}
+        onChange={(date) => {
+          if (date) onDateChange(date);
+        }}
+        label={t("schedule.date")}
+        locale={dateLocale}
+        className="w-56"
+        stepper={{
+          onPrevious: onPrevDay,
+          onNext: onNextDay,
+          previousLabel: t("schedule.previousDay"),
+          nextLabel: t("schedule.nextDay"),
+        }}
+      />
 
       <Select value={typeFilter} onValueChange={onTypeFilterChange}>
         <SelectTrigger className="w-40 gap-2">
