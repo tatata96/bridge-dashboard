@@ -5,6 +5,13 @@ export function addDays(date: Date, days: number) {
   return next;
 }
 
+// Returns a new date offset by the given number of months.
+export function addMonths(date: Date, months: number) {
+  const next = new Date(date);
+  next.setMonth(next.getMonth() + months);
+  return next;
+}
+
 // Formats a date as "Thu, Jun 15".
 export function formatShortDate(date: Date, locale = "en-US") {
   return new Intl.DateTimeFormat(locale, {
@@ -36,4 +43,8 @@ export function isSameDay(a: Date, b: Date) {
     a.getMonth() === b.getMonth() &&
     a.getDate() === b.getDate()
   );
+}
+
+export function isSameMonth(a: Date, b: Date) {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth();
 }
