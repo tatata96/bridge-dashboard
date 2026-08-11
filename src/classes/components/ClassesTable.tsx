@@ -3,6 +3,8 @@ import {
   weekdayShortLabelKeys,
 } from "@/config/class-labels";
 import { useI18n } from "@/i18n/i18n";
+import { cn } from "@/lib/classnames.utils";
+import type { ClassStatus } from "@/types/classes";
 import type { ClassPlan } from "@/types/classes";
 import type { Instructor } from "@/types/schedule";
 
@@ -14,6 +16,21 @@ function getInstructorName(
   return (
     instructors.find((instructor) => instructor.id === instructorId)?.name ??
     "Unknown instructor"
+  );
+}
+
+function StatusIcon({ status, label }: { status: ClassStatus; label: string }) {
+  return (
+    <span
+      title={label}
+      aria-hidden="true"
+      className={cn(
+        "block size-2 rounded-full",
+        status === "active"
+          ? "bg-muted-foreground"
+          : "border border-muted-foreground",
+      )}
+    />
   );
 }
 
@@ -115,9 +132,15 @@ export function ClassesTable({
                       {isPlaceholder ? "" : entry.capacity}
                     </td>
                     <td className="px-2 py-4 text-muted-foreground sm:px-4">
-                      {isPlaceholder
-                        ? ""
-                        : t(classStatusLabelKeys[entry.status])}
+                      {isPlaceholder ? null : (
+                        <span className="inline-flex items-center gap-2">
+                          <StatusIcon
+                            status={entry.status}
+                            label={t(classStatusLabelKeys[entry.status])}
+                          />
+                          {t(classStatusLabelKeys[entry.status])}
+                        </span>
+                      )}
                     </td>
                   </tr>
                 );
