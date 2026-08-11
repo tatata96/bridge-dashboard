@@ -7,6 +7,7 @@ import { WeekdaySelector } from "@/classes/components/WeekdaySelector";
 import { getUniqueClassesByName } from "@/classes/utils/classes.utils";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
+import { InfoNotice } from "@/components/ui/info-notice";
 import { Input } from "@/components/ui/input";
 import { NumberStepper } from "@/components/ui/number-stepper";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -60,6 +61,7 @@ export function ClassFormPage() {
     [classId],
   );
   const isEditMode = Boolean(classId);
+  const isRecurringClassPlan = classToEdit?.schedule.type === "recurring";
 
   const [classType, setClassType] = useState<ClassSchedule["type"]>(
     () => classToEdit?.schedule.type ?? "recurring",
@@ -117,14 +119,30 @@ export function ClassFormPage() {
           </Link>
         </Button>
 
-        <section className="flex min-h-80 flex-col gap-6 rounded-lg border border-border bg-background p-4 sm:p-6">
+        <section className="min-h-80 w-full max-w-240 rounded-lg border border-border bg-background p-4 sm:p-6">
           <h2 className="text-base font-semibold text-foreground">
             {isEditMode ? t("classes.editClass") : t("classes.addClass")}
           </h2>
 
-          <div className="grid gap-x-8 gap-y-6 xl:grid-cols-2">
+          {isEditMode && isRecurringClassPlan && classType === "recurring" && (
+            <InfoNotice className="mt-8">
+              <p>
+                {t("classes.editAppliesToAll")}{" "}
+                {t("classes.editSingleClassPrefix")}
+                <Link
+                  to={getPagePath("schedule")}
+                  className="font-medium text-foreground underline underline-offset-4"
+                >
+                  {t("classes.editSingleClassLink")}
+                </Link>
+                {t("classes.editSingleClassSuffix")}
+              </p>
+            </InfoNotice>
+          )}
+
+          <div className="mt-8 grid gap-8 lg:grid-cols-2">
             <div className="flex min-w-0 flex-col gap-6">
-              <fieldset className="flex min-w-0 flex-col gap-3">
+              <fieldset className="flex min-w-0 flex-col gap-4">
                 <legend className="text-sm font-medium text-muted-foreground">
                   {t("classes.classType")}
                 </legend>
@@ -145,149 +163,148 @@ export function ClassFormPage() {
                   </label>
                 </RadioGroup>
               </fieldset>
-            </div>
 
-            <div className="flex min-w-0 flex-col gap-2">
-              <span className="text-sm font-medium text-muted-foreground">
-                {t("classes.class")}
-              </span>
-              <Select
-                value={selectedClassId}
-                onValueChange={setSelectedClassId}
-              >
-                <SelectTrigger className="h-9 w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {uniqueClasses.map((classItem) => (
-                    <SelectItem key={classItem.id} value={classItem.id}>
-                      {classItem.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+              <div className="grid gap-6 sm:grid-cols-2">
+                <div className="flex min-w-0 flex-col gap-4">
+                  <span className="text-sm font-medium text-muted-foreground">
+                    {dateLabel}
+                  </span>
+                  <DatePicker
+                    value={startDate}
+                    onChange={(date) => {
+                      if (date) {
+                        setStartDate(date);
+                      }
+                    }}
+                    label={dateLabel}
+                    locale={dateLocale}
+                  />
+                </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="flex min-w-0 flex-col gap-2">
-                <span className="text-sm font-medium text-muted-foreground">
-                  {dateLabel}
-                </span>
-                <DatePicker
-                  value={startDate}
-                  onChange={(date) => {
-                    if (date) {
-                      setStartDate(date);
-                    }
-                  }}
-                  label={dateLabel}
-                  locale={dateLocale}
-                />
+                {classType === "recurring" && (
+                  <div className="flex min-w-0 flex-col gap-4">
+                    <span className="text-sm font-medium text-muted-foreground">
+                      {t("classes.endDate")}
+                    </span>
+                    <DatePicker
+                      value={endDate}
+                      onChange={setEndDate}
+                      label={t("classes.endDate")}
+                      locale={dateLocale}
+                      placeholder={t("classes.noEndDate")}
+                      clearLabel={t("filters.clear")}
+                    />
+                  </div>
+                )}
               </div>
 
               {classType === "recurring" && (
-                <div className="flex min-w-0 flex-col gap-2">
-                  <span className="text-sm font-medium text-muted-foreground">
-                    {t("classes.endDate")}
-                  </span>
-                  <DatePicker
-                    value={endDate}
-                    onChange={setEndDate}
-                    label={t("classes.endDate")}
-                    locale={dateLocale}
-                    placeholder={t("classes.noEndDate")}
-                    clearLabel={t("filters.clear")}
-                  />
-                </div>
-              )}
-            </div>
-
-            <div className="flex min-w-0 flex-col gap-2">
-              <span className="flex items-center justify-between gap-3">
-                <span className="text-sm font-medium text-muted-foreground">
-                  {t("classes.staff")}
-                </span>
-                <span className="text-xs font-normal text-muted-foreground">
-                  {t("classes.optional")}
-                </span>
-              </span>
-              <Select
-                value={selectedStaffId}
-                onValueChange={setSelectedStaffId}
-              >
-                <SelectTrigger className="h-9 w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={noStaffValue}>
-                    {t("class.noStaff")}
-                  </SelectItem>
-                  {mockInstructors.map((instructor) => (
-                    <SelectItem key={instructor.id} value={instructor.id}>
-                      {instructor.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {classType === "recurring" && (
-              <>
-                <fieldset className="flex min-w-0 flex-col gap-2">
+                <fieldset className="flex min-w-0 flex-col gap-4">
                   <legend className="text-sm font-medium text-muted-foreground">
                     {t("classes.repeatOn")}
                   </legend>
                   <WeekdaySelector value={repeatOn} onChange={setRepeatOn} />
                 </fieldset>
-                <div aria-hidden="true" className="hidden xl:block" />
-              </>
-            )}
+              )}
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="flex min-w-0 flex-col gap-2">
+              <div className="grid gap-6 sm:grid-cols-2">
+                <div className="flex min-w-0 flex-col gap-4">
+                  <span className="text-sm font-medium text-muted-foreground">
+                    {t("classes.startTime")}
+                  </span>
+                  <Select value={startTime} onValueChange={setStartTime}>
+                    <SelectTrigger className="h-9 w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {startTimeOptions.map((time) => (
+                        <SelectItem key={time} value={time}>
+                          {formatTimeLabel(time, dateLocale)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <label className="flex min-w-0 flex-col gap-4 text-sm font-medium text-muted-foreground">
+                  {t("classes.durationMinutes")}
+                  <Input
+                    type="number"
+                    min={1}
+                    value={durationMinutes}
+                    onChange={(event) =>
+                      setDurationMinutes(Number(event.currentTarget.value))
+                    }
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div className="flex min-w-0 flex-col gap-6">
+              <div className="flex min-w-0 flex-col gap-4">
                 <span className="text-sm font-medium text-muted-foreground">
-                  {t("classes.startTime")}
+                  {t("classes.class")}
                 </span>
-                <Select value={startTime} onValueChange={setStartTime}>
+                <Select
+                  value={selectedClassId}
+                  onValueChange={setSelectedClassId}
+                >
                   <SelectTrigger className="h-9 w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {startTimeOptions.map((time) => (
-                      <SelectItem key={time} value={time}>
-                        {formatTimeLabel(time, dateLocale)}
+                    {uniqueClasses.map((classItem) => (
+                      <SelectItem key={classItem.id} value={classItem.id}>
+                        {classItem.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
 
-              <label className="flex min-w-0 flex-col gap-2 text-sm font-medium text-muted-foreground">
-                {t("classes.durationMinutes")}
-                <Input
-                  type="number"
-                  min={1}
-                  value={durationMinutes}
-                  onChange={(event) =>
-                    setDurationMinutes(Number(event.currentTarget.value))
-                  }
+              <div className="flex min-w-0 flex-col gap-4">
+                <span className="flex items-center justify-between gap-3">
+                  <span className="text-sm font-medium text-muted-foreground">
+                    {t("classes.staff")}
+                  </span>
+                  <span className="text-xs font-normal text-muted-foreground">
+                    {t("classes.optional")}
+                  </span>
+                </span>
+                <Select
+                  value={selectedStaffId}
+                  onValueChange={setSelectedStaffId}
+                >
+                  <SelectTrigger className="h-9 w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={noStaffValue}>
+                      {t("class.noStaff")}
+                    </SelectItem>
+                    {mockInstructors.map((instructor) => (
+                      <SelectItem key={instructor.id} value={instructor.id}>
+                        {instructor.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <label className="flex min-w-0 flex-col gap-4 text-sm font-medium text-muted-foreground">
+                {t("classes.capacity")}
+                <NumberStepper
+                  value={capacity}
+                  onChange={setCapacity}
+                  min={0}
+                  label={t("classes.capacity")}
+                  className="w-fit"
                 />
               </label>
             </div>
-
-            <label className="flex min-w-0 flex-col gap-2 text-sm font-medium text-muted-foreground">
-              {t("classes.capacity")}
-              <NumberStepper
-                value={capacity}
-                onChange={setCapacity}
-                min={0}
-                label={t("classes.capacity")}
-                className="w-fit"
-              />
-            </label>
           </div>
 
-          <div className="flex justify-end border-t border-border pt-4">
+          <div className="mt-8 flex justify-end border-t border-border pt-4">
             <Button type="button" className="h-9" onClick={handleSave}>
               {t("common.save")}
             </Button>
