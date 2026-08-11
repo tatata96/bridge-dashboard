@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ArrowLeftIcon, PlusIcon } from "lucide-react";
+import { ArrowLeftIcon } from "lucide-react";
 import { Link, Navigate, useParams } from "react-router-dom";
 
 import { mockClasses } from "@/classes/data/classes.mock-data";
@@ -285,15 +285,6 @@ export function ClassFormPage() {
                 className="w-fit"
               />
             </label>
-
-            <div>
-              {classType === "recurring" && (
-                <Button type="button" variant="ghost" className="h-9 w-fit">
-                  <PlusIcon data-icon="inline-start" />
-                  {t("classes.addMoreStartTimes")}
-                </Button>
-              )}
-            </div>
           </div>
 
           <div className="flex justify-end border-t border-border pt-4">

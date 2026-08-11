@@ -60,7 +60,6 @@ export const en = {
   "classes.nextStartDate": "Next start date",
   "classes.startTime": "Start time",
   "classes.durationMinutes": "Duration (minutes)",
-  "classes.addMoreStartTimes": "Add more start times",
   "classes.optional": "Optional",
   "classes.selectStaff": "Select staff",
   "classes.selectClass": "Select a class",

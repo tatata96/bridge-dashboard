@@ -62,7 +62,6 @@ export const tr = {
   "classes.nextStartDate": "Sonraki başlangıç tarihi",
   "classes.startTime": "Başlangıç saati",
   "classes.durationMinutes": "Süre (dakika)",
-  "classes.addMoreStartTimes": "Daha fazla başlangıç saati ekle",
   "classes.optional": "İsteğe bağlı",
   "classes.selectStaff": "Personel seç",
   "classes.selectClass": "Ders seçin",
