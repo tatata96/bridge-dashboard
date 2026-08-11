@@ -51,6 +51,7 @@ export const en = {
   "classes.classType": "Class type",
   "classes.recurring": "Recurring",
   "classes.oneTime": "One-time",
+  "classes.date": "Date",
   "classes.startDate": "Start date",
   "classes.endDate": "End date",
   "classes.noEndDate": "No end date",

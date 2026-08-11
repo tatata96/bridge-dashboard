@@ -53,6 +53,7 @@ export const tr = {
   "classes.classType": "Ders türü",
   "classes.recurring": "Tekrarlı",
   "classes.oneTime": "Tek seferlik",
+  "classes.date": "Tarih",
   "classes.startDate": "Başlangıç tarihi",
   "classes.endDate": "Bitiş tarihi",
   "classes.noEndDate": "Bitiş tarihi yok",
