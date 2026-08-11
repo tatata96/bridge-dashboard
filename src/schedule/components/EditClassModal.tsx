@@ -63,6 +63,7 @@ export function EditClassModal({
   );
   const [scopeNoticePrefix, scopeNoticeLink, scopeNoticeSuffix] =
     t("modal.scopeNotice").split("**");
+  const classPlanEditPath = `${getPagePath("classes")}/${session.classId}/edit`;
 
   function handleOpenChange(nextOpen: boolean) {
     setOpen(nextOpen);
@@ -98,7 +99,7 @@ export function EditClassModal({
           <span>
             {scopeNoticePrefix}
             <Link
-              to={getPagePath("classes")}
+              to={classPlanEditPath}
               className="font-medium text-foreground underline underline-offset-4"
             >
               {scopeNoticeLink}
