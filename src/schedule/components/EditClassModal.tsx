@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { PencilIcon } from "lucide-react";
+import { InfoIcon, PencilIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import { InfoNotice } from "@/components/ui/info-notice";
 import {
   Dialog,
   DialogContent,
@@ -50,9 +49,21 @@ export function EditClassModal({
 
   const isDirty =
     instructorId !== session.instructorId || capacity !== session.capacity;
+  const instructorChanged = instructorId !== session.instructorId;
+  const shouldNotifyAttendees = instructorChanged && session.reservedCount > 0;
+  console.log(session.reservedCount);
   const spotsLeft = capacity - session.reservedCount;
   const isAtFloor = capacity <= session.reservedCount;
   const spotLabel = t(spotsLeft === 1 ? "schedule.spot" : "schedule.spots");
+  const notifyAttendeesMessage = t(
+    session.reservedCount === 1
+      ? "modal.notifyAttendees_one"
+      : "modal.notifyAttendees",
+    { n: session.reservedCount },
+  );
+  const [scopeNoticePrefix, scopeNoticeLink, scopeNoticeSuffix] =
+    t("modal.scopeNotice").split("**");
+  const classPlanEditPath = `${getPagePath("classes")}/${session.classId}/edit`;
 
   function handleOpenChange(nextOpen: boolean) {
     setOpen(nextOpen);
@@ -70,7 +81,7 @@ export function EditClassModal({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button type="button" variant="outline" size="sm">
+        <Button type="button" variant="ghost" size="sm">
           <PencilIcon />
           {t("class.edit")}
         </Button>
@@ -83,19 +94,19 @@ export function EditClassModal({
 
         <ClassSessionSummary entry={entry} />
 
-        <InfoNotice>
-          <p>
-            {t("class.editAppliesToSingleSession")}{" "}
-            {t("class.editRecurringPrefix")}
+        <p className="flex items-center gap-1.5 text-xs text-muted-foreground whitespace-nowrap">
+          <InfoIcon className="size-3.5 shrink-0" aria-hidden="true" />
+          <span>
+            {scopeNoticePrefix}
             <Link
-              to={getPagePath("classes")}
+              to={classPlanEditPath}
               className="font-medium text-foreground underline underline-offset-4"
             >
-              {t("class.editRecurringLink")}
+              {scopeNoticeLink}
             </Link>
-            {t("class.editRecurringSuffix")}
-          </p>
-        </InfoNotice>
+            {scopeNoticeSuffix}
+          </span>
+        </p>
 
         <label className="flex flex-col gap-1.5 text-sm">
           <span className="text-xs font-medium text-muted-foreground">
@@ -154,7 +165,21 @@ export function EditClassModal({
           </span>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="flex-col items-stretch gap-2 sm:items-end">
+          <p
+            className={cn(
+              "flex min-h-5 items-center gap-1.5 text-xs text-muted-foreground transition-opacity",
+              shouldNotifyAttendees ? "opacity-100" : "opacity-0",
+            )}
+            aria-live="polite"
+          >
+            {shouldNotifyAttendees && (
+              <>
+                <InfoIcon className="size-3.5 shrink-0" aria-hidden="true" />
+                <span>{notifyAttendeesMessage}</span>
+              </>
+            )}
+          </p>
           <Button
             type="button"
             size="sm"

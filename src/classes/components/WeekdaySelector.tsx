@@ -42,7 +42,7 @@ export function WeekdaySelector({
             aria-pressed={isSelected}
             onClick={() => toggleDay(day)}
             className={cn(
-              "flex h-9 min-w-0 cursor-pointer items-center justify-center border-r border-border px-2 text-sm font-medium text-foreground transition-colors last:border-r-0 hover:bg-primary/50 focus-visible:z-10 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none",
+              "flex h-9 min-w-0 cursor-pointer items-center justify-center border-r border-border px-2 text-sm font-medium text-foreground transition-colors last:border-r-0 hover:hover:bg-primary/20 focus-visible:z-10 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none",
               isSelected && "bg-primary text-primary-foreground",
             )}
           >

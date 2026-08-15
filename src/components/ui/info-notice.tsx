@@ -7,7 +7,7 @@ function InfoNotice({ className, children, ...props }: ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "flex gap-2 rounded-md border border-border bg-muted/50 p-2 text-sm text-[#3F3F46]",
+        "flex gap-2 rounded-md border border-border p-2 text-sm text-[#3F3F46]",
         className,
       )}
       {...props}

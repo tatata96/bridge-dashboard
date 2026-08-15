@@ -230,6 +230,7 @@ export function SchedulePage() {
     <main className="flex min-w-0 flex-1 flex-col gap-4 p-4 sm:gap-6 sm:p-6">
       <ScheduleToolbar
         selectedDate={selectedDate}
+        onDateChange={setSelectedDate}
         onPrevDay={() => setSelectedDate((date) => addDays(date, -1))}
         onNextDay={() => setSelectedDate((date) => addDays(date, 1))}
         typeFilter={typeFilter}

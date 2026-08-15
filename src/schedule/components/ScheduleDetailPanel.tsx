@@ -1,3 +1,13 @@
+import { useState } from "react";
+import { MoreVerticalIcon } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { useI18n } from "@/i18n/i18n";
@@ -35,6 +45,7 @@ export function ScheduleDetailPanel({
   classHasStarted: boolean;
 }) {
   const { dateLocale, t } = useI18n();
+  const [cancelSessionDialogOpen, setCancelSessionDialogOpen] = useState(false);
 
   if (!entry) {
     return (
@@ -79,19 +90,41 @@ export function ScheduleDetailPanel({
             {classHasEnded ? t("schedule.completed") : t("schedule.inProgress")}
           </span>
         ) : (
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-1.5">
             <EditClassModal
               entry={entry}
               instructors={instructors}
               onSave={onSaveClass}
             />
 
-            <span
-              className="hidden h-4 w-px bg-border sm:block"
-              aria-hidden="true"
-            />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={t("common.moreActions")}
+                >
+                  <MoreVerticalIcon />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem
+                  className="text-destructive focus:text-destructive"
+                  onSelect={() => setCancelSessionDialogOpen(true)}
+                >
+                  {t("class.cancelSession")}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-            <CancelSessionButton entry={entry} onConfirm={onCancelSession} />
+            <CancelSessionButton
+              entry={entry}
+              onConfirm={onCancelSession}
+              open={cancelSessionDialogOpen}
+              onOpenChange={setCancelSessionDialogOpen}
+              trigger={null}
+            />
           </div>
         )}
       </div>

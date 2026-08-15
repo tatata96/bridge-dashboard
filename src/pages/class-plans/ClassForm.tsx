@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { ArrowLeftIcon } from "lucide-react";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 
 import { mockClasses } from "@/classes/data/classes.mock-data";
 import { WeekdaySelector } from "@/classes/components/WeekdaySelector";
@@ -19,11 +19,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getPagePath } from "@/config/navigation";
-import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/i18n/i18n";
 import { mockInstructors } from "@/schedule/data/schedule.mock-data";
 import type { ClassSchedule, Weekday } from "@/types/classes";
 
+// TODO: make logical time options list
 const startTimeOptions = Array.from(
   new Set([
     "07:00",
@@ -54,7 +54,7 @@ function formatTimeLabel(value: string, locale: string) {
 
 export function ClassFormPage() {
   const { t, dateLocale } = useI18n();
-  const { toast } = useToast();
+  const navigate = useNavigate();
   const { classId } = useParams();
   const classToEdit = useMemo(
     () => mockClasses.find((classItem) => classItem.id === classId) ?? null,
@@ -97,7 +97,7 @@ export function ClassFormPage() {
   const [durationMinutes, setDurationMinutes] = useState(
     () => classToEdit?.durationMinutes ?? 60,
   );
-  const [capacity, setCapacity] = useState(() => classToEdit?.capacity ?? 0);
+  const [capacity, setCapacity] = useState(() => classToEdit?.capacity ?? 1);
   const dateLabel =
     classType === "one_time" ? t("classes.date") : t("classes.startDate");
 
@@ -106,7 +106,7 @@ export function ClassFormPage() {
   }
 
   function handleSave() {
-    toast({ title: t("toast.classChangesSaved") });
+    navigate(getPagePath("classes"));
   }
 
   return (
@@ -183,8 +183,13 @@ export function ClassFormPage() {
 
                 {classType === "recurring" && (
                   <div className="flex min-w-0 flex-col gap-4">
-                    <span className="text-sm font-medium text-muted-foreground">
-                      {t("classes.endDate")}
+                    <span className="flex items-center justify-between gap-3">
+                      <span className="text-sm font-medium text-muted-foreground">
+                        {t("classes.endDate")}
+                      </span>
+                      <span className="text-xs font-normal text-muted-foreground">
+                        {t("classes.optional")}
+                      </span>
                     </span>
                     <DatePicker
                       value={endDate}
@@ -193,6 +198,7 @@ export function ClassFormPage() {
                       locale={dateLocale}
                       placeholder={t("classes.noEndDate")}
                       clearLabel={t("filters.clear")}
+                      mutedPlaceholder={false}
                     />
                   </div>
                 )}
@@ -296,7 +302,7 @@ export function ClassFormPage() {
                 <NumberStepper
                   value={capacity}
                   onChange={setCapacity}
-                  min={0}
+                  min={1}
                   label={t("classes.capacity")}
                   className="w-fit"
                 />
@@ -304,7 +310,7 @@ export function ClassFormPage() {
             </div>
           </div>
 
-          <div className="mt-8 flex justify-end border-t border-border pt-4">
+          <div className="mt-8 flex justify-end gap-2 border-t border-border pt-4">
             <Button type="button" className="h-9" onClick={handleSave}>
               {t("common.save")}
             </Button>
