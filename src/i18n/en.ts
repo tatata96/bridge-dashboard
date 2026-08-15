@@ -81,7 +81,7 @@ export const en = {
   "classes.capacity": "Capacity",
   "classes.actions": "Actions",
   "classes.entryActions": "{name} actions",
-  "classes.pause": "Pause",
+  "classes.pause": "Pause all classes",
   "classes.activate": "Activate",
   "classes.pauseClassTitle": "Pause class",
   "classes.pauseWithBookings": "This class has {count} upcoming bookings.",

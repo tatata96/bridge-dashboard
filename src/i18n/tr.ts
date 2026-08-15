@@ -84,7 +84,7 @@ export const tr = {
   "classes.capacity": "Kapasite",
   "classes.actions": "İşlemler",
   "classes.entryActions": "{name} işlemleri",
-  "classes.pause": "Duraklat",
+  "classes.pause": "Tüm dersleri duraklat",
   "classes.activate": "Aktifleştir",
   "classes.pauseClassTitle": "Dersi duraklat",
   "classes.pauseWithBookings": "Bu derste {count} yaklaşan rezervasyon var.",

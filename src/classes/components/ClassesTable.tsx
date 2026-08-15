@@ -275,6 +275,7 @@ export function ClassesTable({
                             </DropdownMenuItem>
                             {entry.status === "active" ? (
                               <DropdownMenuItem
+                                className="text-destructive focus:text-destructive"
                                 onSelect={() => {
                                   setPauseError(null);
                                   setEntryToPause(entry);
