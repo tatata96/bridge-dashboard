@@ -6,6 +6,7 @@ import { ClassesToolbar } from "@/classes/components/ClassesToolbar";
 import { mockClasses } from "@/classes/data/classes.mock-data";
 import { getPagePath } from "@/config/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { useI18n } from "@/i18n/i18n";
 import {
   mockClassSessions,
   mockInstructors,
@@ -20,6 +21,7 @@ const DEFAULT_FILTERS: ClassFilters = {
 export function ClassPlansPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useI18n();
   const [classes, setClasses] = useState(() => mockClasses);
   const [filters, setFilters] = useState<ClassFilters>(DEFAULT_FILTERS);
 
@@ -69,7 +71,7 @@ export function ClassPlansPage() {
 
     try {
       await saveClassStatus(entryId, "paused");
-      toast({ title: "Ders duraklatıldı" });
+      toast({ title: t("toast.classPaused") });
     } catch (error) {
       updateClassStatus(entryId, "active");
       throw error;
@@ -79,9 +81,9 @@ export function ClassPlansPage() {
   function activateEntry(entryId: string) {
     updateClassStatus(entryId, "active");
     toast({
-      title: "Ders aktifleştirildi",
+      title: t("toast.classActivated"),
       action: {
-        label: "Geri al",
+        label: t("common.undo"),
         onClick: () => updateClassStatus(entryId, "paused"),
       },
     });

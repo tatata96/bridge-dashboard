@@ -27,11 +27,13 @@ import type { Instructor } from "@/types/schedule";
 function getInstructorName(
   instructorId: string | null,
   instructors: Instructor[],
+  noInstructorLabel: string,
+  unknownInstructorLabel: string,
 ) {
-  if (!instructorId) return "Eğitmen atanmadı";
+  if (!instructorId) return noInstructorLabel;
   return (
     instructors.find((instructor) => instructor.id === instructorId)?.name ??
-    "Bilinmeyen eğitmen"
+    unknownInstructorLabel
   );
 }
 
@@ -50,16 +52,16 @@ function StatusIcon({ status, label }: { status: ClassStatus; label: string }) {
   );
 }
 
-function getStatusLabel(status: ClassStatus) {
-  return status === "active" ? "Aktif" : "Duraklatıldı";
-}
-
-function getPauseDescription(entry: ClassPlan, upcomingBookingCount: number) {
+function getPauseDescription(
+  entry: ClassPlan,
+  upcomingBookingCount: number,
+  t: ReturnType<typeof useI18n>["t"],
+) {
   if (upcomingBookingCount > 0) {
-    return `Bu derste ${upcomingBookingCount} yaklaşan rezervasyon var.`;
+    return t("classes.pauseWithBookings", { count: upcomingBookingCount });
   }
 
-  return `"${entry.name}" duraklatılacak ve yeni rezervasyon alınmayacak.\nMevcut rezervasyonlar etkilenmez.`;
+  return t("classes.pauseDescription", { name: entry.name });
 }
 
 export function ClassesTable({
@@ -107,7 +109,7 @@ export function ClassesTable({
       lastPauseEntryIdRef.current = entryToPause.id;
       setEntryToPause(null);
     } catch {
-      setPauseError("Ders duraklatılamadı. Lütfen tekrar deneyin.");
+      setPauseError(t("classes.pauseError"));
     } finally {
       setIsPausing(false);
     }
@@ -146,7 +148,7 @@ export function ClassesTable({
                 {t("classes.status")}
               </th>
               <th scope="col" className="w-[6%] px-2 py-3 text-right sm:px-3">
-                <span className="sr-only">İşlemler</span>
+                <span className="sr-only">{t("classes.actions")}</span>
               </th>
             </tr>
           </thead>
@@ -201,7 +203,12 @@ export function ClassesTable({
                       {entry.startTime}
                     </td>
                     <td className="px-2 py-4 text-muted-foreground sm:px-4">
-                      {getInstructorName(entry.instructorId, instructors)}
+                      {getInstructorName(
+                        entry.instructorId,
+                        instructors,
+                        t("classes.noInstructorAssigned"),
+                        t("classes.unknownInstructor"),
+                      )}
                     </td>
                     <td className="px-2 py-4 text-muted-foreground sm:px-4">
                       {scheduleLabel}
@@ -214,9 +221,17 @@ export function ClassesTable({
                         <span className="inline-flex items-center gap-2">
                           <StatusIcon
                             status={entry.status}
-                            label={getStatusLabel(entry.status)}
+                            label={t(
+                              entry.status === "active"
+                                ? "classes.active"
+                                : "classes.paused",
+                            )}
                           />
-                          {getStatusLabel(entry.status)}
+                          {t(
+                            entry.status === "active"
+                              ? "classes.active"
+                              : "classes.paused",
+                          )}
                         </span>
                       )}
                     </td>
@@ -243,7 +258,9 @@ export function ClassesTable({
                               type="button"
                               variant="ghost"
                               size="icon-sm"
-                              aria-label={`${entry.name} işlemleri`}
+                              aria-label={t("classes.entryActions", {
+                                name: entry.name,
+                              })}
                               aria-haspopup="menu"
                               aria-expanded={openMenuEntryId === entry.id}
                             >
@@ -254,7 +271,7 @@ export function ClassesTable({
                             <DropdownMenuItem
                               onSelect={() => onEditEntry(entry.id)}
                             >
-                              Ders planını düzenle
+                              {t("classes.editClass")}
                             </DropdownMenuItem>
                             {entry.status === "active" ? (
                               <DropdownMenuItem
@@ -263,13 +280,13 @@ export function ClassesTable({
                                   setEntryToPause(entry);
                                 }}
                               >
-                                Duraklat
+                                {t("classes.pause")}
                               </DropdownMenuItem>
                             ) : (
                               <DropdownMenuItem
                                 onSelect={() => onActivateEntry(entry.id)}
                               >
-                                Aktifleştir
+                                {t("classes.activate")}
                               </DropdownMenuItem>
                             )}
                           </DropdownMenuContent>
@@ -297,11 +314,12 @@ export function ClassesTable({
           {entryToPause && (
             <>
               <DialogHeader>
-                <DialogTitle>Dersi duraklat</DialogTitle>
+                <DialogTitle>{t("classes.pauseClassTitle")}</DialogTitle>
                 <DialogDescription className="whitespace-pre-line">
                   {getPauseDescription(
                     entryToPause,
                     getUpcomingBookingCount(entryToPause.id),
+                    t,
                   )}
                 </DialogDescription>
               </DialogHeader>
@@ -317,11 +335,11 @@ export function ClassesTable({
                   onClick={confirmPause}
                   disabled={isPausing}
                 >
-                  {isPausing ? "Duraklatılıyor..." : "Duraklat"}
+                  {isPausing ? t("classes.pausing") : t("classes.pause")}
                 </Button>
                 <DialogClose asChild>
                   <Button type="button" variant="outline">
-                    Vazgeç
+                    {t("common.dismiss")}
                   </Button>
                 </DialogClose>
               </DialogFooter>
