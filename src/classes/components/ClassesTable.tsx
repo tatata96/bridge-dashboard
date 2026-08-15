@@ -127,7 +127,7 @@ export function ClassesTable({
         <table className="w-full table-fixed text-left text-sm">
           <thead className="sticky top-0 z-10 border-b border-border bg-muted text-xs font-medium text-muted-foreground">
             <tr>
-              <th scope="col" className="w-[22%] px-2 py-3 sm:px-4">
+              <th scope="col" className="w-[24%] px-2 py-3 sm:px-4">
                 {t("classes.className")}
               </th>
               <th scope="col" className="w-[18%] px-2 py-3 sm:px-4">
@@ -136,7 +136,7 @@ export function ClassesTable({
               <th scope="col" className="w-[18%] px-2 py-3 sm:px-4">
                 {t("classes.staff")}
               </th>
-              <th scope="col" className="w-[16%] px-2 py-3 sm:px-4">
+              <th scope="col" className="w-[17%] px-2 py-3 sm:px-4">
                 {t("classes.repeatOn")}
               </th>
               <th scope="col" className="w-[7%] px-2 py-3 sm:px-4">
@@ -145,7 +145,7 @@ export function ClassesTable({
               <th scope="col" className="w-[10%] px-2 py-3 sm:px-4">
                 {t("classes.status")}
               </th>
-              <th scope="col" className="w-12 px-2 py-3 text-right sm:px-3">
+              <th scope="col" className="w-[6%] px-2 py-3 text-right sm:px-3">
                 <span className="sr-only">İşlemler</span>
               </th>
             </tr>
