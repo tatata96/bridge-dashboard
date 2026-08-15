@@ -1,15 +1,7 @@
-import { type ReactNode, useRef, useState } from "react";
+import { type ReactNode, useState } from "react";
 
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -50,18 +42,14 @@ export function CancelSessionButton({
     cancellationReasons[0].value,
   );
   const { t } = useI18n();
-  const keepSessionButtonRef = useRef<HTMLButtonElement>(null);
   const attendeeCount = entry.session.reservedCount;
   const refundCredits = attendeeCount * 2;
   const attendeeLabel = t(
     attendeeCount === 1 ? "class.attendee" : "class.attendees",
   );
   const creditLabel = t(refundCredits === 1 ? "class.credit" : "class.credits");
-  const isControlled = open !== undefined;
-  const dialogOpen = open ?? uncontrolledOpen;
-
   function handleOpenChange(nextOpen: boolean) {
-    if (!isControlled) {
+    if (open === undefined) {
       setUncontrolledOpen(nextOpen);
     }
     onOpenChange?.(nextOpen);
@@ -71,84 +59,59 @@ export function CancelSessionButton({
   }
 
   return (
-    <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>
-      {trigger !== null ? (
-        <DialogTrigger asChild>
-          {trigger ?? (
-            <Button type="button" variant="destructive-link" size="sm">
-              {t("class.cancelSession")}
-            </Button>
-          )}
-        </DialogTrigger>
-      ) : null}
-      <DialogContent
-        onOpenAutoFocus={(event) => {
-          event.preventDefault();
-          keepSessionButtonRef.current?.focus();
-        }}
-      >
-        <DialogHeader>
-          <DialogTitle>{t("class.cancelQuestion")}</DialogTitle>
-          {attendeeCount > 0 ? (
-            <DialogDescription>
-              {t("class.cancelDescription", {
-                attendeeCount,
-                attendeeLabel,
-                creditCount: refundCredits,
-                creditLabel,
-              })}
-              <br />
-              {t("class.cantBeUndone")}
-            </DialogDescription>
-          ) : null}
-        </DialogHeader>
+    <ConfirmDialog
+      open={open ?? uncontrolledOpen}
+      onOpenChange={handleOpenChange}
+      trigger={
+        trigger === null
+          ? null
+          : (trigger ?? (
+              <Button type="button" variant="destructive-link" size="sm">
+                {t("class.cancelSession")}
+              </Button>
+            ))
+      }
+      title={t("class.cancelQuestion")}
+      body={
+        attendeeCount > 0
+          ? `${t("class.cancelDescription", {
+              attendeeCount,
+              attendeeLabel,
+              creditCount: refundCredits,
+              creditLabel,
+            })}\n${t("class.cantBeUndone")}`
+          : undefined
+      }
+      cancelLabel={t("class.keepSession")}
+      confirmLabel={t("class.cancelSession")}
+      tone="destructive"
+      onConfirm={() => {
+        onConfirm(entry.session.id);
+        handleOpenChange(false);
+      }}
+    >
+      <ClassSessionSummary entry={entry} />
 
-        <ClassSessionSummary entry={entry} />
-
-        <label className="flex flex-col gap-1.5 text-sm">
-          <span className="text-xs font-medium text-muted-foreground">
-            {t("class.cancellationReason")}
-          </span>
-          <Select
-            value={cancellationReason}
-            onValueChange={setCancellationReason}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {cancellationReasons.map((reason) => (
-                <SelectItem key={reason.value} value={reason.value}>
-                  {t(reason.labelKey)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </label>
-
-        <DialogFooter>
-          <Button
-            ref={keepSessionButtonRef}
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => handleOpenChange(false)}
-          >
-            {t("class.keepSession")}
-          </Button>
-          <Button
-            type="button"
-            variant="destructive"
-            size="sm"
-            onClick={() => {
-              onConfirm(entry.session.id);
-              handleOpenChange(false);
-            }}
-          >
-            {t("class.cancelSession")}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      <label className="flex flex-col gap-1.5 text-sm">
+        <span className="text-xs font-medium text-muted-foreground">
+          {t("class.cancellationReason")}
+        </span>
+        <Select
+          value={cancellationReason}
+          onValueChange={setCancellationReason}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {cancellationReasons.map((reason) => (
+              <SelectItem key={reason.value} value={reason.value}>
+                {t(reason.labelKey)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </label>
+    </ConfirmDialog>
   );
 }

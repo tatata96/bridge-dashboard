@@ -1,16 +1,8 @@
 import { useRef, useState } from "react";
 import { MoreHorizontalIcon } from "lucide-react";
 
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -275,7 +267,6 @@ export function ClassesTable({
                             </DropdownMenuItem>
                             {entry.status === "active" ? (
                               <DropdownMenuItem
-                                className="text-destructive focus:text-destructive"
                                 onSelect={() => {
                                   setPauseError(null);
                                   setEntryToPause(entry);
@@ -301,53 +292,38 @@ export function ClassesTable({
           </tbody>
         </table>
       </div>
-      <Dialog open={Boolean(entryToPause)} onOpenChange={closePauseDialog}>
-        <DialogContent
-          showCloseButton={false}
-          onCloseAutoFocus={(event) => {
-            const entryId = lastPauseEntryIdRef.current;
-            if (!entryId) return;
-            event.preventDefault();
-            actionTriggerRefs.current.get(entryId)?.focus();
-            lastPauseEntryIdRef.current = null;
+      {entryToPause ? (
+        <ConfirmDialog
+          open={Boolean(entryToPause)}
+          onOpenChange={closePauseDialog}
+          title={t("classes.pauseClassTitle")}
+          body={getPauseDescription(
+            entryToPause,
+            getUpcomingBookingCount(entryToPause.id),
+            t,
+          )}
+          cancelLabel={t("classes.keepActive")}
+          confirmLabel={isPausing ? t("classes.pausing") : t("classes.pause")}
+          tone="neutral"
+          onConfirm={confirmPause}
+          confirmDisabled={isPausing}
+          contentProps={{
+            onCloseAutoFocus: (event) => {
+              const entryId = lastPauseEntryIdRef.current;
+              if (!entryId) return;
+              event.preventDefault();
+              actionTriggerRefs.current.get(entryId)?.focus();
+              lastPauseEntryIdRef.current = null;
+            },
           }}
         >
-          {entryToPause && (
-            <>
-              <DialogHeader>
-                <DialogTitle>{t("classes.pauseClassTitle")}</DialogTitle>
-                <DialogDescription className="whitespace-pre-line">
-                  {getPauseDescription(
-                    entryToPause,
-                    getUpcomingBookingCount(entryToPause.id),
-                    t,
-                  )}
-                </DialogDescription>
-              </DialogHeader>
-              {pauseError ? (
-                <p className="text-sm text-destructive" role="alert">
-                  {pauseError}
-                </p>
-              ) : null}
-              <DialogFooter>
-                <Button
-                  type="button"
-                  variant="destructive"
-                  onClick={confirmPause}
-                  disabled={isPausing}
-                >
-                  {isPausing ? t("classes.pausing") : t("classes.pause")}
-                </Button>
-                <DialogClose asChild>
-                  <Button type="button" variant="outline">
-                    {t("common.dismiss")}
-                  </Button>
-                </DialogClose>
-              </DialogFooter>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+          {pauseError ? (
+            <p className="text-sm text-destructive" role="alert">
+              {pauseError}
+            </p>
+          ) : null}
+        </ConfirmDialog>
+      ) : null}
     </div>
   );
 }
