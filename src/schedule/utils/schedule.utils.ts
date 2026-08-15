@@ -17,6 +17,6 @@ export function hasSessionEnded(session: ClassSession) {
 }
 
 export function getInstructorName(instructorId: string | null) {
-  if (!instructorId) return "No staff specified";
-  return instructorsById.get(instructorId)?.name ?? "Unknown instructor";
+  if (!instructorId) return "Eğitmen atanmadı";
+  return instructorsById.get(instructorId)?.name ?? "Bilinmeyen eğitmen";
 }

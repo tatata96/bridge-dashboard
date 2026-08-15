@@ -127,7 +127,7 @@ export const en = {
   "class.editRecurringLink": "Class Plans",
   "class.editRecurringSuffix": ".",
   "class.instructor": "Instructor",
-  "class.noStaff": "No staff specified",
+  "class.noStaff": "Eğitmen atanmadı",
   "class.capacity": "Capacity",
   "class.alreadyBookedCantGoLower": "{count} already booked - can't go lower",
   "class.bookedSpotsLeft": "{booked} booked · {spotsLeft} {spotLabel} left",

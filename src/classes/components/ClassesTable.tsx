@@ -1,7 +1,23 @@
+import { useRef, useState } from "react";
+import { MoreHorizontalIcon } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import {
-  classStatusLabelKeys,
-  weekdayShortLabelKeys,
-} from "@/config/class-labels";
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { weekdayShortLabelKeys } from "@/config/class-labels";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/classnames.utils";
 import type { ClassStatus } from "@/types/classes";
@@ -12,10 +28,10 @@ function getInstructorName(
   instructorId: string | null,
   instructors: Instructor[],
 ) {
-  if (!instructorId) return "No staff specified";
+  if (!instructorId) return "Eğitmen atanmadı";
   return (
     instructors.find((instructor) => instructor.id === instructorId)?.name ??
-    "Unknown instructor"
+    "Bilinmeyen eğitmen"
   );
 }
 
@@ -34,20 +50,68 @@ function StatusIcon({ status, label }: { status: ClassStatus; label: string }) {
   );
 }
 
+function getStatusLabel(status: ClassStatus) {
+  return status === "active" ? "Aktif" : "Duraklatıldı";
+}
+
+function getPauseDescription(entry: ClassPlan, upcomingBookingCount: number) {
+  if (upcomingBookingCount > 0) {
+    return `Bu derste ${upcomingBookingCount} yaklaşan rezervasyon var.`;
+  }
+
+  return `"${entry.name}" duraklatılacak ve yeni rezervasyon alınmayacak.\nMevcut rezervasyonlar etkilenmez.`;
+}
+
 export function ClassesTable({
   entries,
   instructors,
   onEditEntry,
+  onPauseEntry,
+  onActivateEntry,
+  getUpcomingBookingCount,
   isFiltering,
   onClearFilters,
 }: {
   entries: ClassPlan[];
   instructors: Instructor[];
   onEditEntry: (entryId: string) => void;
+  onPauseEntry: (entryId: string) => Promise<void>;
+  onActivateEntry: (entryId: string) => void;
+  getUpcomingBookingCount: (entryId: string) => number;
   isFiltering: boolean;
   onClearFilters: () => void;
 }) {
   const { t } = useI18n();
+  const [openMenuEntryId, setOpenMenuEntryId] = useState<string | null>(null);
+  const [entryToPause, setEntryToPause] = useState<ClassPlan | null>(null);
+  const [isPausing, setIsPausing] = useState(false);
+  const [pauseError, setPauseError] = useState<string | null>(null);
+  const actionTriggerRefs = useRef(new Map<string, HTMLButtonElement>());
+  const lastPauseEntryIdRef = useRef<string | null>(null);
+
+  function closePauseDialog(open: boolean) {
+    if (open) return;
+    lastPauseEntryIdRef.current = entryToPause?.id ?? null;
+    setEntryToPause(null);
+    setPauseError(null);
+  }
+
+  async function confirmPause() {
+    if (!entryToPause) return;
+
+    setIsPausing(true);
+    setPauseError(null);
+
+    try {
+      await onPauseEntry(entryToPause.id);
+      lastPauseEntryIdRef.current = entryToPause.id;
+      setEntryToPause(null);
+    } catch {
+      setPauseError("Ders duraklatılamadı. Lütfen tekrar deneyin.");
+    } finally {
+      setIsPausing(false);
+    }
+  }
 
   if (entries.length === 0 && !isFiltering) {
     return (
@@ -63,7 +127,7 @@ export function ClassesTable({
         <table className="w-full table-fixed text-left text-sm">
           <thead className="sticky top-0 z-10 border-b border-border bg-muted text-xs font-medium text-muted-foreground">
             <tr>
-              <th scope="col" className="w-[24%] px-2 py-3 sm:px-4">
+              <th scope="col" className="w-[22%] px-2 py-3 sm:px-4">
                 {t("classes.className")}
               </th>
               <th scope="col" className="w-[18%] px-2 py-3 sm:px-4">
@@ -81,13 +145,16 @@ export function ClassesTable({
               <th scope="col" className="w-[10%] px-2 py-3 sm:px-4">
                 {t("classes.status")}
               </th>
+              <th scope="col" className="w-12 px-2 py-3 text-right sm:px-3">
+                <span className="sr-only">İşlemler</span>
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {entries.length === 0 ? (
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={7}
                   className="px-4 py-6 text-center text-sm text-muted-foreground"
                 >
                   <span>{t("classes.noFilterMatches")}</span>
@@ -103,6 +170,7 @@ export function ClassesTable({
             ) : (
               entries.map((entry) => {
                 const isPlaceholder = entry.id === "new-class";
+                const isPaused = entry.status === "paused";
                 const scheduleLabel =
                   entry.schedule.type === "recurring"
                     ? entry.schedule.repeatOn
@@ -116,10 +184,20 @@ export function ClassesTable({
                     onClick={() => onEditEntry(entry.id)}
                     className="cursor-pointer transition-colors hover:bg-primary/20"
                   >
-                    <td className="px-2 py-4 font-semibold text-foreground sm:px-4">
+                    <td
+                      className={cn(
+                        "px-2 py-4 font-semibold sm:px-4",
+                        isPaused ? "text-muted-foreground" : "text-foreground",
+                      )}
+                    >
                       {entry.name}
                     </td>
-                    <td className="px-2 py-4 font-medium text-foreground sm:px-4">
+                    <td
+                      className={cn(
+                        "px-2 py-4 font-medium sm:px-4",
+                        isPaused ? "text-muted-foreground" : "text-foreground",
+                      )}
+                    >
                       {entry.startTime}
                     </td>
                     <td className="px-2 py-4 text-muted-foreground sm:px-4">
@@ -136,10 +214,66 @@ export function ClassesTable({
                         <span className="inline-flex items-center gap-2">
                           <StatusIcon
                             status={entry.status}
-                            label={t(classStatusLabelKeys[entry.status])}
+                            label={getStatusLabel(entry.status)}
                           />
-                          {t(classStatusLabelKeys[entry.status])}
+                          {getStatusLabel(entry.status)}
                         </span>
+                      )}
+                    </td>
+                    <td
+                      className="px-2 py-4 text-right sm:px-3"
+                      onClick={(event) => event.stopPropagation()}
+                    >
+                      {!isPlaceholder && (
+                        <DropdownMenu
+                          open={openMenuEntryId === entry.id}
+                          onOpenChange={(open) =>
+                            setOpenMenuEntryId(open ? entry.id : null)
+                          }
+                        >
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              ref={(node) => {
+                                if (node) {
+                                  actionTriggerRefs.current.set(entry.id, node);
+                                } else {
+                                  actionTriggerRefs.current.delete(entry.id);
+                                }
+                              }}
+                              type="button"
+                              variant="ghost"
+                              size="icon-sm"
+                              aria-label={`${entry.name} işlemleri`}
+                              aria-haspopup="menu"
+                              aria-expanded={openMenuEntryId === entry.id}
+                            >
+                              <MoreHorizontalIcon />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onSelect={() => onEditEntry(entry.id)}
+                            >
+                              Ders planını düzenle
+                            </DropdownMenuItem>
+                            {entry.status === "active" ? (
+                              <DropdownMenuItem
+                                onSelect={() => {
+                                  setPauseError(null);
+                                  setEntryToPause(entry);
+                                }}
+                              >
+                                Duraklat
+                              </DropdownMenuItem>
+                            ) : (
+                              <DropdownMenuItem
+                                onSelect={() => onActivateEntry(entry.id)}
+                              >
+                                Aktifleştir
+                              </DropdownMenuItem>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       )}
                     </td>
                   </tr>
@@ -149,6 +283,52 @@ export function ClassesTable({
           </tbody>
         </table>
       </div>
+      <Dialog open={Boolean(entryToPause)} onOpenChange={closePauseDialog}>
+        <DialogContent
+          showCloseButton={false}
+          onCloseAutoFocus={(event) => {
+            const entryId = lastPauseEntryIdRef.current;
+            if (!entryId) return;
+            event.preventDefault();
+            actionTriggerRefs.current.get(entryId)?.focus();
+            lastPauseEntryIdRef.current = null;
+          }}
+        >
+          {entryToPause && (
+            <>
+              <DialogHeader>
+                <DialogTitle>Dersi duraklat</DialogTitle>
+                <DialogDescription className="whitespace-pre-line">
+                  {getPauseDescription(
+                    entryToPause,
+                    getUpcomingBookingCount(entryToPause.id),
+                  )}
+                </DialogDescription>
+              </DialogHeader>
+              {pauseError ? (
+                <p className="text-sm text-destructive" role="alert">
+                  {pauseError}
+                </p>
+              ) : null}
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={confirmPause}
+                  disabled={isPausing}
+                >
+                  {isPausing ? "Duraklatılıyor..." : "Duraklat"}
+                </Button>
+                <DialogClose asChild>
+                  <Button type="button" variant="outline">
+                    Vazgeç
+                  </Button>
+                </DialogClose>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
