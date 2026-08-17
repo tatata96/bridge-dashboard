@@ -146,7 +146,7 @@ export const tr = {
   "bookings.undoCheckIn": "Girişi geri al",
   "bookings.cancelBooking": "Rezervasyonu iptal et",
   "bookings.checkedIn": "Giriş yapıldı",
-  "bookings.checkIn": "Giriş yap",
+  "bookings.checkIn": "Yoklama al",
   "bookings.notCheckedIn": "Giriş yapılmadı",
   "bookings.keepBooking": "Rezervasyonu koru",
   "bookings.cancelBookingDescription":
