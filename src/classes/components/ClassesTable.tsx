@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { MoreHorizontalIcon } from "lucide-react";
 
+import { ClassStatusIndicator } from "@/classes/components/ClassStatusIndicator";
 import {
   PauseClassPlanDialog,
   type UpcomingSessionSummary,
@@ -15,7 +16,6 @@ import {
 import { weekdayShortLabelKeys } from "@/config/class-labels";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/classnames.utils";
-import type { ClassStatus } from "@/types/classes";
 import type { ClassPlan } from "@/types/classes";
 import type { Instructor } from "@/types/schedule";
 
@@ -29,21 +29,6 @@ function getInstructorName(
   return (
     instructors.find((instructor) => instructor.id === instructorId)?.name ??
     unknownInstructorLabel
-  );
-}
-
-function StatusIcon({ status, label }: { status: ClassStatus; label: string }) {
-  return (
-    <span
-      title={label}
-      aria-hidden="true"
-      className={cn(
-        "block size-2 rounded-full",
-        status === "active"
-          ? "bg-muted-foreground"
-          : "border border-muted-foreground",
-      )}
-    />
   );
 }
 
@@ -201,21 +186,14 @@ export function ClassesTable({
                     </td>
                     <td className="px-2 py-4 text-muted-foreground sm:px-4">
                       {isPlaceholder ? null : (
-                        <span className="inline-flex items-center gap-2">
-                          <StatusIcon
-                            status={entry.status}
-                            label={t(
-                              entry.status === "active"
-                                ? "classes.active"
-                                : "classes.paused",
-                            )}
-                          />
-                          {t(
+                        <ClassStatusIndicator
+                          status={entry.status}
+                          label={t(
                             entry.status === "active"
                               ? "classes.active"
                               : "classes.paused",
                           )}
-                        </span>
+                        />
                       )}
                     </td>
                     <td

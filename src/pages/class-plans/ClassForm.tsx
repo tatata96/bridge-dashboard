@@ -2,8 +2,9 @@ import { useMemo, useState } from "react";
 import { ArrowLeftIcon } from "lucide-react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 
-import { PauseClassPlanDialog } from "@/classes/components/PauseClassPlanDialog";
+import { ClassStatusIndicator } from "@/classes/components/ClassStatusIndicator";
 import { ClassSessionsCard } from "@/classes/components/ClassSessionsCard";
+import { PauseClassPlanDialog } from "@/classes/components/PauseClassPlanDialog";
 import { mockClasses } from "@/classes/data/classes.mock-data";
 import { WeekdaySelector } from "@/classes/components/WeekdaySelector";
 import { getUpcomingSessionSummary } from "@/classes/utils/class-sessions.utils";
@@ -161,9 +162,21 @@ export function ClassFormPage() {
 
         <div className="grid w-full max-w-7xl items-start gap-4 xl:grid-cols-[minmax(0,60rem)_minmax(18rem,22rem)]">
           <section className="min-h-80 w-full rounded-lg border border-border bg-background p-4 sm:p-6">
-            <h2 className="text-base font-semibold text-foreground">
-              {isEditMode ? t("classes.editClass") : t("classes.addClass")}
-            </h2>
+            <div className="flex items-center justify-between gap-4">
+              <h2 className="text-base font-semibold text-foreground">
+                {isEditMode ? t("classes.editClass") : t("classes.addClass")}
+              </h2>
+              {classToEdit ? (
+                <ClassStatusIndicator
+                  status={classToEdit.status}
+                  label={t(
+                    classToEdit.status === "active"
+                      ? "classes.active"
+                      : "classes.paused",
+                  )}
+                />
+              ) : null}
+            </div>
 
             {isEditMode && isRecurringClassPlan && (
               <InfoNotice className="mt-8">
