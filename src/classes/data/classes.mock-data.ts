@@ -141,7 +141,7 @@ export const mockClasses: ClassPlan[] = [
       endDate: null,
     },
     startTime: "09:30",
-    durationMinutes: 50,
+    durationMinutes: 45,
     capacity: 9,
     priceCredits: 2,
   },

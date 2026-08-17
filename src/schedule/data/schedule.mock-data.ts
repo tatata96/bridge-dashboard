@@ -5,6 +5,9 @@ import type { ClassSession, Instructor, Reservation } from "@/types/schedule";
 const today = new Date();
 const yesterday = addDays(today, -1);
 const tomorrow = addDays(today, 1);
+const inTwoDays = addDays(today, 2);
+const inFourDays = addDays(today, 4);
+const nextWeek = addDays(today, 7);
 
 export const mockInstructors: Instructor[] = [
   { id: "instructor-1", name: "Betty White" },
@@ -97,6 +100,33 @@ export const mockClassSessions: ClassSession[] = [
     reservedCount: 6,
   },
   {
+    id: "session-class-1-upcoming-1",
+    classId: "class-1",
+    instructorId: "instructor-1",
+    startAt: atTime(inTwoDays, 7, 0).toISOString(),
+    durationMinutes: 60,
+    capacity: 8,
+    reservedCount: 4,
+  },
+  {
+    id: "session-class-1-upcoming-2",
+    classId: "class-1",
+    instructorId: "instructor-1",
+    startAt: atTime(inFourDays, 7, 0).toISOString(),
+    durationMinutes: 60,
+    capacity: 8,
+    reservedCount: 1,
+  },
+  {
+    id: "session-class-1-upcoming-3",
+    classId: "class-1",
+    instructorId: "instructor-1",
+    startAt: atTime(nextWeek, 7, 0).toISOString(),
+    durationMinutes: 60,
+    capacity: 8,
+    reservedCount: 0,
+  },
+  {
     id: "session-tomorrow-1",
     classId: "class-4",
     instructorId: "instructor-1",
@@ -110,7 +140,7 @@ export const mockClassSessions: ClassSession[] = [
     classId: "class-8",
     instructorId: "instructor-1",
     startAt: atTime(tomorrow, 9, 30).toISOString(),
-    durationMinutes: 50,
+    durationMinutes: 45,
     capacity: 9,
     reservedCount: 7,
   },

@@ -9,20 +9,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useI18n, type TranslationKey } from "@/i18n/i18n";
+import { useI18n } from "@/i18n/i18n";
 import { ClassSessionSummary } from "@/schedule/components/ClassSessionSummary";
 import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
-
-const cancellationReasons = [
-  { value: "low-attendance", labelKey: "class.reason.lowAttendance" },
-  {
-    value: "instructor-unavailable",
-    labelKey: "class.reason.instructorUnavailable",
-  },
-  { value: "facility-issue", labelKey: "class.reason.facilityIssue" },
-  { value: "schedule-conflict", labelKey: "class.reason.scheduleConflict" },
-  { value: "other", labelKey: "class.reason.other" },
-] satisfies { value: string; labelKey: TranslationKey }[];
+import { cancellationReasons } from "@/schedule/constants/cancellation-reasons";
 
 export function CancelSessionButton({
   entry,
@@ -90,7 +80,7 @@ export function CancelSessionButton({
         handleOpenChange(false);
       }}
     >
-      <ClassSessionSummary entry={entry} />
+      <ClassSessionSummary entry={entry} showDate />
 
       <label className="flex flex-col gap-1.5 text-sm">
         <span className="text-xs font-medium text-muted-foreground">

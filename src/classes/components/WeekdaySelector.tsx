@@ -1,17 +1,7 @@
-import { weekdayShortLabelKeys } from "@/config/class-labels";
+import { weekdayShortLabelKeys, weekdays } from "@/config/class-labels";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/classnames.utils";
 import type { Weekday } from "@/types/classes";
-
-const weekdays: Weekday[] = [
-  "monday",
-  "tuesday",
-  "wednesday",
-  "thursday",
-  "friday",
-  "saturday",
-  "sunday",
-];
 
 export function WeekdaySelector({
   value,

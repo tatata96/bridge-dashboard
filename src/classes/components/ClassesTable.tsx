@@ -1,7 +1,11 @@
 import { useRef, useState } from "react";
 import { MoreHorizontalIcon } from "lucide-react";
 
-import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { ClassStatusIndicator } from "@/classes/components/ClassStatusIndicator";
+import {
+  PauseClassPlanDialog,
+  type UpcomingSessionSummary,
+} from "@/classes/components/PauseClassPlanDialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,7 +16,6 @@ import {
 import { weekdayShortLabelKeys } from "@/config/class-labels";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/classnames.utils";
-import type { ClassStatus } from "@/types/classes";
 import type { ClassPlan } from "@/types/classes";
 import type { Instructor } from "@/types/schedule";
 
@@ -29,40 +32,13 @@ function getInstructorName(
   );
 }
 
-function StatusIcon({ status, label }: { status: ClassStatus; label: string }) {
-  return (
-    <span
-      title={label}
-      aria-hidden="true"
-      className={cn(
-        "block size-2 rounded-full",
-        status === "active"
-          ? "bg-muted-foreground"
-          : "border border-muted-foreground",
-      )}
-    />
-  );
-}
-
-function getPauseDescription(
-  entry: ClassPlan,
-  upcomingBookingCount: number,
-  t: ReturnType<typeof useI18n>["t"],
-) {
-  if (upcomingBookingCount > 0) {
-    return t("classes.pauseWithBookings", { count: upcomingBookingCount });
-  }
-
-  return t("classes.pauseDescription", { name: entry.name });
-}
-
 export function ClassesTable({
   entries,
   instructors,
   onEditEntry,
   onPauseEntry,
   onActivateEntry,
-  getUpcomingBookingCount,
+  getUpcomingSessionSummary,
   isFiltering,
   onClearFilters,
 }: {
@@ -71,7 +47,7 @@ export function ClassesTable({
   onEditEntry: (entryId: string) => void;
   onPauseEntry: (entryId: string) => Promise<void>;
   onActivateEntry: (entryId: string) => void;
-  getUpcomingBookingCount: (entryId: string) => number;
+  getUpcomingSessionSummary: (entryId: string) => UpcomingSessionSummary;
   isFiltering: boolean;
   onClearFilters: () => void;
 }) {
@@ -210,21 +186,14 @@ export function ClassesTable({
                     </td>
                     <td className="px-2 py-4 text-muted-foreground sm:px-4">
                       {isPlaceholder ? null : (
-                        <span className="inline-flex items-center gap-2">
-                          <StatusIcon
-                            status={entry.status}
-                            label={t(
-                              entry.status === "active"
-                                ? "classes.active"
-                                : "classes.paused",
-                            )}
-                          />
-                          {t(
+                        <ClassStatusIndicator
+                          status={entry.status}
+                          label={t(
                             entry.status === "active"
                               ? "classes.active"
                               : "classes.paused",
                           )}
-                        </span>
+                        />
                       )}
                     </td>
                     <td
@@ -293,20 +262,14 @@ export function ClassesTable({
         </table>
       </div>
       {entryToPause ? (
-        <ConfirmDialog
+        <PauseClassPlanDialog
+          entry={entryToPause}
           open={Boolean(entryToPause)}
           onOpenChange={closePauseDialog}
-          title={t("classes.pauseClassTitle")}
-          body={getPauseDescription(
-            entryToPause,
-            getUpcomingBookingCount(entryToPause.id),
-            t,
-          )}
-          cancelLabel={t("classes.keepActive")}
-          confirmLabel={isPausing ? t("classes.pausing") : t("classes.pause")}
-          tone="neutral"
+          summary={getUpcomingSessionSummary(entryToPause.id)}
+          isPausing={isPausing}
+          pauseError={pauseError}
           onConfirm={confirmPause}
-          confirmDisabled={isPausing}
           contentProps={{
             onCloseAutoFocus: (event) => {
               const entryId = lastPauseEntryIdRef.current;
@@ -316,13 +279,7 @@ export function ClassesTable({
               lastPauseEntryIdRef.current = null;
             },
           }}
-        >
-          {pauseError ? (
-            <p className="text-sm text-destructive" role="alert">
-              {pauseError}
-            </p>
-          ) : null}
-        </ConfirmDialog>
+        />
       ) : null}
     </div>
   );
