@@ -84,6 +84,15 @@ export const en = {
   "classes.pause": "Pause class",
   "classes.activate": "Activate",
   "classes.pauseClassTitle": "Pause class",
+  "classes.pausePlanTitle": "Pause {name} – {schedule} {time}?",
+  "classes.pausePlanStopsNewBookings": "New bookings will not be accepted.",
+  "classes.pausePlanExistingBookingsUnaffected":
+    "Existing bookings are not affected.",
+  "classes.pausePlanUpcomingBookingsWarning":
+    "This plan has {bookingCount} reservations across {sessionCount} upcoming sessions.",
+  "classes.pausePlanCancelSessionsPrefix":
+    "If you will not run these sessions, you need to cancel them separately.",
+  "classes.pausePlanViewUpcomingSessions": "View upcoming sessions",
   "classes.pauseWithBookings": "This class has {count} upcoming bookings.",
   "classes.pauseDescription":
     '"{name}" will be paused and new bookings will not be accepted.\nExisting bookings will not be affected.',
@@ -104,6 +113,13 @@ export const en = {
   "weekday.short.friday": "Fri",
   "weekday.short.saturday": "Sat",
   "weekday.short.sunday": "Sun",
+  "weekday.long.monday": "Monday",
+  "weekday.long.tuesday": "Tuesday",
+  "weekday.long.wednesday": "Wednesday",
+  "weekday.long.thursday": "Thursday",
+  "weekday.long.friday": "Friday",
+  "weekday.long.saturday": "Saturday",
+  "weekday.long.sunday": "Sunday",
   "toast.capacityChanged": "Capacity changed from {from} to {to}",
   "toast.instructorChanged": "Instructor is now {instructor}",
   "toast.classChangesSaved": "Class changes saved",

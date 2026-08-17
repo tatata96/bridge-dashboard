@@ -15,3 +15,13 @@ export const weekdayShortLabelKeys = {
   saturday: "weekday.short.saturday",
   sunday: "weekday.short.sunday",
 } satisfies Record<Weekday, TranslationKey>;
+
+export const weekdayLongLabelKeys = {
+  monday: "weekday.long.monday",
+  tuesday: "weekday.long.tuesday",
+  wednesday: "weekday.long.wednesday",
+  thursday: "weekday.long.thursday",
+  friday: "weekday.long.friday",
+  saturday: "weekday.long.saturday",
+  sunday: "weekday.long.sunday",
+} satisfies Record<Weekday, TranslationKey>;

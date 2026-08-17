@@ -69,9 +69,15 @@ export function ConfirmDialog({
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           {body ? (
-            <DialogDescription className="whitespace-pre-line">
-              {body}
-            </DialogDescription>
+            typeof body === "string" ? (
+              <DialogDescription className="whitespace-pre-line">
+                {body}
+              </DialogDescription>
+            ) : (
+              <DialogDescription asChild>
+                <div className="text-sm text-muted-foreground">{body}</div>
+              </DialogDescription>
+            )
           ) : null}
         </DialogHeader>
 

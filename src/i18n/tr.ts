@@ -87,6 +87,15 @@ export const tr = {
   "classes.pause": "Dersi duraklat",
   "classes.activate": "Aktifleştir",
   "classes.pauseClassTitle": "Dersi duraklat",
+  "classes.pausePlanTitle": "{name} – {schedule} {time} duraklatılsın mı?",
+  "classes.pausePlanStopsNewBookings": "Yeni rezervasyon alınmayacak.",
+  "classes.pausePlanExistingBookingsUnaffected":
+    "Mevcut rezervasyonlar etkilenmez.",
+  "classes.pausePlanUpcomingBookingsWarning":
+    " Bu planın {sessionCount} yaklaşan seansında {bookingCount} rezervasyon var.",
+  "classes.pausePlanCancelSessionsPrefix":
+    "Bu seansları yapmayacaksanız ayrıca iptal etmeniz gerekir.",
+  "classes.pausePlanViewUpcomingSessions": "Yaklaşan seansları gör",
   "classes.pauseWithBookings": "Bu derste {count} yaklaşan rezervasyon var.",
   "classes.pauseDescription":
     '"{name}" duraklatılacak ve yeni rezervasyon alınmayacak.\nMevcut rezervasyonlar etkilenmez.',
@@ -107,6 +116,13 @@ export const tr = {
   "weekday.short.friday": "Cum",
   "weekday.short.saturday": "Cmt",
   "weekday.short.sunday": "Paz",
+  "weekday.long.monday": "Pazartesi",
+  "weekday.long.tuesday": "Salı",
+  "weekday.long.wednesday": "Çarşamba",
+  "weekday.long.thursday": "Perşembe",
+  "weekday.long.friday": "Cuma",
+  "weekday.long.saturday": "Cumartesi",
+  "weekday.long.sunday": "Pazar",
   "toast.capacityChanged": "Kapasite {from} değerinden {to} değerine değişti",
   "toast.instructorChanged": "Eğitmen artık {instructor}",
   "toast.classChangesSaved": "Ders değişiklikleri kaydedildi",

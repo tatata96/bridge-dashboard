@@ -89,16 +89,21 @@ export function ClassPlansPage() {
     });
   }
 
-  function getUpcomingBookingCount(entryId: string) {
+  function getUpcomingSessionSummary(entryId: string) {
     const now = Date.now();
+    const upcomingSessions = mockClassSessions.filter(
+      (session) =>
+        session.classId === entryId &&
+        new Date(session.startAt).getTime() > now,
+    );
 
-    return mockClassSessions
-      .filter(
-        (session) =>
-          session.classId === entryId &&
-          new Date(session.startAt).getTime() > now,
-      )
-      .reduce((count, session) => count + session.reservedCount, 0);
+    return {
+      sessionCount: upcomingSessions.length,
+      bookingCount: upcomingSessions.reduce(
+        (count, session) => count + session.reservedCount,
+        0,
+      ),
+    };
   }
 
   return (
@@ -117,7 +122,7 @@ export function ClassPlansPage() {
           onEditEntry={editEntry}
           onPauseEntry={pauseEntry}
           onActivateEntry={activateEntry}
-          getUpcomingBookingCount={getUpcomingBookingCount}
+          getUpcomingSessionSummary={getUpcomingSessionSummary}
           isFiltering={isFiltering}
           onClearFilters={clearFilters}
         />
