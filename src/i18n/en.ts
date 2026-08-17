@@ -162,7 +162,7 @@ export const en = {
     "You're editing this session only · Manage the full series in **Class Plans**",
   "modal.notifyAttendees": "This change will be sent to {n} attendees.",
   "modal.notifyAttendees_one": "This change will be sent to 1 attendee.",
-  "class.edit": "Edit this class",
+  "class.edit": "Edit this session",
   "class.editDescription": "Update the staff or capacity for this session.",
   "class.editAppliesToSingleSession":
     "Changes here apply only to this scheduled class.",

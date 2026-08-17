@@ -165,7 +165,7 @@ export const tr = {
     "Yalnızca bu seansı düzenliyorsunuz · Tüm seri için **Ders Planları**",
   "modal.notifyAttendees": "Bu değişiklik {n} katılımcıya bildirilecek.",
   "modal.notifyAttendees_one": "Bu değişiklik 1 katılımcıya bildirilecek.",
-  "class.edit": "Bu dersi düzenle",
+  "class.edit": "Bu seansı düzenle",
   "class.editDescription":
     "Bu seans için personeli veya kapasiteyi güncelleyin.",
   "class.editAppliesToSingleSession":
