@@ -140,7 +140,7 @@ export const mockClassSessions: ClassSession[] = [
     classId: "class-8",
     instructorId: "instructor-1",
     startAt: atTime(tomorrow, 9, 30).toISOString(),
-    durationMinutes: 50,
+    durationMinutes: 45,
     capacity: 9,
     reservedCount: 7,
   },

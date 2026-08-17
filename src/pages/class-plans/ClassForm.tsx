@@ -13,7 +13,6 @@ import { getUniqueClassesByName } from "@/classes/utils/classes.utils";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
 import { InfoNotice } from "@/components/ui/info-notice";
-import { Input } from "@/components/ui/input";
 import { NumberStepper } from "@/components/ui/number-stepper";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
@@ -58,6 +57,7 @@ const startTimeOptions = Array.from(
 ).sort();
 const uniqueClasses = getUniqueClassesByName(mockClasses);
 const noStaffValue = "none";
+const durationOptions = [30, 45, 60, 75, 90] as const;
 
 function getFirstClassDate(startDate: Date, repeatOn: Weekday[]) {
   if (repeatOn.length === 0) return null;
@@ -370,17 +370,28 @@ export function ClassFormPage() {
                     </Select>
                   </div>
 
-                  <label className="flex min-w-0 flex-col gap-4 text-sm font-medium text-muted-foreground">
-                    {t("classes.durationMinutes")}
-                    <Input
-                      type="number"
-                      min={1}
-                      value={durationMinutes}
-                      onChange={(event) =>
-                        setDurationMinutes(Number(event.currentTarget.value))
+                  <div className="flex min-w-0 flex-col gap-4">
+                    <span className="text-sm font-medium text-muted-foreground">
+                      {t("classes.durationMinutes")}
+                    </span>
+                    <Select
+                      value={String(durationMinutes)}
+                      onValueChange={(value) =>
+                        setDurationMinutes(Number(value))
                       }
-                    />
-                  </label>
+                    >
+                      <SelectTrigger className="h-9 w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {durationOptions.map((duration) => (
+                          <SelectItem key={duration} value={String(duration)}>
+                            {duration} {t("schedule.minuteShort")}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
 
