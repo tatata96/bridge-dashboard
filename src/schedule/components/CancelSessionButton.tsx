@@ -80,7 +80,7 @@ export function CancelSessionButton({
         handleOpenChange(false);
       }}
     >
-      <ClassSessionSummary entry={entry} />
+      <ClassSessionSummary entry={entry} showDate />
 
       <label className="flex flex-col gap-1.5 text-sm">
         <span className="text-xs font-medium text-muted-foreground">
