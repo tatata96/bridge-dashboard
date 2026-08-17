@@ -86,6 +86,7 @@ export function ClassFormPage() {
   );
   const isEditMode = Boolean(classId);
   const isRecurringClassPlan = classToEdit?.schedule.type === "recurring";
+  const isClassTypeLocked = isEditMode;
 
   const [classType, setClassType] = useState<ClassSchedule["type"]>(
     () => classToEdit?.schedule.type ?? "recurring",
@@ -129,6 +130,9 @@ export function ClassFormPage() {
     classType === "one_time" ? t("classes.date") : t("classes.startDate");
   const sessionCardClassId = classToEdit?.id ?? selectedClassId;
   const canPauseClass = isEditMode && classToEdit?.status === "active";
+  const classTypeOptionClassName = isClassTypeLocked
+    ? "flex cursor-not-allowed items-center gap-2 text-sm font-medium text-muted-foreground"
+    : "flex cursor-pointer items-center gap-2 text-sm font-medium text-foreground";
   const recurrenceSummary = useMemo(() => {
     if (classType !== "recurring") return null;
 
@@ -181,6 +185,12 @@ export function ClassFormPage() {
 
   function handleSave() {
     navigate(getPagePath("classes"));
+  }
+
+  function handleClassTypeChange(value: string) {
+    if (isClassTypeLocked) return;
+
+    setClassType(value as ClassSchedule["type"]);
   }
 
   function closePauseDialog(open: boolean) {
@@ -261,16 +271,15 @@ export function ClassFormPage() {
                   </legend>
                   <RadioGroup
                     value={classType}
-                    onValueChange={(value) =>
-                      setClassType(value as ClassSchedule["type"])
-                    }
+                    onValueChange={handleClassTypeChange}
+                    disabled={isClassTypeLocked}
                     className="flex w-fit grid-cols-none flex-wrap gap-6"
                   >
-                    <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-foreground">
+                    <label className={classTypeOptionClassName}>
                       <RadioGroupItem value="recurring" />
                       {t("classes.recurring")}
                     </label>
-                    <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-foreground">
+                    <label className={classTypeOptionClassName}>
                       <RadioGroupItem value="one_time" />
                       {t("classes.oneTime")}
                     </label>
