@@ -75,6 +75,12 @@ export const en = {
   "classes.className": "Class name",
   "classes.staff": "Staff",
   "classes.repeatOn": "Repeat on",
+  "classes.recurrenceSummaryPrimary": "Every {days} · {timeRange}",
+  "classes.recurrenceSummaryDates": "From {startDate} · {endDate}",
+  "classes.recurrenceSummaryEndDate": "until {endDate}",
+  "classes.recurrenceSummaryNoDays":
+    "Select repeat days to preview this schedule.",
+  "classes.recurrenceSummaryNoEndDate": "no end date",
   "classes.status": "Status",
   "classes.active": "Active",
   "classes.paused": "Paused",

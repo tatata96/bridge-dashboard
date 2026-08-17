@@ -6,6 +6,26 @@ export const classStatusLabelKeys = {
   paused: "classes.paused",
 } satisfies Record<ClassStatus, TranslationKey>;
 
+export const weekdays: Weekday[] = [
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+  "sunday",
+];
+
+export const weekdayIndexes = {
+  sunday: 0,
+  monday: 1,
+  tuesday: 2,
+  wednesday: 3,
+  thursday: 4,
+  friday: 5,
+  saturday: 6,
+} satisfies Record<Weekday, number>;
+
 export const weekdayShortLabelKeys = {
   monday: "weekday.short.monday",
   tuesday: "weekday.short.tuesday",

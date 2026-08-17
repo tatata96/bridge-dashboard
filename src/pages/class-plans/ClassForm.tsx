@@ -23,9 +23,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  weekdayIndexes,
+  weekdayShortLabelKeys,
+  weekdays,
+} from "@/config/class-labels";
 import { getPagePath } from "@/config/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/i18n/i18n";
+import {
+  addMinutes,
+  dateFromTimeString,
+  dateFromYmdString,
+  formatShortDateWithYear,
+  formatTime,
+  formatTimeRange,
+} from "@/lib/date.utils";
 import {
   mockClassSessions,
   mockInstructors,
@@ -46,19 +59,20 @@ const startTimeOptions = Array.from(
 const uniqueClasses = getUniqueClassesByName(mockClasses);
 const noStaffValue = "none";
 
-function parseClassDate(value: string) {
-  const [year, month, day] = value.split("-").map(Number);
-  return new Date(year, month - 1, day);
-}
+function getFirstClassDate(startDate: Date, repeatOn: Weekday[]) {
+  if (repeatOn.length === 0) return null;
 
-function formatTimeLabel(value: string, locale: string) {
-  const [hours = "0", minutes = "0"] = value.split(":");
-  const date = new Date();
-  date.setHours(Number(hours), Number(minutes), 0, 0);
-  return new Intl.DateTimeFormat(locale, {
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(date);
+  const selectedWeekdayIndexes = repeatOn.map((day) => weekdayIndexes[day]);
+  const daysUntilNextClass = selectedWeekdayIndexes.reduce(
+    (nearestOffset, weekdayIndex) => {
+      const offset = (weekdayIndex - startDate.getDay() + 7) % 7;
+      return Math.min(nearestOffset, offset);
+    },
+    6,
+  );
+  const firstClassDate = new Date(startDate);
+  firstClassDate.setDate(startDate.getDate() + daysUntilNextClass);
+  return firstClassDate;
 }
 
 export function ClassFormPage() {
@@ -84,7 +98,7 @@ export function ClassFormPage() {
   );
   const [startDate, setStartDate] = useState(() =>
     classToEdit
-      ? parseClassDate(
+      ? dateFromYmdString(
           classToEdit.schedule.type === "one_time"
             ? classToEdit.schedule.date
             : classToEdit.schedule.startDate,
@@ -93,7 +107,7 @@ export function ClassFormPage() {
   );
   const [endDate, setEndDate] = useState<Date | null>(() =>
     classToEdit?.schedule.type === "recurring" && classToEdit.schedule.endDate
-      ? parseClassDate(classToEdit.schedule.endDate)
+      ? dateFromYmdString(classToEdit.schedule.endDate)
       : null,
   );
   const [repeatOn, setRepeatOn] = useState<Weekday[]>(() =>
@@ -115,6 +129,51 @@ export function ClassFormPage() {
     classType === "one_time" ? t("classes.date") : t("classes.startDate");
   const sessionCardClassId = classToEdit?.id ?? selectedClassId;
   const canPauseClass = isEditMode && classToEdit?.status === "active";
+  const recurrenceSummary = useMemo(() => {
+    if (classType !== "recurring") return null;
+
+    const orderedRepeatOn = weekdays.filter((day) => repeatOn.includes(day));
+    if (orderedRepeatOn.length === 0) {
+      return { message: t("classes.recurrenceSummaryNoDays") };
+    }
+
+    const firstClassDate = getFirstClassDate(startDate, orderedRepeatOn);
+    if (!firstClassDate) {
+      return { message: t("classes.recurrenceSummaryNoDays") };
+    }
+
+    const days = orderedRepeatOn
+      .map((day) => t(weekdayShortLabelKeys[day]))
+      .join(", ");
+
+    return {
+      primary: t("classes.recurrenceSummaryPrimary", {
+        days,
+        timeRange: formatTimeRange(
+          dateFromTimeString(startTime),
+          addMinutes(dateFromTimeString(startTime), durationMinutes),
+          dateLocale,
+        ),
+      }),
+      secondary: t("classes.recurrenceSummaryDates", {
+        startDate: formatShortDateWithYear(firstClassDate, dateLocale),
+        endDate: endDate
+          ? t("classes.recurrenceSummaryEndDate", {
+              endDate: formatShortDateWithYear(endDate, dateLocale),
+            })
+          : t("classes.recurrenceSummaryNoEndDate"),
+      }),
+    };
+  }, [
+    classType,
+    dateLocale,
+    durationMinutes,
+    endDate,
+    repeatOn,
+    startDate,
+    startTime,
+    t,
+  ]);
 
   if (isEditMode && !classToEdit) {
     return <Navigate to={getPagePath("classes")} replace />;
@@ -264,6 +323,22 @@ export function ClassFormPage() {
                       {t("classes.repeatOn")}
                     </legend>
                     <WeekdaySelector value={repeatOn} onChange={setRepeatOn} />
+                    {recurrenceSummary ? (
+                      <p className="text-sm leading-6 text-muted-foreground">
+                        {"message" in recurrenceSummary ? (
+                          recurrenceSummary.message
+                        ) : (
+                          <>
+                            <span className="block">
+                              {recurrenceSummary.primary}
+                            </span>
+                            <span className="block">
+                              {recurrenceSummary.secondary}
+                            </span>
+                          </>
+                        )}
+                      </p>
+                    ) : null}
                   </fieldset>
                 )}
 
@@ -279,7 +354,7 @@ export function ClassFormPage() {
                       <SelectContent>
                         {startTimeOptions.map((time) => (
                           <SelectItem key={time} value={time}>
-                            {formatTimeLabel(time, dateLocale)}
+                            {formatTime(dateFromTimeString(time), dateLocale)}
                           </SelectItem>
                         ))}
                       </SelectContent>
