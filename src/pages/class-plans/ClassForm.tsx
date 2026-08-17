@@ -2,9 +2,12 @@ import { useMemo, useState } from "react";
 import { ArrowLeftIcon } from "lucide-react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 
+import { PauseClassPlanDialog } from "@/classes/components/PauseClassPlanDialog";
 import { ClassSessionsCard } from "@/classes/components/ClassSessionsCard";
 import { mockClasses } from "@/classes/data/classes.mock-data";
 import { WeekdaySelector } from "@/classes/components/WeekdaySelector";
+import { getUpcomingSessionSummary } from "@/classes/utils/class-sessions.utils";
+import { saveClassStatus } from "@/classes/utils/class-status.utils";
 import { getUniqueClassesByName } from "@/classes/utils/classes.utils";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
@@ -20,8 +23,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getPagePath } from "@/config/navigation";
+import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/i18n/i18n";
-import { mockInstructors } from "@/schedule/data/schedule.mock-data";
+import {
+  mockClassSessions,
+  mockInstructors,
+} from "@/schedule/data/schedule.mock-data";
 import type { ClassSchedule, Weekday } from "@/types/classes";
 
 // TODO: make logical time options list
@@ -55,6 +62,7 @@ function formatTimeLabel(value: string, locale: string) {
 
 export function ClassFormPage() {
   const { t, dateLocale } = useI18n();
+  const { toast } = useToast();
   const navigate = useNavigate();
   const { classId } = useParams();
   const classToEdit = useMemo(
@@ -99,9 +107,13 @@ export function ClassFormPage() {
     () => classToEdit?.durationMinutes ?? 60,
   );
   const [capacity, setCapacity] = useState(() => classToEdit?.capacity ?? 1);
+  const [isPauseDialogOpen, setIsPauseDialogOpen] = useState(false);
+  const [isPausing, setIsPausing] = useState(false);
+  const [pauseError, setPauseError] = useState<string | null>(null);
   const dateLabel =
     classType === "one_time" ? t("classes.date") : t("classes.startDate");
   const sessionCardClassId = classToEdit?.id ?? selectedClassId;
+  const canPauseClass = isEditMode && classToEdit?.status === "active";
 
   if (isEditMode && !classToEdit) {
     return <Navigate to={getPagePath("classes")} replace />;
@@ -109,6 +121,32 @@ export function ClassFormPage() {
 
   function handleSave() {
     navigate(getPagePath("classes"));
+  }
+
+  function closePauseDialog(open: boolean) {
+    setIsPauseDialogOpen(open);
+    if (!open) {
+      setPauseError(null);
+    }
+  }
+
+  async function confirmPause() {
+    if (!classToEdit) return;
+
+    setIsPausing(true);
+    setPauseError(null);
+
+    try {
+      await saveClassStatus(classToEdit.id, "paused");
+      toast({ title: t("toast.classPaused") });
+      navigate(getPagePath("classes"), {
+        state: { pausedClassId: classToEdit.id },
+      });
+    } catch {
+      setPauseError(t("classes.pauseError"));
+    } finally {
+      setIsPausing(false);
+    }
   }
 
   return (
@@ -314,6 +352,19 @@ export function ClassFormPage() {
             </div>
 
             <div className="mt-8 flex justify-end gap-2 border-t border-border pt-4">
+              {canPauseClass ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="h-9"
+                  onClick={() => {
+                    setPauseError(null);
+                    setIsPauseDialogOpen(true);
+                  }}
+                >
+                  {t("classes.pause")}
+                </Button>
+              ) : null}
               <Button type="button" className="h-9" onClick={handleSave}>
                 {t("common.save")}
               </Button>
@@ -323,6 +374,17 @@ export function ClassFormPage() {
           <ClassSessionsCard classId={sessionCardClassId} />
         </div>
       </div>
+      {classToEdit && canPauseClass ? (
+        <PauseClassPlanDialog
+          entry={classToEdit}
+          open={isPauseDialogOpen}
+          onOpenChange={closePauseDialog}
+          summary={getUpcomingSessionSummary(mockClassSessions, classToEdit.id)}
+          isPausing={isPausing}
+          pauseError={pauseError}
+          onConfirm={confirmPause}
+        />
+      ) : null}
     </main>
   );
 }

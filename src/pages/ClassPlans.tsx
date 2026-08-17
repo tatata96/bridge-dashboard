@@ -1,9 +1,11 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { ClassesTable } from "@/classes/components/ClassesTable";
 import { ClassesToolbar } from "@/classes/components/ClassesToolbar";
 import { mockClasses } from "@/classes/data/classes.mock-data";
+import { getUpcomingSessionSummary } from "@/classes/utils/class-sessions.utils";
+import { saveClassStatus } from "@/classes/utils/class-status.utils";
 import { getPagePath } from "@/config/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/i18n/i18n";
@@ -20,9 +22,21 @@ const DEFAULT_FILTERS: ClassFilters = {
 
 export function ClassPlansPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const { t } = useI18n();
-  const [classes, setClasses] = useState(() => mockClasses);
+  const returnedPausedClassId = (
+    location.state as { pausedClassId?: string } | null
+  )?.pausedClassId;
+  const [classes, setClasses] = useState(() =>
+    returnedPausedClassId
+      ? mockClasses.map((classItem) =>
+          classItem.id === returnedPausedClassId
+            ? { ...classItem, status: "paused" as const }
+            : classItem,
+        )
+      : mockClasses,
+  );
   const [filters, setFilters] = useState<ClassFilters>(DEFAULT_FILTERS);
 
   const isFiltering =
@@ -66,6 +80,12 @@ export function ClassPlansPage() {
     );
   }
 
+  useEffect(() => {
+    if (!returnedPausedClassId) return;
+
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location.pathname, navigate, returnedPausedClassId]);
+
   async function pauseEntry(entryId: string) {
     updateClassStatus(entryId, "paused");
 
@@ -89,23 +109,6 @@ export function ClassPlansPage() {
     });
   }
 
-  function getUpcomingSessionSummary(entryId: string) {
-    const now = Date.now();
-    const upcomingSessions = mockClassSessions.filter(
-      (session) =>
-        session.classId === entryId &&
-        new Date(session.startAt).getTime() > now,
-    );
-
-    return {
-      sessionCount: upcomingSessions.length,
-      bookingCount: upcomingSessions.reduce(
-        (count, session) => count + session.reservedCount,
-        0,
-      ),
-    };
-  }
-
   return (
     <main className="flex h-[calc(100svh-var(--header-height))] min-w-0 flex-col gap-4 overflow-hidden p-4">
       <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col gap-4">
@@ -122,17 +125,13 @@ export function ClassPlansPage() {
           onEditEntry={editEntry}
           onPauseEntry={pauseEntry}
           onActivateEntry={activateEntry}
-          getUpcomingSessionSummary={getUpcomingSessionSummary}
+          getUpcomingSessionSummary={(entryId) =>
+            getUpcomingSessionSummary(mockClassSessions, entryId)
+          }
           isFiltering={isFiltering}
           onClearFilters={clearFilters}
         />
       </div>
     </main>
   );
-}
-
-async function saveClassStatus(entryId: string, status: "active" | "paused") {
-  void entryId;
-  void status;
-  await new Promise((resolve) => window.setTimeout(resolve, 300));
 }

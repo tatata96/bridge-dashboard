@@ -1,8 +1,10 @@
 import { useRef, useState } from "react";
 import { MoreHorizontalIcon } from "lucide-react";
-import { Link } from "react-router-dom";
 
-import { ConfirmDialog } from "@/components/ConfirmDialog";
+import {
+  PauseClassPlanDialog,
+  type UpcomingSessionSummary,
+} from "@/classes/components/PauseClassPlanDialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,21 +12,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  weekdayLongLabelKeys,
-  weekdayShortLabelKeys,
-} from "@/config/class-labels";
-import { getPagePath } from "@/config/navigation";
+import { weekdayShortLabelKeys } from "@/config/class-labels";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/classnames.utils";
 import type { ClassStatus } from "@/types/classes";
 import type { ClassPlan } from "@/types/classes";
 import type { Instructor } from "@/types/schedule";
-
-type UpcomingSessionSummary = {
-  sessionCount: number;
-  bookingCount: number;
-};
 
 function getInstructorName(
   instructorId: string | null,
@@ -51,58 +44,6 @@ function StatusIcon({ status, label }: { status: ClassStatus; label: string }) {
           : "border border-muted-foreground",
       )}
     />
-  );
-}
-
-function getPauseScheduleLabel(
-  entry: ClassPlan,
-  t: ReturnType<typeof useI18n>["t"],
-) {
-  if (entry.schedule.type === "recurring") {
-    return entry.schedule.repeatOn
-      .map((weekday) => t(weekdayLongLabelKeys[weekday]))
-      .join("/");
-  }
-
-  return entry.schedule.date;
-}
-
-function getPauseTitle(entry: ClassPlan, t: ReturnType<typeof useI18n>["t"]) {
-  return t("classes.pausePlanTitle", {
-    name: entry.name,
-    schedule: getPauseScheduleLabel(entry, t),
-    time: entry.startTime,
-  });
-}
-
-function PauseDescription({ summary }: { summary: UpcomingSessionSummary }) {
-  const { t } = useI18n();
-
-  return (
-    <div className="space-y-3">
-      <div className="space-y-1">
-        <p>{t("classes.pausePlanStopsNewBookings")}</p>
-        <p>{t("classes.pausePlanExistingBookingsUnaffected")}</p>
-      </div>
-      {summary.bookingCount > 0 ? (
-        <p>
-          {t("classes.pausePlanUpcomingBookingsWarning", {
-            sessionCount: summary.sessionCount,
-            bookingCount: summary.bookingCount,
-          })}
-        </p>
-      ) : null}
-      <p>
-        {t("classes.pausePlanCancelSessionsPrefix")} <br />
-        <span aria-hidden="true">→</span>{" "}
-        <Link
-          to={getPagePath("schedule")}
-          className="font-semibold text-primary underline underline-offset-4"
-        >
-          {t("classes.pausePlanViewUpcomingSessions")}
-        </Link>
-      </p>
-    </div>
   );
 }
 
@@ -343,20 +284,14 @@ export function ClassesTable({
         </table>
       </div>
       {entryToPause ? (
-        <ConfirmDialog
+        <PauseClassPlanDialog
+          entry={entryToPause}
           open={Boolean(entryToPause)}
           onOpenChange={closePauseDialog}
-          title={getPauseTitle(entryToPause, t)}
-          body={
-            <PauseDescription
-              summary={getUpcomingSessionSummary(entryToPause.id)}
-            />
-          }
-          cancelLabel={t("classes.keepActive")}
-          confirmLabel={isPausing ? t("classes.pausing") : t("classes.pause")}
-          tone="neutral"
+          summary={getUpcomingSessionSummary(entryToPause.id)}
+          isPausing={isPausing}
+          pauseError={pauseError}
           onConfirm={confirmPause}
-          confirmDisabled={isPausing}
           contentProps={{
             onCloseAutoFocus: (event) => {
               const entryId = lastPauseEntryIdRef.current;
@@ -366,13 +301,7 @@ export function ClassesTable({
               lastPauseEntryIdRef.current = null;
             },
           }}
-        >
-          {pauseError ? (
-            <p className="text-sm text-destructive" role="alert">
-              {pauseError}
-            </p>
-          ) : null}
-        </ConfirmDialog>
+        />
       ) : null}
     </div>
   );
