@@ -49,6 +49,7 @@ export const tr = {
   "classes.noInstructorAssigned": "Eğitmen atanmamış",
   "classes.unknownInstructor": "Bilinmeyen eğitmen",
   "classes.addClass": "Ders planı ekle",
+  "classes.editAction": "Düzenle",
   "classes.editClass": "Ders planını düzenle",
   "classes.editAppliesToAll":
     "Değişiklikler bu plandaki tüm derslere uygulanır.",

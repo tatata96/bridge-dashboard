@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import {
   weekdayIndexes,
+  weekdayLongLabelKeys,
   weekdayShortLabelKeys,
   weekdays,
 } from "@/config/class-labels";
@@ -128,8 +129,21 @@ export function ClassFormPage() {
   const [pauseError, setPauseError] = useState<string | null>(null);
   const dateLabel =
     classType === "one_time" ? t("classes.date") : t("classes.startDate");
-  const sessionCardClassId = classToEdit?.id ?? selectedClassId;
   const canPauseClass = isEditMode && classToEdit?.status === "active";
+  const formTitle = useMemo(() => {
+    if (!isEditMode || !classToEdit) return t("classes.addClass");
+
+    const schedule = classToEdit.schedule;
+    const scheduleLabel =
+      schedule.type === "recurring"
+        ? weekdays
+            .filter((day) => schedule.repeatOn.includes(day))
+            .map((day) => t(weekdayLongLabelKeys[day]))
+            .join("/")
+        : formatShortDateWithYear(dateFromYmdString(schedule.date), dateLocale);
+
+    return `${t("classes.editAction")} ${classToEdit.name} – ${scheduleLabel} ${classToEdit.startTime}`;
+  }, [classToEdit, dateLocale, isEditMode, t]);
   const classTypeOptionClassName = isClassTypeLocked
     ? "flex cursor-not-allowed items-center gap-2 text-sm font-medium text-muted-foreground"
     : "flex cursor-pointer items-center gap-2 text-sm font-medium text-foreground";
@@ -233,7 +247,7 @@ export function ClassFormPage() {
           <section className="min-h-80 w-full rounded-lg border border-border bg-background p-4 sm:p-6">
             <div className="flex items-center justify-between gap-4">
               <h2 className="text-base font-semibold text-foreground">
-                {isEditMode ? t("classes.editClass") : t("classes.addClass")}
+                {formTitle}
               </h2>
               {classToEdit ? (
                 <ClassStatusIndicator
@@ -479,7 +493,7 @@ export function ClassFormPage() {
             </div>
           </section>
 
-          <ClassSessionsCard classId={sessionCardClassId} />
+          {classToEdit ? <ClassSessionsCard classId={classToEdit.id} /> : null}
         </div>
       </div>
       {classToEdit && canPauseClass ? (

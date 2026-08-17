@@ -47,6 +47,7 @@ export const en = {
   "classes.noInstructorAssigned": "No instructor assigned",
   "classes.unknownInstructor": "Unknown instructor",
   "classes.addClass": "Add class plan",
+  "classes.editAction": "Edit",
   "classes.editClass": "Edit class plan",
   "classes.editAppliesToAll": "Changes apply to every class in this plan.",
   "classes.editSingleClassPrefix": "To change a single class, go to ",
