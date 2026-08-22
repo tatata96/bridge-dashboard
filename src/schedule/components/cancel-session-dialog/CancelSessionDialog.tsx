@@ -10,11 +10,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useI18n } from "@/i18n/i18n";
-import { ClassSessionSummary } from "@/schedule/components/ClassSessionSummary";
+import { ClassSessionSummary } from "@/schedule/components/session-detail-right-panel/ClassSessionSummary";
 import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
 import { cancellationReasons } from "@/schedule/constants/cancellation-reasons";
 
-export function CancelSessionButton({
+export function CancelSessionDialog({
   entry,
   onConfirm,
   open,

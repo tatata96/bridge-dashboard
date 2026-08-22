@@ -7,13 +7,13 @@ import {
   ScheduleClassList,
   type ScheduleListEntry,
 } from "@/schedule/components/ScheduleClassList";
-import { ScheduleDetailPanel } from "@/schedule/components/ScheduleDetailPanel";
+import { ScheduleDetailPanel } from "@/schedule/components/session-detail-right-panel/ScheduleDetailPanel";
 import {
   mockClassSessions,
   mockInstructors,
   mockReservations,
 } from "@/schedule/data/schedule.mock-data";
-import { ScheduleToolbar } from "@/schedule/components/ScheduleToolbar";
+import { ScheduleToolbar } from "@/schedule/components/session-detail-right-panel/ScheduleToolbar";
 import {
   classesById,
   getInstructorName,
