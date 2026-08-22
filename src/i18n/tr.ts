@@ -4,7 +4,6 @@ export const tr = {
   "common.comingSoon": "Yakında",
   "common.undo": "Geri al",
   "common.save": "Kaydet",
-  "common.freeze": "Dondur",
   "common.language": "Dil",
   "common.english": "İngilizce",
   "common.turkish": "Türkçe",
@@ -56,7 +55,6 @@ export const tr = {
   "classes.editSingleClassPrefix": "Tek bir dersi değiştirmek için ",
   "classes.editSingleClassLink": "Program'a gidin",
   "classes.editSingleClassSuffix": ".",
-  "classes.addClassDescription": "Ders detayları burada ayarlanacak.",
   "classes.backToClasses": "Ders planlarına dön",
   "classes.class": "Ders",
   "classes.classType": "Ders türü",
@@ -66,15 +64,9 @@ export const tr = {
   "classes.startDate": "Başlangıç tarihi",
   "classes.endDate": "Bitiş tarihi",
   "classes.noEndDate": "Bitiş tarihi yok",
-  "classes.previousStartDate": "Önceki başlangıç tarihi",
-  "classes.nextStartDate": "Sonraki başlangıç tarihi",
   "classes.startTime": "Başlangıç saati",
   "classes.durationMinutes": "Süre (dakika)",
   "classes.optional": "İsteğe bağlı",
-  "classes.selectStaff": "Personel seç",
-  "classes.selectClass": "Ders seçin",
-  "classes.selectClassDescription":
-    "Detaylarını görüntülemek ve düzenlemek için listeden bir ders seçin.",
   "classes.time": "Saat",
   "classes.className": "Ders adı",
   "classes.staff": "Personel",
@@ -93,21 +85,15 @@ export const tr = {
   "classes.entryActions": "{name} işlemleri",
   "classes.pause": "Dersi duraklat",
   "classes.activate": "Aktifleştir",
-  "classes.pauseClassTitle": "Dersi duraklat",
   "classes.pausePlanTitle": "Ders planı duraklatılsın mı?",
   "classes.pausePlanStopsNewBookings": "Yeni rezervasyon alınmayacak.",
   "classes.pausePlanExistingBookingsUnaffected":
     "Mevcut rezervasyonlar etkilenmez.",
   "classes.pausePlanReactivateAnytime":
     "İstediğiniz zaman yeniden aktifleştirebilirsiniz.",
-  "classes.pausePlanUpcomingBookingsWarning":
-    " Bu planın {sessionCount} yaklaşan seansında {bookingCount} rezervasyon var.",
   "classes.pausePlanCancelSessionsPrefix":
     "Yaklaşmakta olan seansları yapmayacaksanız ayrıca iptal etmeniz gerekir.",
   "classes.pausePlanViewUpcomingSessions": "Yaklaşan seansları gör",
-  "classes.pauseWithBookings": "Bu derste {count} yaklaşan rezervasyon var.",
-  "classes.pauseDescription":
-    '"{name}" duraklatılacak ve yeni rezervasyon alınmayacak.\nMevcut rezervasyonlar etkilenmez.',
   "classes.keepActive": "Aktif kalsın",
   "classes.pauseError": "Ders duraklatılamadı. Lütfen tekrar deneyin.",
   "classes.pausing": "Duraklatılıyor...",
@@ -171,11 +157,6 @@ export const tr = {
   "class.edit": "Seansı düzenle",
   "class.editDescription":
     "Bu seans için personeli veya kapasiteyi güncelleyin.",
-  "class.editAppliesToSingleSession":
-    "Buradaki değişiklikler yalnızca bu planlanmış derse uygulanır.",
-  "class.editRecurringPrefix": "Tüm tekrarlı dersleri değiştirmek için ",
-  "class.editRecurringLink": "Ders Planları'na gidin",
-  "class.editRecurringSuffix": ".",
   "class.instructor": "Eğitmen",
   "class.noStaff": "Personel belirtilmedi",
   "class.capacity": "Kapasite",
