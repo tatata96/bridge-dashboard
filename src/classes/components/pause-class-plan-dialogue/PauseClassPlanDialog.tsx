@@ -1,82 +1,52 @@
 import { Link } from "react-router-dom";
 
 import { ConfirmDialog } from "@/components/ConfirmDialog";
-import { weekdayLongLabelKeys } from "@/config/class-labels";
+import { InlineInfoNote } from "@/components/InlineInfoNote";
 import { getPagePath } from "@/config/navigation";
 import { useI18n } from "@/i18n/i18n";
-import type { ClassPlan } from "@/types/classes";
+import { ClassSessionSummary } from "@/schedule/components/session-detail-right-panel/ClassSessionSummary";
+import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
 
-export type UpcomingSessionSummary = {
-  sessionCount: number;
-  bookingCount: number;
-};
-
-function getPauseScheduleLabel(
-  entry: ClassPlan,
-  t: ReturnType<typeof useI18n>["t"],
-) {
-  if (entry.schedule.type === "recurring") {
-    return entry.schedule.repeatOn
-      .map((weekday) => t(weekdayLongLabelKeys[weekday]))
-      .join("/");
-  }
-
-  return entry.schedule.date;
-}
-
-function getPauseTitle(entry: ClassPlan, t: ReturnType<typeof useI18n>["t"]) {
-  return t("classes.pausePlanTitle", {
-    name: entry.name,
-    schedule: getPauseScheduleLabel(entry, t),
-    time: entry.startTime,
-  });
-}
-
-function PauseDescription({ summary }: { summary: UpcomingSessionSummary }) {
+function PauseDescription({
+  summaryEntry,
+}: {
+  summaryEntry: ScheduleListEntry;
+}) {
   const { t } = useI18n();
 
   return (
     <div className="space-y-3">
-      <div className="space-y-1">
-        <p>{t("classes.pausePlanStopsNewBookings")}</p>
-        <p>{t("classes.pausePlanExistingBookingsUnaffected")}</p>
+      <div className="flex flex-col gap-1">
+        <span>{t("classes.pausePlanStopsNewBookings")}</span>
+        <span>{t("classes.pausePlanExistingBookingsUnaffected")}</span>
+        <span>{t("classes.pausePlanReactivateAnytime")}</span>
       </div>
-      {summary.bookingCount > 0 ? (
-        <p>
-          {t("classes.pausePlanUpcomingBookingsWarning", {
-            sessionCount: summary.sessionCount,
-            bookingCount: summary.bookingCount,
-          })}
-        </p>
-      ) : null}
-      <p>
-        {t("classes.pausePlanCancelSessionsPrefix")} <br />
-        <span aria-hidden="true">→</span>{" "}
+      <ClassSessionSummary entry={summaryEntry} showDate />
+      <InlineInfoNote>
+        {t("classes.pausePlanCancelSessionsPrefix")}{" "}
         <Link
           to={getPagePath("schedule")}
-          className="font-semibold text-primary underline underline-offset-4"
+          className="font-medium text-foreground underline underline-offset-4"
         >
           {t("classes.pausePlanViewUpcomingSessions")}
         </Link>
-      </p>
+      </InlineInfoNote>
     </div>
   );
 }
 
 export function PauseClassPlanDialog({
-  entry,
   open,
   onOpenChange,
-  summary,
+  summaryEntry,
   isPausing,
   pauseError,
   onConfirm,
   contentProps,
 }: {
-  entry: ClassPlan;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  summary: UpcomingSessionSummary;
+  summaryEntry: ScheduleListEntry;
   isPausing: boolean;
   pauseError: string | null;
   onConfirm: () => void;
@@ -88,8 +58,8 @@ export function PauseClassPlanDialog({
     <ConfirmDialog
       open={open}
       onOpenChange={onOpenChange}
-      title={getPauseTitle(entry, t)}
-      body={<PauseDescription summary={summary} />}
+      title={t("classes.pausePlanTitle")}
+      body={<PauseDescription summaryEntry={summaryEntry} />}
       cancelLabel={t("classes.keepActive")}
       confirmLabel={isPausing ? t("classes.pausing") : t("classes.pause")}
       tone="neutral"

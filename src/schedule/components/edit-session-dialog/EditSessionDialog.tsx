@@ -2,6 +2,7 @@ import { useState } from "react";
 import { InfoIcon, PencilIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 
+import { InlineInfoNote } from "@/components/InlineInfoNote";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -94,19 +95,16 @@ export function EditSessionDialog({
 
         <ClassSessionSummary entry={entry} />
 
-        <p className="flex items-center gap-1.5 text-xs text-muted-foreground whitespace-nowrap">
-          <InfoIcon className="size-3.5 shrink-0" aria-hidden="true" />
-          <span>
-            {scopeNoticePrefix}
-            <Link
-              to={classPlanEditPath}
-              className="font-medium text-foreground underline underline-offset-4"
-            >
-              {scopeNoticeLink}
-            </Link>
-            {scopeNoticeSuffix}
-          </span>
-        </p>
+        <InlineInfoNote className="whitespace-nowrap">
+          {scopeNoticePrefix}
+          <Link
+            to={classPlanEditPath}
+            className="font-medium text-foreground underline underline-offset-4"
+          >
+            {scopeNoticeLink}
+          </Link>
+          {scopeNoticeSuffix}
+        </InlineInfoNote>
 
         <label className="flex flex-col gap-1.5 text-sm">
           <span className="text-xs font-medium text-muted-foreground">

@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ClassesTable } from "@/classes/components/ClassesTable";
 import { ClassesToolbar } from "@/classes/components/ClassesToolbar";
 import { mockClasses } from "@/classes/data/classes.mock-data";
-import { getUpcomingSessionSummary } from "@/classes/utils/class-sessions.utils";
+import { getClassPlanSummaryEntry } from "@/classes/utils/class-sessions.utils";
 import { saveClassStatus } from "@/classes/utils/class-status.utils";
 import { getPagePath } from "@/config/navigation";
 import { useToast } from "@/hooks/use-toast";
@@ -125,8 +125,14 @@ export function ClassPlansPage() {
           onEditEntry={editEntry}
           onPauseEntry={pauseEntry}
           onActivateEntry={activateEntry}
-          getUpcomingSessionSummary={(entryId) =>
-            getUpcomingSessionSummary(mockClassSessions, entryId)
+          getClassPlanSummaryEntry={(entry) =>
+            getClassPlanSummaryEntry(
+              entry,
+              mockClassSessions,
+              mockInstructors,
+              t("classes.noInstructorAssigned"),
+              t("classes.unknownInstructor"),
+            )
           }
           isFiltering={isFiltering}
           onClearFilters={clearFilters}

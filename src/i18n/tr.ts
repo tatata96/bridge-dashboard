@@ -94,10 +94,12 @@ export const tr = {
   "classes.pause": "Dersi duraklat",
   "classes.activate": "Aktifleştir",
   "classes.pauseClassTitle": "Dersi duraklat",
-  "classes.pausePlanTitle": "{name} – {schedule} {time} duraklatılsın mı?",
+  "classes.pausePlanTitle": "Ders planı duraklatılsın mı?",
   "classes.pausePlanStopsNewBookings": "Yeni rezervasyon alınmayacak.",
   "classes.pausePlanExistingBookingsUnaffected":
     "Mevcut rezervasyonlar etkilenmez.",
+  "classes.pausePlanReactivateAnytime":
+    "İstediğiniz zaman yeniden aktifleştirebilirsiniz.",
   "classes.pausePlanUpcomingBookingsWarning":
     " Bu planın {sessionCount} yaklaşan seansında {bookingCount} rezervasyon var.",
   "classes.pausePlanCancelSessionsPrefix":

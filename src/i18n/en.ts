@@ -91,10 +91,11 @@ export const en = {
   "classes.pause": "Pause class",
   "classes.activate": "Activate",
   "classes.pauseClassTitle": "Pause class",
-  "classes.pausePlanTitle": "Pause {name} – {schedule} {time}?",
+  "classes.pausePlanTitle": "Pause class plan?",
   "classes.pausePlanStopsNewBookings": "New bookings will not be accepted.",
   "classes.pausePlanExistingBookingsUnaffected":
     "Existing bookings are not affected.",
+  "classes.pausePlanReactivateAnytime": "You can reactivate anytime.",
   "classes.pausePlanUpcomingBookingsWarning":
     "This plan has {bookingCount} reservations across {sessionCount} upcoming sessions.",
   "classes.pausePlanCancelSessionsPrefix":
