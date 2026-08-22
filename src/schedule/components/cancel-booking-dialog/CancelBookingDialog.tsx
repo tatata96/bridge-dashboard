@@ -12,7 +12,7 @@ import { useI18n } from "@/i18n/i18n";
 import { cancellationReasons } from "@/schedule/constants/cancellation-reasons";
 import type { Reservation } from "@/types/schedule";
 
-export function CancelBookingModal({
+export function CancelBookingDialog({
   reservation,
   open,
   onOpenChange,

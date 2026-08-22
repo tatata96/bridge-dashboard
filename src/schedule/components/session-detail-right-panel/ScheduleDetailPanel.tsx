@@ -14,7 +14,7 @@ import { useI18n } from "@/i18n/i18n";
 import { formatTime } from "@/lib/date.utils";
 import { Bookings } from "@/schedule/components/session-detail-right-panel/Bookings";
 import { CancelSessionDialog } from "@/schedule/components/cancel-session-dialog/CancelSessionDialog";
-import { EditClassModal } from "@/schedule/components/edit-session-dialog/EditClassModal";
+import { EditSessionDialog } from "@/schedule/components/edit-session-dialog/EditSessionDialog";
 import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
 import type { Instructor, Reservation } from "@/types/schedule";
 
@@ -91,7 +91,7 @@ export function ScheduleDetailPanel({
           </span>
         ) : (
           <div className="flex flex-wrap items-center gap-1.5">
-            <EditClassModal
+            <EditSessionDialog
               entry={entry}
               instructors={instructors}
               onSave={onSaveClass}

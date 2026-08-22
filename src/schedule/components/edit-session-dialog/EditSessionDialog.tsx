@@ -29,7 +29,7 @@ import type { Instructor } from "@/types/schedule";
 
 const UNASSIGNED_INSTRUCTOR = "unassigned";
 
-export function EditClassModal({
+export function EditSessionDialog({
   entry,
   instructors,
   onSave,
@@ -57,12 +57,12 @@ export function EditClassModal({
   const spotLabel = t(spotsLeft === 1 ? "schedule.spot" : "schedule.spots");
   const notifyAttendeesMessage = t(
     session.reservedCount === 1
-      ? "modal.notifyAttendees_one"
-      : "modal.notifyAttendees",
+      ? "dialog.notifyAttendees_one"
+      : "dialog.notifyAttendees",
     { n: session.reservedCount },
   );
   const [scopeNoticePrefix, scopeNoticeLink, scopeNoticeSuffix] =
-    t("modal.scopeNotice").split("**");
+    t("dialog.scopeNotice").split("**");
   const classPlanEditPath = `${getPagePath("classes")}/${session.classId}/edit`;
 
   function handleOpenChange(nextOpen: boolean) {

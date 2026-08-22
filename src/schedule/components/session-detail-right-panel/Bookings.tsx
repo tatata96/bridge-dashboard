@@ -15,7 +15,7 @@ import {
   defaultAttendeesFilter,
   type AttendeesFilter,
 } from "@/schedule/types/attendees-filter.types";
-import { CancelBookingModal } from "@/schedule/components/cancel-booking-dialog/CancelBookingModal";
+import { CancelBookingDialog } from "@/schedule/components/cancel-booking-dialog/CancelBookingDialog";
 import type { Reservation } from "@/types/schedule";
 
 function matchesFilter(reservation: Reservation, filter: AttendeesFilter) {
@@ -175,7 +175,7 @@ function BookingRow({
           </DropdownMenu>
         ) : null}
 
-        <CancelBookingModal
+        <CancelBookingDialog
           reservation={reservation}
           open={cancelDialogOpen}
           onOpenChange={setCancelDialogOpen}

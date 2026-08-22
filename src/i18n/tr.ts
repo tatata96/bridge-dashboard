@@ -162,10 +162,10 @@ export const tr = {
   "filters.newUser": "Yeni kullanıcı",
   "filters.returningUser": "Tekrar gelen kullanıcı",
   "filters.clear": "Temizle",
-  "modal.scopeNotice":
+  "dialog.scopeNotice":
     "Yalnızca bu seansı düzenliyorsunuz · Tüm seri için **Ders Planları**",
-  "modal.notifyAttendees": "Bu değişiklik {n} katılımcıya bildirilecek.",
-  "modal.notifyAttendees_one": "Bu değişiklik 1 katılımcıya bildirilecek.",
+  "dialog.notifyAttendees": "Bu değişiklik {n} katılımcıya bildirilecek.",
+  "dialog.notifyAttendees_one": "Bu değişiklik 1 katılımcıya bildirilecek.",
   "class.edit": "Bu seansı düzenle",
   "class.editDescription":
     "Bu seans için personeli veya kapasiteyi güncelleyin.",

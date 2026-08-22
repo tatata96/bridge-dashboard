@@ -159,10 +159,10 @@ export const en = {
   "filters.newUser": "New user",
   "filters.returningUser": "Returning user",
   "filters.clear": "Clear",
-  "modal.scopeNotice":
+  "dialog.scopeNotice":
     "You're editing this session only · Manage the full series in **Class Plans**",
-  "modal.notifyAttendees": "This change will be sent to {n} attendees.",
-  "modal.notifyAttendees_one": "This change will be sent to 1 attendee.",
+  "dialog.notifyAttendees": "This change will be sent to {n} attendees.",
+  "dialog.notifyAttendees_one": "This change will be sent to 1 attendee.",
   "class.edit": "Edit this session",
   "class.editDescription": "Update the staff or capacity for this session.",
   "class.editAppliesToSingleSession":
