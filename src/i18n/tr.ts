@@ -10,6 +10,8 @@ export const tr = {
   "common.moreActions": "Diğer işlemler",
   "common.dismiss": "Kapat",
   "common.toggleSidebar": "Kenar çubuğunu aç/kapat",
+  "common.required": "Zorunlu",
+  "common.optional": "İsteğe bağlı",
   "nav.schedule": "Program",
   "nav.businessProfile": "İşletme profili",
   "nav.classes": "Ders planı",

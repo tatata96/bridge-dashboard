@@ -8,6 +8,8 @@ export const en = {
   "common.moreActions": "More actions",
   "common.dismiss": "Dismiss",
   "common.toggleSidebar": "Toggle sidebar",
+  "common.required": "Required",
+  "common.optional": "Optional",
   "nav.schedule": "Schedule",
   "nav.businessProfile": "Business profile",
   "nav.classes": "Class Plans",

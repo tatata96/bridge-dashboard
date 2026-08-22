@@ -37,6 +37,28 @@ const CONTACT_ICON_URLS = {
   x: xIconUrl,
 } satisfies Partial<Record<BusinessContactFieldId, string>>;
 
+function SectionHeader({
+  children,
+  description,
+  requirement,
+}: {
+  children: string;
+  description: string;
+  requirement: string;
+}) {
+  return (
+    <div className="flex min-w-0 items-start justify-between gap-4">
+      <div className="flex min-w-0 flex-col gap-1">
+        <h3 className="text-base font-semibold tracking-normal">{children}</h3>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </div>
+      <span className="shrink-0 pt-0.5 text-xs font-medium text-muted-foreground">
+        {requirement}
+      </span>
+    </div>
+  );
+}
+
 export function BusinessProfilePage() {
   const { t } = useI18n();
   const [description, setDescription] = useState("");
@@ -80,16 +102,14 @@ export function BusinessProfilePage() {
   }
 
   return (
-    <main className="flex min-w-0 flex-1 flex-col gap-4 p-4 sm:gap-6 sm:p-6">
-      <section className="flex w-full min-w-0 flex-col gap-3 rounded-lg border border-border bg-card p-4 lg:w-1/2">
-        <div className="flex min-w-0 flex-col gap-1">
-          <h3 className="text-base font-semibold tracking-normal">
-            {t("businessProfile.coverPhoto")}
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            {t("businessProfile.coverPhotoDescription")}
-          </p>
-        </div>
+    <main className="grid min-w-0 flex-1 grid-cols-1 items-start gap-4 p-4 sm:gap-6 sm:p-6 lg:grid-cols-2">
+      <section className="flex w-full min-w-0 flex-col gap-3 rounded-lg border border-border bg-card p-4">
+        <SectionHeader
+          description={t("businessProfile.coverPhotoDescription")}
+          requirement={t("common.required")}
+        >
+          {t("businessProfile.coverPhoto")}
+        </SectionHeader>
         <ImageUpload
           value={coverPhoto}
           onValueChange={setCoverPhoto}
@@ -101,15 +121,13 @@ export function BusinessProfilePage() {
         />
       </section>
 
-      <section className="flex w-full min-w-0 flex-col gap-3 rounded-lg border border-border bg-card p-4 lg:w-1/2">
-        <div className="flex min-w-0 flex-col gap-1">
-          <h3 className="text-base font-semibold tracking-normal">
-            {t("businessProfile.additionalPhotos")}
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            {t("businessProfile.additionalPhotosDescription")}
-          </p>
-        </div>
+      <section className="flex w-full min-w-0 flex-col gap-3 rounded-lg border border-border bg-card p-4">
+        <SectionHeader
+          description={t("businessProfile.additionalPhotosDescription")}
+          requirement={t("common.optional")}
+        >
+          {t("businessProfile.additionalPhotos")}
+        </SectionHeader>
         <ImageUpload
           value={additionalPhotos}
           onValueChange={setAdditionalPhotos}
@@ -122,15 +140,13 @@ export function BusinessProfilePage() {
         />
       </section>
 
-      <section className="flex w-full min-w-0 flex-col gap-3 rounded-lg border border-border bg-card p-4 lg:w-1/2">
-        <div className="flex min-w-0 flex-col gap-1">
-          <h3 className="text-base font-semibold tracking-normal">
-            {t("businessProfile.logo")}
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            {t("businessProfile.logoDescription")}
-          </p>
-        </div>
+      <section className="flex w-full min-w-0 flex-col gap-3 rounded-lg border border-border bg-card p-4">
+        <SectionHeader
+          description={t("businessProfile.logoDescription")}
+          requirement={t("common.required")}
+        >
+          {t("businessProfile.logo")}
+        </SectionHeader>
         <ImageUpload
           value={logo}
           onValueChange={setLogo}
@@ -142,15 +158,13 @@ export function BusinessProfilePage() {
         />
       </section>
 
-      <section className="flex w-full min-w-0 flex-col gap-3 rounded-lg border border-border bg-card p-4 lg:w-1/2">
-        <div className="flex min-w-0 flex-col gap-1">
-          <h3 className="text-base font-semibold tracking-normal">
-            {t("businessProfile.description")}
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            {t("businessProfile.descriptionHelp")}
-          </p>
-        </div>
+      <section className="flex w-full min-w-0 flex-col gap-3 rounded-lg border border-border bg-card p-4">
+        <SectionHeader
+          description={t("businessProfile.descriptionHelp")}
+          requirement={t("common.required")}
+        >
+          {t("businessProfile.description")}
+        </SectionHeader>
         <Textarea
           value={description}
           onChange={(event) => setDescription(event.target.value)}
@@ -170,15 +184,13 @@ export function BusinessProfilePage() {
         </p>
       </section>
 
-      <section className="flex w-full min-w-0 flex-col gap-3 rounded-lg border border-border bg-card p-4 lg:w-1/2">
-        <div className="flex min-w-0 flex-col gap-1">
-          <h3 className="text-base font-semibold tracking-normal">
-            {t("businessProfile.contacts")}
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            {t("businessProfile.contactsDescription")}
-          </p>
-        </div>
+      <section className="flex w-full min-w-0 flex-col gap-3 rounded-lg border border-border bg-card p-4">
+        <SectionHeader
+          description={t("businessProfile.contactsDescription")}
+          requirement={t("common.optional")}
+        >
+          {t("businessProfile.contacts")}
+        </SectionHeader>
         <div className="grid gap-3 sm:grid-cols-2">
           {BUSINESS_CONTACT_FIELDS.map((field) => (
             <div key={field.id} className="relative min-w-0">
@@ -209,15 +221,13 @@ export function BusinessProfilePage() {
         </div>
       </section>
 
-      <section className="flex w-full min-w-0 flex-col gap-3 rounded-lg border border-border bg-card p-4 lg:w-1/2">
-        <div className="flex min-w-0 flex-col gap-1">
-          <h3 className="text-base font-semibold tracking-normal">
-            {t("businessProfile.amenities")}
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            {t("businessProfile.amenitiesDescription")}
-          </p>
-        </div>
+      <section className="flex w-full min-w-0 flex-col gap-3 rounded-lg border border-border bg-card p-4">
+        <SectionHeader
+          description={t("businessProfile.amenitiesDescription")}
+          requirement={t("common.optional")}
+        >
+          {t("businessProfile.amenities")}
+        </SectionHeader>
         <div className="grid gap-2 sm:grid-cols-2">
           {BUSINESS_AMENITIES.map((amenity) => (
             <label
@@ -238,15 +248,13 @@ export function BusinessProfilePage() {
         </div>
       </section>
 
-      <section className="flex w-full min-w-0 flex-col gap-3 rounded-lg border border-border bg-card p-4 lg:w-1/2">
-        <div className="flex min-w-0 flex-col gap-1">
-          <h3 className="text-base font-semibold tracking-normal">
-            {t("businessProfile.reservationDeadline")}
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            {t("businessProfile.reservationDeadlineDescription")}
-          </p>
-        </div>
+      <section className="flex w-full min-w-0 flex-col gap-3 rounded-lg border border-border bg-card p-4">
+        <SectionHeader
+          description={t("businessProfile.reservationDeadlineDescription")}
+          requirement={t("common.required")}
+        >
+          {t("businessProfile.reservationDeadline")}
+        </SectionHeader>
         <Select
           value={reservationDeadline}
           onValueChange={(value) =>
