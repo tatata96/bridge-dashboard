@@ -7,13 +7,22 @@ import tiktokIconUrl from "@/assets/icons/tiktok.svg";
 import xIconUrl from "@/assets/icons/x.svg";
 import { ImageUpload } from "@/components/ImageUpload";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useI18n } from "@/i18n/i18n";
 import {
   BUSINESS_AMENITIES,
   BUSINESS_CONTACT_FIELDS,
+  RESERVATION_DEADLINE_OPTIONS,
   type BusinessAmenityId,
   type BusinessContactFieldId,
+  type ReservationDeadlineValue,
 } from "@/pages/business-profile/business-profile.constants";
 
 const DESCRIPTION_MAX_LENGTH = 3000;
@@ -35,6 +44,8 @@ export function BusinessProfilePage() {
     BusinessAmenityId[]
   >([]);
   const [contacts, setContacts] = useState(INITIAL_CONTACT_VALUES);
+  const [reservationDeadline, setReservationDeadline] =
+    useState<ReservationDeadlineValue>("12-hours");
   const [coverPhoto, setCoverPhoto] = useState<File[]>([]);
   const [additionalPhotos, setAdditionalPhotos] = useState<File[]>([]);
   const [logo, setLogo] = useState<File[]>([]);
@@ -225,6 +236,37 @@ export function BusinessProfilePage() {
             </label>
           ))}
         </div>
+      </section>
+
+      <section className="flex w-full min-w-0 flex-col gap-3 rounded-lg border border-border bg-card p-4 lg:w-1/2">
+        <div className="flex min-w-0 flex-col gap-1">
+          <h3 className="text-base font-semibold tracking-normal">
+            {t("businessProfile.reservationDeadline")}
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            {t("businessProfile.reservationDeadlineDescription")}
+          </p>
+        </div>
+        <Select
+          value={reservationDeadline}
+          onValueChange={(value) =>
+            setReservationDeadline(value as ReservationDeadlineValue)
+          }
+        >
+          <SelectTrigger
+            aria-label={t("businessProfile.reservationDeadline")}
+            className="w-36 rounded-lg bg-background"
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {RESERVATION_DEADLINE_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {t(option.labelKey)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </section>
     </main>
   );

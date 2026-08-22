@@ -70,3 +70,26 @@ export const BUSINESS_CONTACT_FIELDS = [
 
 export type BusinessContactFieldId =
   (typeof BUSINESS_CONTACT_FIELDS)[number]["id"];
+
+export const RESERVATION_DEADLINE_OPTIONS = [
+  { value: "5-min", labelKey: "businessProfile.reservationDeadline.5Min" },
+  { value: "15-min", labelKey: "businessProfile.reservationDeadline.15Min" },
+  { value: "30-min", labelKey: "businessProfile.reservationDeadline.30Min" },
+  { value: "1-hour", labelKey: "businessProfile.reservationDeadline.1Hour" },
+  { value: "2-hours", labelKey: "businessProfile.reservationDeadline.2Hours" },
+  { value: "6-hours", labelKey: "businessProfile.reservationDeadline.6Hours" },
+  {
+    value: "12-hours",
+    labelKey: "businessProfile.reservationDeadline.12Hours",
+  },
+  {
+    value: "24-hours",
+    labelKey: "businessProfile.reservationDeadline.24Hours",
+  },
+] as const satisfies {
+  value: string;
+  labelKey: TranslationKey;
+}[];
+
+export type ReservationDeadlineValue =
+  (typeof RESERVATION_DEADLINE_OPTIONS)[number]["value"];

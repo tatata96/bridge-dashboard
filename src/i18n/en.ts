@@ -51,6 +51,17 @@ export const en = {
   "businessProfile.amenity.wifi": "Wi-Fi",
   "businessProfile.amenity.showers": "Showers",
   "businessProfile.amenity.changingRooms": "Changing rooms",
+  "businessProfile.reservationDeadline": "Reservation deadline",
+  "businessProfile.reservationDeadlineDescription":
+    "Set a deadline for when members need to make reservations prior to start time.",
+  "businessProfile.reservationDeadline.5Min": "5 min",
+  "businessProfile.reservationDeadline.15Min": "15 min",
+  "businessProfile.reservationDeadline.30Min": "30 min",
+  "businessProfile.reservationDeadline.1Hour": "1 hour",
+  "businessProfile.reservationDeadline.2Hours": "2 hours",
+  "businessProfile.reservationDeadline.6Hours": "6 hours",
+  "businessProfile.reservationDeadline.12Hours": "12 hours",
+  "businessProfile.reservationDeadline.24Hours": "24 hours",
   "businessProfile.coverPhoto": "Add your cover photo",
   "businessProfile.coverPhotoDescription":
     "Upload one wide photo for the business profile header.",

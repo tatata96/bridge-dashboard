@@ -53,6 +53,17 @@ export const tr = {
   "businessProfile.amenity.wifi": "Wi-Fi",
   "businessProfile.amenity.showers": "Duşlar",
   "businessProfile.amenity.changingRooms": "Soyunma odaları",
+  "businessProfile.reservationDeadline": "Rezervasyon son tarihi",
+  "businessProfile.reservationDeadlineDescription":
+    "Üyelerin başlangıç saatinden ne kadar önce rezervasyon yapması gerektiğini belirleyin.",
+  "businessProfile.reservationDeadline.5Min": "5 dk",
+  "businessProfile.reservationDeadline.15Min": "15 dk",
+  "businessProfile.reservationDeadline.30Min": "30 dk",
+  "businessProfile.reservationDeadline.1Hour": "1 saat",
+  "businessProfile.reservationDeadline.2Hours": "2 saat",
+  "businessProfile.reservationDeadline.6Hours": "6 saat",
+  "businessProfile.reservationDeadline.12Hours": "12 saat",
+  "businessProfile.reservationDeadline.24Hours": "24 saat",
   "businessProfile.coverPhoto": "Kapak fotoğrafınızı ekleyin",
   "businessProfile.coverPhotoDescription":
     "İşletme profili başlığı için geniş formatta bir fotoğraf yükleyin.",
