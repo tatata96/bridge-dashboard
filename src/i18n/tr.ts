@@ -25,6 +25,19 @@ export const tr = {
   "businessProfile.descriptionPlaceholder":
     "Stüdyonuzu, derslerinizi, eğitmenlerinizi ve deneyimi özel kılan noktaları anlatın.",
   "businessProfile.descriptionCharacterCount": "{count}/{max} karakter",
+  "businessProfile.amenities": "Olanaklar",
+  "businessProfile.amenitiesDescription":
+    "İşletmenizde bulunan olanakları seçin.",
+  "businessProfile.amenity.carParking": "Otopark",
+  "businessProfile.amenity.prayerArea": "İbadet alanı",
+  "businessProfile.amenity.toilets": "Tuvaletler",
+  "businessProfile.amenity.lockers": "Dolaplar",
+  "businessProfile.amenity.ac": "Klima",
+  "businessProfile.amenity.wheelchairAccess": "Tekerlekli sandalye erişimi",
+  "businessProfile.amenity.childFriendlyArea": "Çocuk dostu alan",
+  "businessProfile.amenity.wifi": "Wi-Fi",
+  "businessProfile.amenity.showers": "Duşlar",
+  "businessProfile.amenity.changingRooms": "Soyunma odaları",
   "businessProfile.coverPhoto": "Kapak fotoğrafınızı ekleyin",
   "businessProfile.coverPhotoDescription":
     "İşletme profili başlığı için geniş formatta bir fotoğraf yükleyin.",

@@ -23,6 +23,19 @@ export const en = {
   "businessProfile.descriptionPlaceholder":
     "Describe your studio, classes, instructors, and what makes the experience distinct.",
   "businessProfile.descriptionCharacterCount": "{count}/{max} characters",
+  "businessProfile.amenities": "Amenities",
+  "businessProfile.amenitiesDescription":
+    "Select the facilities available at your business.",
+  "businessProfile.amenity.carParking": "Car parking",
+  "businessProfile.amenity.prayerArea": "Prayer area",
+  "businessProfile.amenity.toilets": "Toilets",
+  "businessProfile.amenity.lockers": "Lockers",
+  "businessProfile.amenity.ac": "AC",
+  "businessProfile.amenity.wheelchairAccess": "Wheelchair access",
+  "businessProfile.amenity.childFriendlyArea": "Child-friendly area",
+  "businessProfile.amenity.wifi": "Wi-Fi",
+  "businessProfile.amenity.showers": "Showers",
+  "businessProfile.amenity.changingRooms": "Changing rooms",
   "businessProfile.coverPhoto": "Add your cover photo",
   "businessProfile.coverPhotoDescription":
     "Upload one wide photo for the business profile header.",
