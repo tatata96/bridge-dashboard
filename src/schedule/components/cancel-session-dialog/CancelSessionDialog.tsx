@@ -1,7 +1,6 @@
-import { type ReactNode, useState } from "react";
+import { useState } from "react";
 
 import { ConfirmDialog } from "@/components/ConfirmDialog";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -19,13 +18,11 @@ export function CancelSessionDialog({
   onConfirm,
   open,
   onOpenChange,
-  trigger,
 }: {
   entry: ScheduleListEntry;
   onConfirm: (sessionId: string) => void;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  trigger?: ReactNode | null;
 }) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const [cancellationReason, setCancellationReason] = useState(
@@ -52,15 +49,6 @@ export function CancelSessionDialog({
     <ConfirmDialog
       open={open ?? uncontrolledOpen}
       onOpenChange={handleOpenChange}
-      trigger={
-        trigger === null
-          ? null
-          : (trigger ?? (
-              <Button type="button" variant="destructive-link" size="sm">
-                {t("class.cancelSession")}
-              </Button>
-            ))
-      }
       title={t("class.cancelQuestion")}
       body={
         attendeeCount > 0

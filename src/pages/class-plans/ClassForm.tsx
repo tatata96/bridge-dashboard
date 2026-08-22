@@ -4,7 +4,7 @@ import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 
 import { ClassStatusIndicator } from "@/classes/components/ClassStatusIndicator";
 import { ClassSessionsCard } from "@/classes/components/ClassSessionsCard";
-import { PauseClassPlanDialog } from "@/classes/components/PauseClassPlanDialog";
+import { PauseClassPlanDialog } from "@/classes/components/pause-class-plan-dialogue/PauseClassPlanDialog";
 import { mockClasses } from "@/classes/data/classes.mock-data";
 import { WeekdaySelector } from "@/classes/components/WeekdaySelector";
 import { getUpcomingSessionSummary } from "@/classes/utils/class-sessions.utils";

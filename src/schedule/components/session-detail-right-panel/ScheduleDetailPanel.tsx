@@ -123,7 +123,6 @@ export function ScheduleDetailPanel({
               onConfirm={onCancelSession}
               open={cancelSessionDialogOpen}
               onOpenChange={setCancelSessionDialogOpen}
-              trigger={null}
             />
           </div>
         )}

@@ -5,7 +5,7 @@ import { ClassStatusIndicator } from "@/classes/components/ClassStatusIndicator"
 import {
   PauseClassPlanDialog,
   type UpcomingSessionSummary,
-} from "@/classes/components/PauseClassPlanDialog";
+} from "@/classes/components/pause-class-plan-dialogue/PauseClassPlanDialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
