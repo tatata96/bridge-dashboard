@@ -1,10 +1,14 @@
 import { useState } from "react";
 
 import { ImageUpload } from "@/components/ImageUpload";
+import { Textarea } from "@/components/ui/textarea";
 import { useI18n } from "@/i18n/i18n";
+
+const DESCRIPTION_MAX_LENGTH = 3000;
 
 export function BusinessProfilePage() {
   const { t } = useI18n();
+  const [description, setDescription] = useState("");
   const [coverPhoto, setCoverPhoto] = useState<File[]>([]);
   const [additionalPhotos, setAdditionalPhotos] = useState<File[]>([]);
   const [logo, setLogo] = useState<File[]>([]);
@@ -82,6 +86,34 @@ export function BusinessProfilePage() {
             title: t("businessProfile.logoUpload"),
           }}
         />
+      </section>
+
+      <section className="flex w-full min-w-0 flex-col gap-3 rounded-lg border border-border bg-card p-4 lg:w-1/2">
+        <div className="flex min-w-0 flex-col gap-1">
+          <h3 className="text-base font-semibold tracking-normal">
+            {t("businessProfile.description")}
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            {t("businessProfile.descriptionHelp")}
+          </p>
+        </div>
+        <Textarea
+          value={description}
+          onChange={(event) => setDescription(event.target.value)}
+          maxLength={DESCRIPTION_MAX_LENGTH}
+          placeholder={t("businessProfile.descriptionPlaceholder")}
+          aria-describedby="business-profile-description-count"
+          className="min-h-40 resize-y"
+        />
+        <p
+          id="business-profile-description-count"
+          className="self-end text-sm text-muted-foreground"
+        >
+          {t("businessProfile.descriptionCharacterCount", {
+            count: description.length,
+            max: DESCRIPTION_MAX_LENGTH,
+          })}
+        </p>
       </section>
     </main>
   );

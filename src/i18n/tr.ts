@@ -19,6 +19,12 @@ export const tr = {
   "nav.ratingsAndReviews": "Puanlar ve yorumlar",
   "nav.support": "Destek",
   "nav.account": "Hesap",
+  "businessProfile.description": "Açıklama",
+  "businessProfile.descriptionHelp":
+    "İşletme profiliniz için kısa bir açıklama yazın.",
+  "businessProfile.descriptionPlaceholder":
+    "Stüdyonuzu, derslerinizi, eğitmenlerinizi ve deneyimi özel kılan noktaları anlatın.",
+  "businessProfile.descriptionCharacterCount": "{count}/{max} karakter",
   "businessProfile.coverPhoto": "Kapak fotoğrafınızı ekleyin",
   "businessProfile.coverPhotoDescription":
     "İşletme profili başlığı için geniş formatta bir fotoğraf yükleyin.",

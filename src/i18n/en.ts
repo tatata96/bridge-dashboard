@@ -17,6 +17,12 @@ export const en = {
   "nav.ratingsAndReviews": "Ratings & reviews",
   "nav.support": "Support",
   "nav.account": "Account",
+  "businessProfile.description": "Description",
+  "businessProfile.descriptionHelp":
+    "Write a short description for your business profile.",
+  "businessProfile.descriptionPlaceholder":
+    "Describe your studio, classes, instructors, and what makes the experience distinct.",
+  "businessProfile.descriptionCharacterCount": "{count}/{max} characters",
   "businessProfile.coverPhoto": "Add your cover photo",
   "businessProfile.coverPhotoDescription":
     "Upload one wide photo for the business profile header.",
