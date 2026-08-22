@@ -95,7 +95,7 @@ export function EditSessionDialog({
 
         <ClassSessionSummary entry={entry} />
 
-        <InfoNotice className="whitespace-nowrap">
+        <InfoNotice>
           <p>
             {scopeNoticePrefix}
             <Link

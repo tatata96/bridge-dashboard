@@ -99,7 +99,7 @@ export const en = {
   "classes.pausePlanUpcomingBookingsWarning":
     "This plan has {bookingCount} reservations across {sessionCount} upcoming sessions.",
   "classes.pausePlanCancelSessionsPrefix":
-    "If you will not run these sessions, you need to cancel them separately.",
+    "If you will not run the upcoming sessions, you need to cancel them separately.",
   "classes.pausePlanViewUpcomingSessions": "View upcoming sessions",
   "classes.pauseWithBookings": "This class has {count} upcoming bookings.",
   "classes.pauseDescription":
@@ -164,7 +164,7 @@ export const en = {
     "You're editing this session only · Manage the full series in **Class Plans**",
   "dialog.notifyAttendees": "This change will be sent to {n} attendees.",
   "dialog.notifyAttendees_one": "This change will be sent to 1 attendee.",
-  "class.edit": "Edit this session",
+  "class.edit": "Edit session",
   "class.editDescription": "Update the staff or capacity for this session.",
   "class.editAppliesToSingleSession":
     "Changes here apply only to this scheduled class.",

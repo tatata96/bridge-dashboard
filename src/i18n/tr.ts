@@ -103,7 +103,7 @@ export const tr = {
   "classes.pausePlanUpcomingBookingsWarning":
     " Bu planın {sessionCount} yaklaşan seansında {bookingCount} rezervasyon var.",
   "classes.pausePlanCancelSessionsPrefix":
-    "Bu seansları yapmayacaksanız ayrıca iptal etmeniz gerekir.",
+    "Yaklaşmakta olan seansları yapmayacaksanız ayrıca iptal etmeniz gerekir.",
   "classes.pausePlanViewUpcomingSessions": "Yaklaşan seansları gör",
   "classes.pauseWithBookings": "Bu derste {count} yaklaşan rezervasyon var.",
   "classes.pauseDescription":
@@ -168,7 +168,7 @@ export const tr = {
     "Yalnızca bu seansı düzenliyorsunuz · Tüm seri için **Ders Planları**",
   "dialog.notifyAttendees": "Bu değişiklik {n} katılımcıya bildirilecek.",
   "dialog.notifyAttendees_one": "Bu değişiklik 1 katılımcıya bildirilecek.",
-  "class.edit": "Bu seansı düzenle",
+  "class.edit": "Seansı düzenle",
   "class.editDescription":
     "Bu seans için personeli veya kapasiteyi güncelleyin.",
   "class.editAppliesToSingleSession":
