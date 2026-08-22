@@ -4,10 +4,10 @@ import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 
 import { ClassStatusIndicator } from "@/classes/components/ClassStatusIndicator";
 import { ClassSessionsCard } from "@/classes/components/ClassSessionsCard";
-import { PauseClassPlanDialog } from "@/classes/components/PauseClassPlanDialog";
+import { PauseClassPlanDialog } from "@/classes/components/pause-class-plan-dialogue/PauseClassPlanDialog";
 import { mockClasses } from "@/classes/data/classes.mock-data";
 import { WeekdaySelector } from "@/classes/components/WeekdaySelector";
-import { getUpcomingSessionSummary } from "@/classes/utils/class-sessions.utils";
+import { getClassPlanSummaryEntry } from "@/classes/utils/class-sessions.utils";
 import { saveClassStatus } from "@/classes/utils/class-status.utils";
 import { getUniqueClassesByName } from "@/classes/utils/classes.utils";
 import { Button } from "@/components/ui/button";
@@ -498,10 +498,15 @@ export function ClassFormPage() {
       </div>
       {classToEdit && canPauseClass ? (
         <PauseClassPlanDialog
-          entry={classToEdit}
           open={isPauseDialogOpen}
           onOpenChange={closePauseDialog}
-          summary={getUpcomingSessionSummary(mockClassSessions, classToEdit.id)}
+          summaryEntry={getClassPlanSummaryEntry(
+            classToEdit,
+            mockClassSessions,
+            mockInstructors,
+            t("classes.noInstructorAssigned"),
+            t("classes.unknownInstructor"),
+          )}
           isPausing={isPausing}
           pauseError={pauseError}
           onConfirm={confirmPause}

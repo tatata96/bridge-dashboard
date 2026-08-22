@@ -2,10 +2,7 @@ import { useRef, useState } from "react";
 import { MoreHorizontalIcon } from "lucide-react";
 
 import { ClassStatusIndicator } from "@/classes/components/ClassStatusIndicator";
-import {
-  PauseClassPlanDialog,
-  type UpcomingSessionSummary,
-} from "@/classes/components/PauseClassPlanDialog";
+import { PauseClassPlanDialog } from "@/classes/components/pause-class-plan-dialogue/PauseClassPlanDialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,6 +13,7 @@ import {
 import { weekdayShortLabelKeys } from "@/config/class-labels";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/classnames.utils";
+import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
 import type { ClassPlan } from "@/types/classes";
 import type { Instructor } from "@/types/schedule";
 
@@ -38,7 +36,7 @@ export function ClassesTable({
   onEditEntry,
   onPauseEntry,
   onActivateEntry,
-  getUpcomingSessionSummary,
+  getClassPlanSummaryEntry,
   isFiltering,
   onClearFilters,
 }: {
@@ -47,7 +45,7 @@ export function ClassesTable({
   onEditEntry: (entryId: string) => void;
   onPauseEntry: (entryId: string) => Promise<void>;
   onActivateEntry: (entryId: string) => void;
-  getUpcomingSessionSummary: (entryId: string) => UpcomingSessionSummary;
+  getClassPlanSummaryEntry: (entry: ClassPlan) => ScheduleListEntry;
   isFiltering: boolean;
   onClearFilters: () => void;
 }) {
@@ -263,10 +261,9 @@ export function ClassesTable({
       </div>
       {entryToPause ? (
         <PauseClassPlanDialog
-          entry={entryToPause}
           open={Boolean(entryToPause)}
           onOpenChange={closePauseDialog}
-          summary={getUpcomingSessionSummary(entryToPause.id)}
+          summaryEntry={getClassPlanSummaryEntry(entryToPause)}
           isPausing={isPausing}
           pauseError={pauseError}
           onConfirm={confirmPause}

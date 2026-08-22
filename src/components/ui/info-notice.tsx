@@ -16,7 +16,9 @@ function InfoNotice({ className, children, ...props }: ComponentProps<"div">) {
         className="mt-0.75 size-4 shrink-0 text-foreground"
         aria-hidden="true"
       />
-      <div className="min-w-0">{children}</div>
+      <div className="min-w-0 whitespace-normal wrap-break-word">
+        {children}
+      </div>
     </div>
   );
 }

@@ -10,12 +10,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/classnames.utils";
-import { AttendeesFilterPopover } from "@/schedule/components/AttendeesFilter";
+import { AttendeesFilterPopover } from "@/schedule/components/session-detail-right-panel/AttendeesFilter";
 import {
   defaultAttendeesFilter,
   type AttendeesFilter,
 } from "@/schedule/types/attendees-filter.types";
-import { CancelBookingModal } from "@/schedule/components/CancelBookingModal";
+import { CancelBookingDialog } from "@/schedule/components/cancel-booking-dialog/CancelBookingDialog";
 import type { Reservation } from "@/types/schedule";
 
 function matchesFilter(reservation: Reservation, filter: AttendeesFilter) {
@@ -175,7 +175,7 @@ function BookingRow({
           </DropdownMenu>
         ) : null}
 
-        <CancelBookingModal
+        <CancelBookingDialog
           reservation={reservation}
           open={cancelDialogOpen}
           onOpenChange={setCancelDialogOpen}

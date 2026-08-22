@@ -13,6 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { NumberStepper } from "@/components/ui/number-stepper";
+import { InfoNotice } from "@/components/ui/info-notice";
 import {
   Select,
   SelectContent,
@@ -23,13 +24,13 @@ import {
 import { getPagePath } from "@/config/navigation";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/classnames.utils";
-import { ClassSessionSummary } from "@/schedule/components/ClassSessionSummary";
+import { ClassSessionSummary } from "@/schedule/components/session-detail-right-panel/ClassSessionSummary";
 import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
 import type { Instructor } from "@/types/schedule";
 
 const UNASSIGNED_INSTRUCTOR = "unassigned";
 
-export function EditClassModal({
+export function EditSessionDialog({
   entry,
   instructors,
   onSave,
@@ -57,12 +58,12 @@ export function EditClassModal({
   const spotLabel = t(spotsLeft === 1 ? "schedule.spot" : "schedule.spots");
   const notifyAttendeesMessage = t(
     session.reservedCount === 1
-      ? "modal.notifyAttendees_one"
-      : "modal.notifyAttendees",
+      ? "dialog.notifyAttendees_one"
+      : "dialog.notifyAttendees",
     { n: session.reservedCount },
   );
   const [scopeNoticePrefix, scopeNoticeLink, scopeNoticeSuffix] =
-    t("modal.scopeNotice").split("**");
+    t("dialog.scopeNotice").split("**");
   const classPlanEditPath = `${getPagePath("classes")}/${session.classId}/edit`;
 
   function handleOpenChange(nextOpen: boolean) {
@@ -94,9 +95,8 @@ export function EditClassModal({
 
         <ClassSessionSummary entry={entry} />
 
-        <p className="flex items-center gap-1.5 text-xs text-muted-foreground whitespace-nowrap">
-          <InfoIcon className="size-3.5 shrink-0" aria-hidden="true" />
-          <span>
+        <InfoNotice>
+          <p>
             {scopeNoticePrefix}
             <Link
               to={classPlanEditPath}
@@ -105,8 +105,8 @@ export function EditClassModal({
               {scopeNoticeLink}
             </Link>
             {scopeNoticeSuffix}
-          </span>
-        </p>
+          </p>
+        </InfoNotice>
 
         <label className="flex flex-col gap-1.5 text-sm">
           <span className="text-xs font-medium text-muted-foreground">
