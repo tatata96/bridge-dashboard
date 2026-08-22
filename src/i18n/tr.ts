@@ -25,6 +25,21 @@ export const tr = {
   "businessProfile.descriptionPlaceholder":
     "Stüdyonuzu, derslerinizi, eğitmenlerinizi ve deneyimi özel kılan noktaları anlatın.",
   "businessProfile.descriptionCharacterCount": "{count}/{max} karakter",
+  "businessProfile.contacts": "İletişim",
+  "businessProfile.contactsDescription":
+    "İşletmeniz için herkese açık iletişim ve sosyal medya bağlantılarını ekleyin.",
+  "businessProfile.contact.phone": "Telefon numarası",
+  "businessProfile.contact.phonePlaceholder": "Telefon numarası",
+  "businessProfile.contact.website": "Website URL",
+  "businessProfile.contact.websitePlaceholder": "Website URL",
+  "businessProfile.contact.facebook": "Facebook URL",
+  "businessProfile.contact.facebookPlaceholder": "Facebook URL",
+  "businessProfile.contact.instagram": "Instagram",
+  "businessProfile.contact.instagramPlaceholder": "@ instagram",
+  "businessProfile.contact.x": "X",
+  "businessProfile.contact.xPlaceholder": "@ x",
+  "businessProfile.contact.tiktok": "TikTok",
+  "businessProfile.contact.tiktokPlaceholder": "@ tiktok",
   "businessProfile.amenities": "Olanaklar",
   "businessProfile.amenitiesDescription":
     "İşletmenizde bulunan olanakları seçin.",

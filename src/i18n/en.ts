@@ -23,6 +23,21 @@ export const en = {
   "businessProfile.descriptionPlaceholder":
     "Describe your studio, classes, instructors, and what makes the experience distinct.",
   "businessProfile.descriptionCharacterCount": "{count}/{max} characters",
+  "businessProfile.contacts": "Contacts",
+  "businessProfile.contactsDescription":
+    "Add the public contact and social links for your business.",
+  "businessProfile.contact.phone": "Phone number",
+  "businessProfile.contact.phonePlaceholder": "Phone number",
+  "businessProfile.contact.website": "Website URL",
+  "businessProfile.contact.websitePlaceholder": "Website URL",
+  "businessProfile.contact.facebook": "Facebook URL",
+  "businessProfile.contact.facebookPlaceholder": "Facebook URL",
+  "businessProfile.contact.instagram": "Instagram",
+  "businessProfile.contact.instagramPlaceholder": "@ instagram",
+  "businessProfile.contact.x": "X",
+  "businessProfile.contact.xPlaceholder": "@ x",
+  "businessProfile.contact.tiktok": "TikTok",
+  "businessProfile.contact.tiktokPlaceholder": "@ tiktok",
   "businessProfile.amenities": "Amenities",
   "businessProfile.amenitiesDescription":
     "Select the facilities available at your business.",
