@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 import { ConfirmDialog } from "@/components/ConfirmDialog";
-import { InlineInfoNote } from "@/components/InlineInfoNote";
+import { InfoNotice } from "@/components/ui/info-notice";
 import { getPagePath } from "@/config/navigation";
 import { useI18n } from "@/i18n/i18n";
 import { ClassSessionSummary } from "@/schedule/components/session-detail-right-panel/ClassSessionSummary";
@@ -18,19 +18,23 @@ function PauseDescription({
     <div className="space-y-3">
       <div className="flex flex-col gap-1">
         <span>{t("classes.pausePlanStopsNewBookings")}</span>
-        <span>{t("classes.pausePlanExistingBookingsUnaffected")}</span>
+        <span className="font-semibold">
+          {t("classes.pausePlanExistingBookingsUnaffected")}
+        </span>
         <span>{t("classes.pausePlanReactivateAnytime")}</span>
       </div>
       <ClassSessionSummary entry={summaryEntry} showDate />
-      <InlineInfoNote>
-        {t("classes.pausePlanCancelSessionsPrefix")}{" "}
-        <Link
-          to={getPagePath("schedule")}
-          className="font-medium text-foreground underline underline-offset-4"
-        >
-          {t("classes.pausePlanViewUpcomingSessions")}
-        </Link>
-      </InlineInfoNote>
+      <InfoNotice>
+        <p>
+          {t("classes.pausePlanCancelSessionsPrefix")}{" "}
+          <Link
+            to={getPagePath("schedule")}
+            className="font-medium text-foreground underline underline-offset-4"
+          >
+            {t("classes.pausePlanViewUpcomingSessions")}
+          </Link>
+        </p>
+      </InfoNotice>
     </div>
   );
 }

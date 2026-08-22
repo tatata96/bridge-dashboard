@@ -2,7 +2,6 @@ import { useState } from "react";
 import { InfoIcon, PencilIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import { InlineInfoNote } from "@/components/InlineInfoNote";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,6 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { NumberStepper } from "@/components/ui/number-stepper";
+import { InfoNotice } from "@/components/ui/info-notice";
 import {
   Select,
   SelectContent,
@@ -95,16 +95,18 @@ export function EditSessionDialog({
 
         <ClassSessionSummary entry={entry} />
 
-        <InlineInfoNote className="whitespace-nowrap">
-          {scopeNoticePrefix}
-          <Link
-            to={classPlanEditPath}
-            className="font-medium text-foreground underline underline-offset-4"
-          >
-            {scopeNoticeLink}
-          </Link>
-          {scopeNoticeSuffix}
-        </InlineInfoNote>
+        <InfoNotice className="whitespace-nowrap">
+          <p>
+            {scopeNoticePrefix}
+            <Link
+              to={classPlanEditPath}
+              className="font-medium text-foreground underline underline-offset-4"
+            >
+              {scopeNoticeLink}
+            </Link>
+            {scopeNoticeSuffix}
+          </p>
+        </InfoNotice>
 
         <label className="flex flex-col gap-1.5 text-sm">
           <span className="text-xs font-medium text-muted-foreground">
