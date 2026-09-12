@@ -5,11 +5,14 @@ import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { ClassStatusIndicator } from "@/classes/components/ClassStatusIndicator";
 import { ClassSessionsCard } from "@/classes/components/ClassSessionsCard";
 import { PauseClassPlanDialog } from "@/classes/components/pause-class-plan-dialogue/PauseClassPlanDialog";
-import { mockClasses } from "@/classes/data/classes.mock-data";
+import {
+  mockClassPlans,
+  mockClassTypes,
+  mockClassTypesById,
+} from "@/classes/data/classes.mock-data";
 import { WeekdaySelector } from "@/classes/components/WeekdaySelector";
 import { getClassPlanSummaryEntry } from "@/classes/utils/class-sessions.utils";
 import { saveClassStatus } from "@/classes/utils/class-status.utils";
-import { getUniqueClassesByName } from "@/classes/utils/classes.utils";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
 import { InfoNotice } from "@/components/ui/info-notice";
@@ -53,10 +56,9 @@ const startTimeOptions = Array.from(
     "09:00",
     "10:00",
     "18:00",
-    ...mockClasses.map((classItem) => classItem.startTime),
+    ...mockClassPlans.map((classPlan) => classPlan.startTime),
   ]),
 ).sort();
-const uniqueClasses = getUniqueClassesByName(mockClasses);
 const noStaffValue = "none";
 const durationOptions = [30, 45, 60, 75, 90] as const;
 
@@ -81,59 +83,65 @@ export function ClassFormPage() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { classId } = useParams();
-  const classToEdit = useMemo(
-    () => mockClasses.find((classItem) => classItem.id === classId) ?? null,
+  const classPlanToEdit = useMemo(
+    () => mockClassPlans.find((classPlan) => classPlan.id === classId) ?? null,
     [classId],
   );
+  const classTypeToEdit = classPlanToEdit
+    ? (mockClassTypesById.get(classPlanToEdit.classTypeId) ?? null)
+    : null;
   const isEditMode = Boolean(classId);
-  const isRecurringClassPlan = classToEdit?.schedule.type === "recurring";
+  const isRecurringClassPlan = classPlanToEdit?.schedule.type === "recurring";
   const isClassTypeLocked = isEditMode;
 
   const [classType, setClassType] = useState<ClassSchedule["type"]>(
-    () => classToEdit?.schedule.type ?? "recurring",
+    () => classPlanToEdit?.schedule.type ?? "recurring",
   );
-  const [selectedClassId, setSelectedClassId] = useState(
-    () => classToEdit?.id ?? uniqueClasses[0]?.id ?? "",
+  const [selectedClassTypeId, setSelectedClassTypeId] = useState(
+    () => classPlanToEdit?.classTypeId ?? mockClassTypes[0]?.id ?? "",
   );
   const [selectedStaffId, setSelectedStaffId] = useState(
-    () => classToEdit?.instructorId ?? noStaffValue,
+    () => classPlanToEdit?.instructorId ?? noStaffValue,
   );
   const [startDate, setStartDate] = useState(() =>
-    classToEdit
+    classPlanToEdit
       ? dateFromYmdString(
-          classToEdit.schedule.type === "one_time"
-            ? classToEdit.schedule.date
-            : classToEdit.schedule.startDate,
+          classPlanToEdit.schedule.type === "one_time"
+            ? classPlanToEdit.schedule.date
+            : classPlanToEdit.schedule.startDate,
         )
       : new Date(),
   );
   const [endDate, setEndDate] = useState<Date | null>(() =>
-    classToEdit?.schedule.type === "recurring" && classToEdit.schedule.endDate
-      ? dateFromYmdString(classToEdit.schedule.endDate)
+    classPlanToEdit?.schedule.type === "recurring" &&
+    classPlanToEdit.schedule.endDate
+      ? dateFromYmdString(classPlanToEdit.schedule.endDate)
       : null,
   );
   const [repeatOn, setRepeatOn] = useState<Weekday[]>(() =>
-    classToEdit?.schedule.type === "recurring"
-      ? classToEdit.schedule.repeatOn
+    classPlanToEdit?.schedule.type === "recurring"
+      ? classPlanToEdit.schedule.repeatOn
       : [],
   );
   const [startTime, setStartTime] = useState(
-    () => classToEdit?.startTime ?? "07:00",
+    () => classPlanToEdit?.startTime ?? "07:00",
   );
   const [durationMinutes, setDurationMinutes] = useState(
-    () => classToEdit?.durationMinutes ?? 60,
+    () => classPlanToEdit?.durationMinutes ?? 60,
   );
-  const [capacity, setCapacity] = useState(() => classToEdit?.capacity ?? 1);
+  const [capacity, setCapacity] = useState(
+    () => classPlanToEdit?.capacity ?? 1,
+  );
   const [isPauseDialogOpen, setIsPauseDialogOpen] = useState(false);
   const [isPausing, setIsPausing] = useState(false);
   const [pauseError, setPauseError] = useState<string | null>(null);
   const dateLabel =
     classType === "one_time" ? t("classes.date") : t("classes.startDate");
-  const canPauseClass = isEditMode && classToEdit?.status === "active";
+  const canPauseClassPlan = isEditMode && classPlanToEdit?.status === "active";
   const formTitle = useMemo(() => {
-    if (!isEditMode || !classToEdit) return t("classes.addClass");
+    if (!isEditMode || !classPlanToEdit) return t("classes.addClass");
 
-    const schedule = classToEdit.schedule;
+    const schedule = classPlanToEdit.schedule;
     const scheduleLabel =
       schedule.type === "recurring"
         ? weekdays
@@ -142,8 +150,8 @@ export function ClassFormPage() {
             .join("/")
         : formatShortDateWithYear(dateFromYmdString(schedule.date), dateLocale);
 
-    return `${t("classes.editAction")} ${classToEdit.name} – ${scheduleLabel} ${classToEdit.startTime}`;
-  }, [classToEdit, dateLocale, isEditMode, t]);
+    return `${t("classes.editAction")} ${classTypeToEdit?.name ?? t("schedule.unknownClass")} – ${scheduleLabel} ${classPlanToEdit.startTime}`;
+  }, [classPlanToEdit, classTypeToEdit, dateLocale, isEditMode, t]);
   const classTypeOptionClassName = isClassTypeLocked
     ? "flex cursor-not-allowed items-center gap-2 text-sm font-medium text-muted-foreground"
     : "flex cursor-pointer items-center gap-2 text-sm font-medium text-foreground";
@@ -193,7 +201,7 @@ export function ClassFormPage() {
     t,
   ]);
 
-  if (isEditMode && !classToEdit) {
+  if (isEditMode && !classPlanToEdit) {
     return <Navigate to={getPagePath("classes")} replace />;
   }
 
@@ -215,16 +223,16 @@ export function ClassFormPage() {
   }
 
   async function confirmPause() {
-    if (!classToEdit) return;
+    if (!classPlanToEdit) return;
 
     setIsPausing(true);
     setPauseError(null);
 
     try {
-      await saveClassStatus(classToEdit.id, "paused");
+      await saveClassStatus(classPlanToEdit.id, "paused");
       toast({ title: t("toast.classPaused") });
       navigate(getPagePath("classes"), {
-        state: { pausedClassId: classToEdit.id },
+        state: { pausedClassId: classPlanToEdit.id },
       });
     } catch {
       setPauseError(t("classes.pauseError"));
@@ -249,11 +257,11 @@ export function ClassFormPage() {
               <h2 className="text-base font-semibold text-foreground">
                 {formTitle}
               </h2>
-              {classToEdit ? (
+              {classPlanToEdit ? (
                 <ClassStatusIndicator
-                  status={classToEdit.status}
+                  status={classPlanToEdit.status}
                   label={t(
-                    classToEdit.status === "active"
+                    classPlanToEdit.status === "active"
                       ? "classes.active"
                       : "classes.paused",
                   )}
@@ -415,16 +423,16 @@ export function ClassFormPage() {
                     {t("classes.class")}
                   </span>
                   <Select
-                    value={selectedClassId}
-                    onValueChange={setSelectedClassId}
+                    value={selectedClassTypeId}
+                    onValueChange={setSelectedClassTypeId}
                   >
                     <SelectTrigger className="h-9 w-full">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {uniqueClasses.map((classItem) => (
-                        <SelectItem key={classItem.id} value={classItem.id}>
-                          {classItem.name}
+                      {mockClassTypes.map((classType) => (
+                        <SelectItem key={classType.id} value={classType.id}>
+                          {classType.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -474,7 +482,7 @@ export function ClassFormPage() {
             </div>
 
             <div className="mt-8 flex justify-end gap-2 border-t border-border pt-4">
-              {canPauseClass ? (
+              {canPauseClassPlan ? (
                 <Button
                   type="button"
                   variant="outline"
@@ -493,17 +501,21 @@ export function ClassFormPage() {
             </div>
           </section>
 
-          {classToEdit ? <ClassSessionsCard classId={classToEdit.id} /> : null}
+          {classPlanToEdit ? (
+            <ClassSessionsCard classPlanId={classPlanToEdit.id} />
+          ) : null}
         </div>
       </div>
-      {classToEdit && canPauseClass ? (
+      {classPlanToEdit && canPauseClassPlan ? (
         <PauseClassPlanDialog
           open={isPauseDialogOpen}
           onOpenChange={closePauseDialog}
           summaryEntry={getClassPlanSummaryEntry(
-            classToEdit,
+            classPlanToEdit,
             mockClassSessions,
             mockInstructors,
+            mockClassTypesById,
+            t("schedule.unknownClass"),
             t("classes.noInstructorAssigned"),
             t("classes.unknownInstructor"),
           )}

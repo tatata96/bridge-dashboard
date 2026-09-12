@@ -43,7 +43,7 @@ function getClassSessionSummary(sessions: ClassSession[]) {
   };
 }
 
-export function ClassSessionsCard({ classId }: { classId: string }) {
+export function ClassSessionsCard({ classPlanId }: { classPlanId: string }) {
   const { t, dateLocale } = useI18n();
   const now = new Date();
   const eightWeeksAgo = addDays(now, -56);
@@ -51,12 +51,12 @@ export function ClassSessionsCard({ classId }: { classId: string }) {
   const sessions = useMemo(
     () =>
       mockClassSessions
-        .filter((session) => session.classId === classId)
+        .filter((session) => session.classId === classPlanId)
         .sort(
           (a, b) =>
             new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
         ),
-    [classId],
+    [classPlanId],
   );
   const recentSessions = sessions.filter(
     (session) =>

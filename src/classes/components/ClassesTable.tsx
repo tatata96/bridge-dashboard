@@ -14,7 +14,7 @@ import { weekdayShortLabelKeys } from "@/config/class-labels";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/classnames.utils";
 import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
-import type { ClassPlan } from "@/types/classes";
+import type { ClassPlan, ClassType } from "@/types/classes";
 import type { Instructor } from "@/types/schedule";
 
 function getInstructorName(
@@ -36,6 +36,7 @@ export function ClassesTable({
   onEditEntry,
   onPauseEntry,
   onActivateEntry,
+  classTypesById,
   getClassPlanSummaryEntry,
   isFiltering,
   onClearFilters,
@@ -45,6 +46,7 @@ export function ClassesTable({
   onEditEntry: (entryId: string) => void;
   onPauseEntry: (entryId: string) => Promise<void>;
   onActivateEntry: (entryId: string) => void;
+  classTypesById: Map<ClassType["id"], ClassType>;
   getClassPlanSummaryEntry: (entry: ClassPlan) => ScheduleListEntry;
   isFiltering: boolean;
   onClearFilters: () => void;
@@ -137,6 +139,8 @@ export function ClassesTable({
               </tr>
             ) : (
               entries.map((entry) => {
+                const classType = classTypesById.get(entry.classTypeId);
+                const className = classType?.name ?? t("schedule.unknownClass");
                 const isPlaceholder = entry.id === "new-class";
                 const isPaused = entry.status === "paused";
                 const scheduleLabel =
@@ -158,7 +162,7 @@ export function ClassesTable({
                         isPaused ? "text-muted-foreground" : "text-foreground",
                       )}
                     >
-                      {entry.name}
+                      {className}
                     </td>
                     <td
                       className={cn(
@@ -218,7 +222,7 @@ export function ClassesTable({
                               variant="ghost"
                               size="icon-sm"
                               aria-label={t("classes.entryActions", {
-                                name: entry.name,
+                                name: className,
                               })}
                               aria-haspopup="menu"
                               aria-expanded={openMenuEntryId === entry.id}

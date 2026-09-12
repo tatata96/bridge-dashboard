@@ -1,12 +1,95 @@
-import type { ClassPlan } from "@/types/classes";
+import type { ClassPlan, ClassType } from "@/types/classes";
 
-export const mockClasses: ClassPlan[] = [
+export const mockClassTypes: ClassType[] = [
+  {
+    id: "class-type-advanced-crossfit",
+    name: "Advanced CrossFit",
+    categoryId: "crossfit",
+    description: "High-intensity strength and conditioning class.",
+  },
+  {
+    id: "class-type-basic-crossfit",
+    name: "Basic Crossfit",
+    categoryId: "crossfit",
+    description: "Beginner-friendly CrossFit fundamentals class.",
+  },
+  {
+    id: "class-type-salsa",
+    name: "Salsa",
+    categoryId: "dance",
+    description: "Partner dance class focused on salsa basics and rhythm.",
+  },
+  {
+    id: "class-type-morning-yoga",
+    name: "Morning Yoga",
+    categoryId: "yoga",
+    description: "Gentle mobility and breathing class for early mornings.",
+  },
+  {
+    id: "class-type-mobility-flow",
+    name: "Mobility Flow",
+    categoryId: "yoga",
+    description: "Joint prep, stretching, and recovery-focused movement.",
+  },
+  {
+    id: "class-type-strength-basics",
+    name: "Strength Basics",
+    categoryId: "crossfit",
+    description: "Foundational barbell technique and controlled strength work.",
+  },
+  {
+    id: "class-type-weekend-hiit",
+    name: "Weekend HIIT",
+    categoryId: "crossfit",
+    description: "Fast-paced interval training with bodyweight conditioning.",
+  },
+  {
+    id: "class-type-pilates-core",
+    name: "Pilates Core",
+    categoryId: "pilates",
+    description: "Core strength, posture, and low-impact control work.",
+  },
+  {
+    id: "class-type-boxing-conditioning",
+    name: "Boxing Conditioning",
+    categoryId: "boxing",
+    description: "Bag rounds, footwork, and conditioning circuits.",
+  },
+  {
+    id: "class-type-dance-cardio",
+    name: "Dance Cardio",
+    categoryId: "dance",
+    description: "Music-led cardio class built around simple choreography.",
+  },
+  {
+    id: "class-type-open-gym-skills",
+    name: "Open Gym Skills",
+    categoryId: "crossfit",
+    description: "Coach-supported skill practice and accessory work.",
+  },
+  {
+    id: "class-type-power-yoga",
+    name: "Power Yoga",
+    categoryId: "yoga",
+    description: "Stronger yoga sequence with balance and endurance work.",
+  },
+  {
+    id: "class-type-intro-workshop",
+    name: "Intro Workshop",
+    categoryId: "workshop",
+    description: "One-time intro session for new members.",
+  },
+];
+
+export const mockClassTypesById = new Map(
+  mockClassTypes.map((classType) => [classType.id, classType]),
+);
+
+export const mockClassPlans: ClassPlan[] = [
   {
     id: "class-1",
-    name: "Advanced CrossFit",
-    classTypeId: "crossfit",
+    classTypeId: "class-type-advanced-crossfit",
     status: "active",
-    description: "High-intensity strength and conditioning class.",
     instructorId: "instructor-1",
     schedule: {
       type: "recurring",
@@ -21,10 +104,8 @@ export const mockClasses: ClassPlan[] = [
   },
   {
     id: "class-2",
-    name: "Basic Crossfit",
-    classTypeId: "crossfit",
+    classTypeId: "class-type-basic-crossfit",
     status: "active",
-    description: "Beginner-friendly CrossFit fundamentals class.",
     instructorId: null,
     schedule: {
       type: "recurring",
@@ -39,10 +120,8 @@ export const mockClasses: ClassPlan[] = [
   },
   {
     id: "class-3",
-    name: "Salsa",
-    classTypeId: "dance",
+    classTypeId: "class-type-salsa",
     status: "paused",
-    description: "Partner dance class focused on salsa basics and rhythm.",
     instructorId: "instructor-1",
     schedule: {
       type: "recurring",
@@ -57,10 +136,8 @@ export const mockClasses: ClassPlan[] = [
   },
   {
     id: "class-4",
-    name: "Morning Yoga",
-    classTypeId: "yoga",
+    classTypeId: "class-type-morning-yoga",
     status: "active",
-    description: "Gentle mobility and breathing class for early mornings.",
     instructorId: "instructor-1",
     schedule: {
       type: "recurring",
@@ -75,10 +152,8 @@ export const mockClasses: ClassPlan[] = [
   },
   {
     id: "class-5",
-    name: "Mobility Flow",
-    classTypeId: "yoga",
+    classTypeId: "class-type-mobility-flow",
     status: "active",
-    description: "Joint prep, stretching, and recovery-focused movement.",
     instructorId: null,
     schedule: {
       type: "recurring",
@@ -93,10 +168,8 @@ export const mockClasses: ClassPlan[] = [
   },
   {
     id: "class-6",
-    name: "Strength Basics",
-    classTypeId: "crossfit",
+    classTypeId: "class-type-strength-basics",
     status: "active",
-    description: "Foundational barbell technique and controlled strength work.",
     instructorId: "instructor-1",
     schedule: {
       type: "recurring",
@@ -111,10 +184,8 @@ export const mockClasses: ClassPlan[] = [
   },
   {
     id: "class-7",
-    name: "Weekend HIIT",
-    classTypeId: "crossfit",
+    classTypeId: "class-type-weekend-hiit",
     status: "paused",
-    description: "Fast-paced interval training with bodyweight conditioning.",
     instructorId: null,
     schedule: {
       type: "recurring",
@@ -129,10 +200,8 @@ export const mockClasses: ClassPlan[] = [
   },
   {
     id: "class-8",
-    name: "Pilates Core",
-    classTypeId: "pilates",
+    classTypeId: "class-type-pilates-core",
     status: "active",
-    description: "Core strength, posture, and low-impact control work.",
     instructorId: "instructor-1",
     schedule: {
       type: "recurring",
@@ -147,10 +216,8 @@ export const mockClasses: ClassPlan[] = [
   },
   {
     id: "class-9",
-    name: "Boxing Conditioning",
-    classTypeId: "boxing",
+    classTypeId: "class-type-boxing-conditioning",
     status: "active",
-    description: "Bag rounds, footwork, and conditioning circuits.",
     instructorId: "instructor-1",
     schedule: {
       type: "recurring",
@@ -165,10 +232,8 @@ export const mockClasses: ClassPlan[] = [
   },
   {
     id: "class-10",
-    name: "Dance Cardio",
-    classTypeId: "dance",
+    classTypeId: "class-type-dance-cardio",
     status: "active",
-    description: "Music-led cardio class built around simple choreography.",
     instructorId: null,
     schedule: {
       type: "recurring",
@@ -183,10 +248,8 @@ export const mockClasses: ClassPlan[] = [
   },
   {
     id: "class-11",
-    name: "Open Gym Skills",
-    classTypeId: "crossfit",
+    classTypeId: "class-type-open-gym-skills",
     status: "active",
-    description: "Coach-supported skill practice and accessory work.",
     instructorId: "instructor-1",
     schedule: {
       type: "recurring",
@@ -201,10 +264,8 @@ export const mockClasses: ClassPlan[] = [
   },
   {
     id: "class-12",
-    name: "Power Yoga",
-    classTypeId: "yoga",
+    classTypeId: "class-type-power-yoga",
     status: "paused",
-    description: "Stronger yoga sequence with balance and endurance work.",
     instructorId: "instructor-1",
     schedule: {
       type: "recurring",
@@ -219,10 +280,8 @@ export const mockClasses: ClassPlan[] = [
   },
   {
     id: "class-13",
-    name: "Intro Workshop",
-    classTypeId: "workshop",
+    classTypeId: "class-type-intro-workshop",
     status: "active",
-    description: "One-time intro session for new members.",
     instructorId: null,
     schedule: {
       type: "one_time",
@@ -235,10 +294,8 @@ export const mockClasses: ClassPlan[] = [
   },
   {
     id: "class-14",
-    name: "Advanced CrossFit",
-    classTypeId: "crossfit",
+    classTypeId: "class-type-advanced-crossfit",
     status: "active",
-    description: "High-intensity strength and conditioning class.",
     instructorId: "instructor-1",
     schedule: {
       type: "recurring",
@@ -253,10 +310,8 @@ export const mockClasses: ClassPlan[] = [
   },
   {
     id: "class-15",
-    name: "Advanced CrossFit",
-    classTypeId: "crossfit",
+    classTypeId: "class-type-advanced-crossfit",
     status: "active",
-    description: "High-intensity strength and conditioning class.",
     instructorId: "instructor-1",
     schedule: {
       type: "recurring",
@@ -271,10 +326,8 @@ export const mockClasses: ClassPlan[] = [
   },
   {
     id: "class-16",
-    name: "Advanced CrossFit",
-    classTypeId: "crossfit",
+    classTypeId: "class-type-advanced-crossfit",
     status: "active",
-    description: "High-intensity strength and conditioning class.",
     instructorId: "instructor-1",
     schedule: {
       type: "recurring",

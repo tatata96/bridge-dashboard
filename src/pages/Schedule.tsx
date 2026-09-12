@@ -15,7 +15,8 @@ import {
 } from "@/schedule/data/schedule.mock-data";
 import { ScheduleToolbar } from "@/schedule/components/session-detail-right-panel/ScheduleToolbar";
 import {
-  classesById,
+  getClassPlanCategoryId,
+  getClassPlanName,
   getInstructorName,
   hasSessionEnded,
   hasSessionStarted,
@@ -38,7 +39,7 @@ export function SchedulePage() {
       .filter((session) => isSameDay(new Date(session.startAt), selectedDate))
       .filter((session) => {
         if (typeFilter === "all") return true;
-        return classesById.get(session.classId)?.classTypeId === typeFilter;
+        return getClassPlanCategoryId(session.classId) === typeFilter;
       })
       .sort(
         (a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
@@ -203,8 +204,7 @@ export function SchedulePage() {
   const entries: ScheduleListEntry[] = getVisibleSessions(sessions).map(
     (session) => ({
       session,
-      className:
-        classesById.get(session.classId)?.name ?? t("schedule.unknownClass"),
+      className: getClassPlanName(session.classId, t("schedule.unknownClass")),
       instructorName: getInstructorName(session.instructorId),
     }),
   );

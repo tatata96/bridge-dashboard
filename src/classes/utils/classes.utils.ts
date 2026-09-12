@@ -1,13 +1,39 @@
-import type { ClassPlan } from "@/types/classes";
+import { categories } from "@/config/class-types";
+import type { CategoryId } from "@/config/class-types";
+import type { ClassPlan, ClassType } from "@/types/classes";
 
-export function getUniqueClassesByName(classes: ClassPlan[]) {
-  const classesByName = new Map<string, ClassPlan>();
+export const categoriesById = new Map(
+  categories.map((category) => [category.id, category]),
+);
 
-  for (const classItem of classes) {
-    if (!classesByName.has(classItem.name)) {
-      classesByName.set(classItem.name, classItem);
-    }
-  }
+export function getClassType(
+  classTypeId: ClassType["id"],
+  classTypesById: Map<ClassType["id"], ClassType>,
+) {
+  return classTypesById.get(classTypeId) ?? null;
+}
 
-  return Array.from(classesByName.values());
+export function getClassPlanClassType(
+  classPlan: ClassPlan,
+  classTypesById: Map<ClassType["id"], ClassType>,
+) {
+  return getClassType(classPlan.classTypeId, classTypesById);
+}
+
+export function getClassPlanCategoryId(
+  classPlan: ClassPlan,
+  classTypesById: Map<ClassType["id"], ClassType>,
+): CategoryId | null {
+  return getClassPlanClassType(classPlan, classTypesById)?.categoryId ?? null;
+}
+
+export function getCategoryIdsForClassPlans(
+  classPlans: ClassPlan[],
+  classTypesById: Map<ClassType["id"], ClassType>,
+) {
+  return new Set(
+    classPlans
+      .map((classPlan) => getClassPlanCategoryId(classPlan, classTypesById))
+      .filter((categoryId): categoryId is CategoryId => Boolean(categoryId)),
+  );
 }

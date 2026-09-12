@@ -1,7 +1,7 @@
 import { weekdayIndexes } from "@/config/class-labels";
 import { atTime, dateFromYmdString } from "@/lib/date.utils";
 import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
-import type { ClassPlan } from "@/types/classes";
+import type { ClassPlan, ClassType } from "@/types/classes";
 import type { ClassSession } from "@/types/schedule";
 import type { Instructor } from "@/types/schedule";
 
@@ -75,6 +75,8 @@ export function getClassPlanSummaryEntry(
   entry: ClassPlan,
   sessions: ClassSession[],
   instructors: Instructor[],
+  classTypesById: Map<ClassType["id"], ClassType>,
+  unknownClassLabel: string,
   noInstructorLabel: string,
   unknownInstructorLabel: string,
 ): ScheduleListEntry {
@@ -103,7 +105,7 @@ export function getClassPlanSummaryEntry(
       capacity: entry.capacity,
       reservedCount: 0,
     },
-    className: entry.name,
+    className: classTypesById.get(entry.classTypeId)?.name ?? unknownClassLabel,
     instructorName,
   };
 }

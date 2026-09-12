@@ -3,9 +3,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { ClassesTable } from "@/classes/components/ClassesTable";
 import { ClassesToolbar } from "@/classes/components/ClassesToolbar";
-import { mockClasses } from "@/classes/data/classes.mock-data";
+import {
+  mockClassPlans,
+  mockClassTypesById,
+} from "@/classes/data/classes.mock-data";
 import { getClassPlanSummaryEntry } from "@/classes/utils/class-sessions.utils";
 import { saveClassStatus } from "@/classes/utils/class-status.utils";
+import { getClassPlanCategoryId } from "@/classes/utils/classes.utils";
 import { getPagePath } from "@/config/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/i18n/i18n";
@@ -16,7 +20,7 @@ import {
 import type { ClassFilters } from "@/types/classes";
 
 const DEFAULT_FILTERS: ClassFilters = {
-  classTypeId: "all",
+  categoryId: "all",
   instructorId: "all",
 };
 
@@ -28,33 +32,34 @@ export function ClassPlansPage() {
   const returnedPausedClassId = (
     location.state as { pausedClassId?: string } | null
   )?.pausedClassId;
-  const [classes, setClasses] = useState(() =>
+  const [classPlans, setClassPlans] = useState(() =>
     returnedPausedClassId
-      ? mockClasses.map((classItem) =>
-          classItem.id === returnedPausedClassId
-            ? { ...classItem, status: "paused" as const }
-            : classItem,
+      ? mockClassPlans.map((classPlan) =>
+          classPlan.id === returnedPausedClassId
+            ? { ...classPlan, status: "paused" as const }
+            : classPlan,
         )
-      : mockClasses,
+      : mockClassPlans,
   );
   const [filters, setFilters] = useState<ClassFilters>(DEFAULT_FILTERS);
 
   const isFiltering =
-    filters.classTypeId !== DEFAULT_FILTERS.classTypeId ||
+    filters.categoryId !== DEFAULT_FILTERS.categoryId ||
     filters.instructorId !== DEFAULT_FILTERS.instructorId;
 
-  const filteredEntries = classes.filter((classItem) => {
+  const filteredEntries = classPlans.filter((classPlan) => {
     if (
-      filters.classTypeId !== "all" &&
-      classItem.classTypeId !== filters.classTypeId
+      filters.categoryId !== "all" &&
+      getClassPlanCategoryId(classPlan, mockClassTypesById) !==
+        filters.categoryId
     ) {
       return false;
     }
     if (filters.instructorId === "none") {
-      return classItem.instructorId === null;
+      return classPlan.instructorId === null;
     }
     if (filters.instructorId !== "all") {
-      return classItem.instructorId === filters.instructorId;
+      return classPlan.instructorId === filters.instructorId;
     }
 
     return true;
@@ -73,9 +78,9 @@ export function ClassPlansPage() {
   }
 
   function updateClassStatus(entryId: string, status: "active" | "paused") {
-    setClasses((prev) =>
-      prev.map((classItem) =>
-        classItem.id === entryId ? { ...classItem, status } : classItem,
+    setClassPlans((prev) =>
+      prev.map((classPlan) =>
+        classPlan.id === entryId ? { ...classPlan, status } : classPlan,
       ),
     );
   }
@@ -113,7 +118,7 @@ export function ClassPlansPage() {
     <main className="flex h-[calc(100svh-var(--header-height))] min-w-0 flex-col gap-4 overflow-hidden p-4">
       <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col gap-4">
         <ClassesToolbar
-          classes={classes}
+          classPlans={classPlans}
           instructors={mockInstructors}
           filters={filters}
           onFilterChange={setFilters}
@@ -125,11 +130,14 @@ export function ClassPlansPage() {
           onEditEntry={editEntry}
           onPauseEntry={pauseEntry}
           onActivateEntry={activateEntry}
+          classTypesById={mockClassTypesById}
           getClassPlanSummaryEntry={(entry) =>
             getClassPlanSummaryEntry(
               entry,
               mockClassSessions,
               mockInstructors,
+              mockClassTypesById,
+              t("schedule.unknownClass"),
               t("classes.noInstructorAssigned"),
               t("classes.unknownInstructor"),
             )
