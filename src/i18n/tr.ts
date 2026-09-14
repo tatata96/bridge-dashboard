@@ -158,6 +158,9 @@ export const tr = {
   "classes.className": "Ders adı",
   "classes.staff": "Personel",
   "classes.repeatOn": "Tekrar günleri",
+  "classes.repeatOnRequired": "En az bir tekrar günü seçin.",
+  "classes.endDateBeforeStartDate":
+    "Bitiş tarihi başlangıç tarihinden önce olamaz.",
   "classes.recurrenceSummaryPrimary": "Her {days} · {timeRange}",
   "classes.recurrenceSummaryDates": "Başlangıç {startDate} · {endDate}",
   "classes.recurrenceSummaryEndDate": "{endDate} tarihine kadar",

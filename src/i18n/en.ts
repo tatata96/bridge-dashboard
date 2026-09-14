@@ -155,6 +155,8 @@ export const en = {
   "classes.className": "Class name",
   "classes.staff": "Staff",
   "classes.repeatOn": "Repeat on",
+  "classes.repeatOnRequired": "Select at least one repeat day.",
+  "classes.endDateBeforeStartDate": "End date cannot be before start date.",
   "classes.recurrenceSummaryPrimary": "Every {days} · {timeRange}",
   "classes.recurrenceSummaryDates": "From {startDate} · {endDate}",
   "classes.recurrenceSummaryEndDate": "until {endDate}",

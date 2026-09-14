@@ -64,6 +64,17 @@ const startTimeOptions = Array.from(
 const noStaffValue = "none";
 const durationOptions = [30, 45, 60, 75, 90] as const;
 
+type FormErrors = {
+  repeatOn?: string;
+  endDate?: string;
+};
+
+function withoutFormError(errors: FormErrors, key: keyof FormErrors) {
+  return Object.fromEntries(
+    Object.entries(errors).filter(([errorKey]) => errorKey !== key),
+  ) as FormErrors;
+}
+
 function getFirstClassDate(startDate: Date, repeatOn: Weekday[]) {
   if (repeatOn.length === 0) return null;
 
@@ -150,6 +161,7 @@ export function ClassFormPage() {
   const [capacity, setCapacity] = useState(
     () => classPlanToEdit?.capacity ?? 1,
   );
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isPauseDialogOpen, setIsPauseDialogOpen] = useState(false);
   const [isPausing, setIsPausing] = useState(false);
   const [pauseError, setPauseError] = useState<string | null>(null);
@@ -224,6 +236,24 @@ export function ClassFormPage() {
   }
 
   function handleSave() {
+    const nextErrors: FormErrors = {};
+
+    if (classType === "recurring") {
+      if (repeatOn.length === 0) {
+        nextErrors.repeatOn = t("classes.repeatOnRequired");
+      }
+
+      if (endDate && formatYmd(endDate) < formatYmd(startDate)) {
+        nextErrors.endDate = t("classes.endDateBeforeStartDate");
+      }
+    }
+
+    setFormErrors(nextErrors);
+
+    if (Object.keys(nextErrors).length > 0) {
+      return;
+    }
+
     const savedClassPlan: ClassPlan = {
       id: classPlanToEdit?.id ?? `class-${Date.now()}`,
       classTypeId: selectedClassTypeId,
@@ -255,6 +285,48 @@ export function ClassFormPage() {
     if (isClassTypeLocked) return;
 
     setClassType(value as ClassSchedule["type"]);
+    setFormErrors({});
+  }
+
+  function handleStartDateChange(date: Date | null) {
+    if (!date) return;
+
+    setStartDate(date);
+    setFormErrors((currentErrors) => {
+      if (
+        !currentErrors.endDate ||
+        (endDate && formatYmd(endDate) < formatYmd(date))
+      ) {
+        return currentErrors;
+      }
+
+      return withoutFormError(currentErrors, "endDate");
+    });
+  }
+
+  function handleEndDateChange(date: Date | null) {
+    setEndDate(date);
+    setFormErrors((currentErrors) => {
+      if (
+        !currentErrors.endDate ||
+        (date && formatYmd(date) < formatYmd(startDate))
+      ) {
+        return currentErrors;
+      }
+
+      return withoutFormError(currentErrors, "endDate");
+    });
+  }
+
+  function handleRepeatOnChange(value: Weekday[]) {
+    setRepeatOn(value);
+    setFormErrors((currentErrors) => {
+      if (!currentErrors.repeatOn || value.length === 0) {
+        return currentErrors;
+      }
+
+      return withoutFormError(currentErrors, "repeatOn");
+    });
   }
 
   function closePauseDialog(open: boolean) {
@@ -357,11 +429,7 @@ export function ClassFormPage() {
                     </span>
                     <DatePicker
                       value={startDate}
-                      onChange={(date) => {
-                        if (date) {
-                          setStartDate(date);
-                        }
-                      }}
+                      onChange={handleStartDateChange}
                       label={dateLabel}
                       locale={dateLocale}
                     />
@@ -379,13 +447,18 @@ export function ClassFormPage() {
                       </span>
                       <DatePicker
                         value={endDate}
-                        onChange={setEndDate}
+                        onChange={handleEndDateChange}
                         label={t("classes.endDate")}
                         locale={dateLocale}
                         placeholder={t("classes.noEndDate")}
                         clearLabel={t("filters.clear")}
                         mutedPlaceholder={false}
                       />
+                      {formErrors.endDate ? (
+                        <p className="text-sm font-medium text-destructive">
+                          {formErrors.endDate}
+                        </p>
+                      ) : null}
                     </div>
                   )}
                 </div>
@@ -395,7 +468,15 @@ export function ClassFormPage() {
                     <legend className="text-sm font-medium text-muted-foreground">
                       {t("classes.repeatOn")}
                     </legend>
-                    <WeekdaySelector value={repeatOn} onChange={setRepeatOn} />
+                    <WeekdaySelector
+                      value={repeatOn}
+                      onChange={handleRepeatOnChange}
+                    />
+                    {formErrors.repeatOn ? (
+                      <p className="text-sm font-medium text-destructive">
+                        {formErrors.repeatOn}
+                      </p>
+                    ) : null}
                     {recurrenceSummary ? (
                       <p className="text-sm leading-6 text-muted-foreground">
                         {"message" in recurrenceSummary ? (
