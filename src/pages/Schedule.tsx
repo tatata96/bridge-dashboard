@@ -17,6 +17,7 @@ import { ScheduleToolbar } from "@/schedule/components/session-detail-right-pane
 import {
   getClassPlanCategoryId,
   getClassPlanName,
+  getSessionVenueName,
   getInstructorName,
   hasSessionEnded,
   hasSessionStarted,
@@ -28,6 +29,7 @@ export function SchedulePage() {
   const { t } = useI18n();
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const [typeFilter, setTypeFilter] = useState("all");
+  const [venueFilter, setVenueFilter] = useState("all");
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
     null,
   );
@@ -40,6 +42,10 @@ export function SchedulePage() {
       .filter((session) => {
         if (typeFilter === "all") return true;
         return getClassPlanCategoryId(session.classId) === typeFilter;
+      })
+      .filter((session) => {
+        if (venueFilter === "all") return true;
+        return session.venueId === venueFilter;
       })
       .sort(
         (a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
@@ -205,6 +211,7 @@ export function SchedulePage() {
     (session) => ({
       session,
       className: getClassPlanName(session.classId, t("schedule.unknownClass")),
+      venueName: getSessionVenueName(session, t("venues.unknownVenue")),
       instructorName: getInstructorName(session.instructorId),
     }),
   );
@@ -235,6 +242,8 @@ export function SchedulePage() {
         onNextDay={() => setSelectedDate((date) => addDays(date, 1))}
         typeFilter={typeFilter}
         onTypeFilterChange={setTypeFilter}
+        venueFilter={venueFilter}
+        onVenueFilterChange={setVenueFilter}
       />
 
       <div className="flex min-w-0 flex-1 flex-col gap-4 xl:flex-row">

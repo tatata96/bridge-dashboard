@@ -5,12 +5,14 @@ import {
 } from "@/classes/data/classes.mock-data";
 import { mockInstructors } from "@/schedule/data/schedule.mock-data";
 import type { ClassSession } from "@/types/schedule";
+import { mockVenuesById } from "@/venues/data/venues.mock-data";
 
 export const classPlansById = new Map(
   mockClassPlans.map((classPlan) => [classPlan.id, classPlan]),
 );
 export const classTypesById = mockClassTypesById;
 export const instructorsById = new Map(mockInstructors.map((i) => [i.id, i]));
+export const venuesById = mockVenuesById;
 
 export function hasSessionStarted(session: ClassSession) {
   return Date.now() >= new Date(session.startAt).getTime();
@@ -43,4 +45,11 @@ export function getClassPlanCategoryId(classPlanId: string): CategoryId | null {
   if (!classPlan) return null;
 
   return classTypesById.get(classPlan.classTypeId)?.categoryId ?? null;
+}
+
+export function getSessionVenueName(
+  session: ClassSession,
+  fallbackName: string,
+) {
+  return venuesById.get(session.venueId)?.name ?? fallbackName;
 }

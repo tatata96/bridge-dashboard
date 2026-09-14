@@ -16,7 +16,7 @@ export function ClassSessionSummary({
   entry: ScheduleListEntry;
   showDate?: boolean;
 }) {
-  const { session, className, instructorName } = entry;
+  const { session, className, venueName, instructorName } = entry;
   const { dateLocale } = useI18n();
   const sessionStart = new Date(session.startAt);
 
@@ -27,12 +27,13 @@ export function ClassSessionSummary({
           <span>
             {className} · {instructorName}
           </span>
+          <span>{venueName}</span>
           <span>{formatShortDateWithYear(sessionStart, dateLocale)}</span>
           <span>{formatSessionTime(sessionStart, dateLocale)}</span>
         </div>
       ) : (
         <span className="font-medium text-foreground">
-          {className} · {instructorName} ·{" "}
+          {className} · {instructorName} · {venueName} ·{" "}
           {formatSessionTime(sessionStart, dateLocale)}
         </span>
       )}

@@ -1,4 +1,5 @@
 import type { CategoryId } from "@/config/class-types";
+import type { Venue } from "@/types/venues";
 
 export type ClassStatus = "active" | "paused";
 
@@ -26,6 +27,7 @@ export type ClassSchedule =
 export type ClassPlan = {
   id: string;
   classTypeId: ClassType["id"];
+  venueId: Venue["id"];
   status: ClassStatus;
   instructorId: string | null;
   schedule: ClassSchedule;

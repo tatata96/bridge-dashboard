@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/select";
 import { categories } from "@/config/class-types";
 import { useI18n } from "@/i18n/i18n";
+import { mockVenues } from "@/venues/data/venues.mock-data";
 
 function TypeFilterValue({ value }: { value: string }) {
   const { t } = useI18n();
@@ -25,6 +26,8 @@ export function ScheduleToolbar({
   onNextDay,
   typeFilter,
   onTypeFilterChange,
+  venueFilter,
+  onVenueFilterChange,
 }: {
   selectedDate: Date;
   onDateChange: (date: Date) => void;
@@ -32,6 +35,8 @@ export function ScheduleToolbar({
   onNextDay: () => void;
   typeFilter: string;
   onTypeFilterChange: (value: string) => void;
+  venueFilter: string;
+  onVenueFilterChange: (value: string) => void;
 }) {
   const { dateLocale, t } = useI18n();
 
@@ -65,6 +70,21 @@ export function ScheduleToolbar({
           {categories.map((classType) => (
             <SelectItem key={classType.id} value={classType.id}>
               {t(classType.labelKey)}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      <Select value={venueFilter} onValueChange={onVenueFilterChange}>
+        <SelectTrigger className="w-52 gap-2">
+          <span className="text-muted-foreground">{t("venues.venue")}</span>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">{t("venues.allVenues")}</SelectItem>
+          {mockVenues.map((venue) => (
+            <SelectItem key={venue.id} value={venue.id}>
+              {venue.name}
             </SelectItem>
           ))}
         </SelectContent>

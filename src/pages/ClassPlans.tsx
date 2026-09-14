@@ -17,30 +17,55 @@ import {
   mockClassSessions,
   mockInstructors,
 } from "@/schedule/data/schedule.mock-data";
-import type { ClassFilters } from "@/types/classes";
+import type { ClassFilters, ClassPlan } from "@/types/classes";
+import { mockVenuesById } from "@/venues/data/venues.mock-data";
 
 const DEFAULT_FILTERS: ClassFilters = {
   categoryId: "all",
   instructorId: "all",
 };
 
+type ClassPlansLocationState = {
+  pausedClassId?: string;
+  savedClassPlan?: ClassPlan;
+} | null;
+
+function mergeSavedClassPlan(
+  classPlans: ClassPlan[],
+  savedClassPlan: ClassPlan,
+) {
+  const existingIndex = classPlans.findIndex(
+    (classPlan) => classPlan.id === savedClassPlan.id,
+  );
+
+  if (existingIndex === -1) return [savedClassPlan, ...classPlans];
+
+  return classPlans.map((classPlan) =>
+    classPlan.id === savedClassPlan.id ? savedClassPlan : classPlan,
+  );
+}
+
 export function ClassPlansPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
   const { t } = useI18n();
-  const returnedPausedClassId = (
-    location.state as { pausedClassId?: string } | null
-  )?.pausedClassId;
-  const [classPlans, setClassPlans] = useState(() =>
-    returnedPausedClassId
+  const locationState = location.state as ClassPlansLocationState;
+  const returnedPausedClassId = locationState?.pausedClassId;
+  const returnedSavedClassPlan = locationState?.savedClassPlan;
+  const [classPlans, setClassPlans] = useState(() => {
+    const classPlansFromState = returnedPausedClassId
       ? mockClassPlans.map((classPlan) =>
           classPlan.id === returnedPausedClassId
             ? { ...classPlan, status: "paused" as const }
             : classPlan,
         )
-      : mockClassPlans,
-  );
+      : mockClassPlans;
+
+    return returnedSavedClassPlan
+      ? mergeSavedClassPlan(classPlansFromState, returnedSavedClassPlan)
+      : classPlansFromState;
+  });
   const [filters, setFilters] = useState<ClassFilters>(DEFAULT_FILTERS);
 
   const isFiltering =
@@ -86,10 +111,15 @@ export function ClassPlansPage() {
   }
 
   useEffect(() => {
-    if (!returnedPausedClassId) return;
+    if (!returnedPausedClassId && !returnedSavedClassPlan) return;
 
     navigate(location.pathname, { replace: true, state: null });
-  }, [location.pathname, navigate, returnedPausedClassId]);
+  }, [
+    location.pathname,
+    navigate,
+    returnedPausedClassId,
+    returnedSavedClassPlan,
+  ]);
 
   async function pauseEntry(entryId: string) {
     updateClassStatus(entryId, "paused");
@@ -131,13 +161,16 @@ export function ClassPlansPage() {
           onPauseEntry={pauseEntry}
           onActivateEntry={activateEntry}
           classTypesById={mockClassTypesById}
+          venuesById={mockVenuesById}
           getClassPlanSummaryEntry={(entry) =>
             getClassPlanSummaryEntry(
               entry,
               mockClassSessions,
               mockInstructors,
               mockClassTypesById,
+              mockVenuesById,
               t("schedule.unknownClass"),
+              t("venues.unknownVenue"),
               t("classes.noInstructorAssigned"),
               t("classes.unknownInstructor"),
             )

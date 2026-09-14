@@ -41,12 +41,14 @@ import {
   formatShortDateWithYear,
   formatTime,
   formatTimeRange,
+  formatYmd,
 } from "@/lib/date.utils";
 import {
   mockClassSessions,
   mockInstructors,
 } from "@/schedule/data/schedule.mock-data";
-import type { ClassSchedule, Weekday } from "@/types/classes";
+import type { ClassPlan, ClassSchedule, Weekday } from "@/types/classes";
+import { mockVenues, mockVenuesById } from "@/venues/data/venues.mock-data";
 
 // TODO: make logical time options list
 const startTimeOptions = Array.from(
@@ -93,12 +95,28 @@ export function ClassFormPage() {
   const isEditMode = Boolean(classId);
   const isRecurringClassPlan = classPlanToEdit?.schedule.type === "recurring";
   const isClassTypeLocked = isEditMode;
+  const activeVenueOptions = mockVenues.filter(
+    (venue) => venue.status === "active",
+  );
+  const venueOptions =
+    classPlanToEdit &&
+    !activeVenueOptions.some((venue) => venue.id === classPlanToEdit.venueId)
+      ? [
+          mockVenuesById.get(classPlanToEdit.venueId),
+          ...activeVenueOptions,
+        ].filter((venue): venue is (typeof mockVenues)[number] =>
+          Boolean(venue),
+        )
+      : activeVenueOptions;
 
   const [classType, setClassType] = useState<ClassSchedule["type"]>(
     () => classPlanToEdit?.schedule.type ?? "recurring",
   );
   const [selectedClassTypeId, setSelectedClassTypeId] = useState(
     () => classPlanToEdit?.classTypeId ?? mockClassTypes[0]?.id ?? "",
+  );
+  const [selectedVenueId, setSelectedVenueId] = useState(
+    () => classPlanToEdit?.venueId ?? activeVenueOptions[0]?.id ?? "",
   );
   const [selectedStaffId, setSelectedStaffId] = useState(
     () => classPlanToEdit?.instructorId ?? noStaffValue,
@@ -206,7 +224,31 @@ export function ClassFormPage() {
   }
 
   function handleSave() {
-    navigate(getPagePath("classes"));
+    const savedClassPlan: ClassPlan = {
+      id: classPlanToEdit?.id ?? `class-${Date.now()}`,
+      classTypeId: selectedClassTypeId,
+      venueId: selectedVenueId,
+      status: classPlanToEdit?.status ?? "active",
+      instructorId: selectedStaffId === noStaffValue ? null : selectedStaffId,
+      schedule:
+        classType === "one_time"
+          ? {
+              type: "one_time",
+              date: formatYmd(startDate),
+            }
+          : {
+              type: "recurring",
+              repeatOn,
+              startDate: formatYmd(startDate),
+              endDate: endDate ? formatYmd(endDate) : null,
+            },
+      startTime,
+      durationMinutes,
+      capacity,
+      priceCredits: classPlanToEdit?.priceCredits ?? 1,
+    };
+
+    navigate(getPagePath("classes"), { state: { savedClassPlan } });
   }
 
   function handleClassTypeChange(value: string) {
@@ -286,7 +328,7 @@ export function ClassFormPage() {
             )}
 
             <div className="mt-8 grid gap-8 lg:grid-cols-2">
-              <div className="flex min-w-0 flex-col gap-6">
+              <div className="order-2 flex min-w-0 flex-col gap-6">
                 <fieldset className="flex min-w-0 flex-col gap-4">
                   <legend className="text-sm font-medium text-muted-foreground">
                     {t("classes.classType")}
@@ -415,9 +457,20 @@ export function ClassFormPage() {
                     </Select>
                   </div>
                 </div>
+
+                <label className="flex min-w-0 flex-col gap-4 text-sm font-medium text-muted-foreground">
+                  {t("classes.capacity")}
+                  <NumberStepper
+                    value={capacity}
+                    onChange={setCapacity}
+                    min={1}
+                    label={t("classes.capacity")}
+                    className="w-fit"
+                  />
+                </label>
               </div>
 
-              <div className="flex min-w-0 flex-col gap-6">
+              <div className="order-1 flex min-w-0 flex-col gap-6">
                 <div className="flex min-w-0 flex-col gap-4">
                   <span className="text-sm font-medium text-muted-foreground">
                     {t("classes.class")}
@@ -433,6 +486,30 @@ export function ClassFormPage() {
                       {mockClassTypes.map((classType) => (
                         <SelectItem key={classType.id} value={classType.id}>
                           {classType.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex min-w-0 flex-col gap-4">
+                  <span className="text-sm font-medium text-muted-foreground">
+                    {t("venues.venue")}
+                  </span>
+                  <Select
+                    value={selectedVenueId}
+                    onValueChange={setSelectedVenueId}
+                  >
+                    <SelectTrigger
+                      aria-label={t("venues.selectVenue")}
+                      className="h-9 w-full"
+                    >
+                      <SelectValue placeholder={t("venues.selectVenue")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {venueOptions.map((venue) => (
+                        <SelectItem key={venue.id} value={venue.id}>
+                          {venue.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -467,17 +544,6 @@ export function ClassFormPage() {
                     </SelectContent>
                   </Select>
                 </div>
-
-                <label className="flex min-w-0 flex-col gap-4 text-sm font-medium text-muted-foreground">
-                  {t("classes.capacity")}
-                  <NumberStepper
-                    value={capacity}
-                    onChange={setCapacity}
-                    min={1}
-                    label={t("classes.capacity")}
-                    className="w-fit"
-                  />
-                </label>
               </div>
             </div>
 
@@ -515,7 +581,9 @@ export function ClassFormPage() {
             mockClassSessions,
             mockInstructors,
             mockClassTypesById,
+            mockVenuesById,
             t("schedule.unknownClass"),
+            t("venues.unknownVenue"),
             t("classes.noInstructorAssigned"),
             t("classes.unknownInstructor"),
           )}

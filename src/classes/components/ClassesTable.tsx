@@ -16,6 +16,7 @@ import { cn } from "@/lib/classnames.utils";
 import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
 import type { ClassPlan, ClassType } from "@/types/classes";
 import type { Instructor } from "@/types/schedule";
+import type { Venue } from "@/types/venues";
 
 function getInstructorName(
   instructorId: string | null,
@@ -37,6 +38,7 @@ export function ClassesTable({
   onPauseEntry,
   onActivateEntry,
   classTypesById,
+  venuesById,
   getClassPlanSummaryEntry,
   isFiltering,
   onClearFilters,
@@ -47,6 +49,7 @@ export function ClassesTable({
   onPauseEntry: (entryId: string) => Promise<void>;
   onActivateEntry: (entryId: string) => void;
   classTypesById: Map<ClassType["id"], ClassType>;
+  venuesById: Map<Venue["id"], Venue>;
   getClassPlanSummaryEntry: (entry: ClassPlan) => ScheduleListEntry;
   isFiltering: boolean;
   onClearFilters: () => void;
@@ -97,16 +100,19 @@ export function ClassesTable({
         <table className="w-full table-fixed text-left text-sm">
           <thead className="sticky top-0 z-10 border-b border-border bg-muted text-xs font-medium text-muted-foreground">
             <tr>
-              <th scope="col" className="w-[24%] px-2 py-3 sm:px-4">
+              <th scope="col" className="w-[22%] px-2 py-3 sm:px-4">
                 {t("classes.className")}
               </th>
-              <th scope="col" className="w-[18%] px-2 py-3 sm:px-4">
+              <th scope="col" className="w-[17%] px-2 py-3 sm:px-4">
+                {t("venues.venue")}
+              </th>
+              <th scope="col" className="w-[14%] px-2 py-3 sm:px-4">
                 {t("classes.time")}
               </th>
-              <th scope="col" className="w-[18%] px-2 py-3 sm:px-4">
+              <th scope="col" className="w-[15%] px-2 py-3 sm:px-4">
                 {t("classes.staff")}
               </th>
-              <th scope="col" className="w-[17%] px-2 py-3 sm:px-4">
+              <th scope="col" className="w-[15%] px-2 py-3 sm:px-4">
                 {t("classes.repeatOn")}
               </th>
               <th scope="col" className="w-[7%] px-2 py-3 sm:px-4">
@@ -124,7 +130,7 @@ export function ClassesTable({
             {entries.length === 0 ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={8}
                   className="px-4 py-6 text-center text-sm text-muted-foreground"
                 >
                   <span>{t("classes.noFilterMatches")}</span>
@@ -141,6 +147,9 @@ export function ClassesTable({
               entries.map((entry) => {
                 const classType = classTypesById.get(entry.classTypeId);
                 const className = classType?.name ?? t("schedule.unknownClass");
+                const venueName =
+                  venuesById.get(entry.venueId)?.name ??
+                  t("venues.unknownVenue");
                 const isPlaceholder = entry.id === "new-class";
                 const isPaused = entry.status === "paused";
                 const scheduleLabel =
@@ -163,6 +172,9 @@ export function ClassesTable({
                       )}
                     >
                       {className}
+                    </td>
+                    <td className="px-2 py-4 text-muted-foreground sm:px-4">
+                      {venueName}
                     </td>
                     <td
                       className={cn(

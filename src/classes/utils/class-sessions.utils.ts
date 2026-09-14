@@ -4,6 +4,7 @@ import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList"
 import type { ClassPlan, ClassType } from "@/types/classes";
 import type { ClassSession } from "@/types/schedule";
 import type { Instructor } from "@/types/schedule";
+import type { Venue } from "@/types/venues";
 
 export function getUpcomingSessionSummary(
   sessions: ClassSession[],
@@ -76,7 +77,9 @@ export function getClassPlanSummaryEntry(
   sessions: ClassSession[],
   instructors: Instructor[],
   classTypesById: Map<ClassType["id"], ClassType>,
+  venuesById: Map<Venue["id"], Venue>,
   unknownClassLabel: string,
+  fallbackVenueName: string,
   noInstructorLabel: string,
   unknownInstructorLabel: string,
 ): ScheduleListEntry {
@@ -99,6 +102,7 @@ export function getClassPlanSummaryEntry(
     session: upcomingSession ?? {
       id: `${entry.id}-plan-summary`,
       classId: entry.id,
+      venueId: entry.venueId,
       instructorId: entry.instructorId,
       startAt: getNextClassPlanStart(entry).toISOString(),
       durationMinutes: entry.durationMinutes,
@@ -106,6 +110,7 @@ export function getClassPlanSummaryEntry(
       reservedCount: 0,
     },
     className: classTypesById.get(entry.classTypeId)?.name ?? unknownClassLabel,
+    venueName: venuesById.get(entry.venueId)?.name ?? fallbackVenueName,
     instructorName,
   };
 }

@@ -89,6 +89,7 @@ export const mockClassPlans: ClassPlan[] = [
   {
     id: "class-1",
     classTypeId: "class-type-advanced-crossfit",
+    venueId: "venue-kadikoy",
     status: "active",
     instructorId: "instructor-1",
     schedule: {
@@ -105,6 +106,7 @@ export const mockClassPlans: ClassPlan[] = [
   {
     id: "class-2",
     classTypeId: "class-type-basic-crossfit",
+    venueId: "venue-besiktas",
     status: "active",
     instructorId: null,
     schedule: {
@@ -121,6 +123,7 @@ export const mockClassPlans: ClassPlan[] = [
   {
     id: "class-3",
     classTypeId: "class-type-salsa",
+    venueId: "venue-kadikoy",
     status: "paused",
     instructorId: "instructor-1",
     schedule: {
@@ -137,6 +140,7 @@ export const mockClassPlans: ClassPlan[] = [
   {
     id: "class-4",
     classTypeId: "class-type-morning-yoga",
+    venueId: "venue-besiktas",
     status: "active",
     instructorId: "instructor-1",
     schedule: {
@@ -153,6 +157,7 @@ export const mockClassPlans: ClassPlan[] = [
   {
     id: "class-5",
     classTypeId: "class-type-mobility-flow",
+    venueId: "venue-kadikoy",
     status: "active",
     instructorId: null,
     schedule: {
@@ -169,6 +174,7 @@ export const mockClassPlans: ClassPlan[] = [
   {
     id: "class-6",
     classTypeId: "class-type-strength-basics",
+    venueId: "venue-besiktas",
     status: "active",
     instructorId: "instructor-1",
     schedule: {
@@ -185,6 +191,7 @@ export const mockClassPlans: ClassPlan[] = [
   {
     id: "class-7",
     classTypeId: "class-type-weekend-hiit",
+    venueId: "venue-kadikoy",
     status: "paused",
     instructorId: null,
     schedule: {
@@ -201,6 +208,7 @@ export const mockClassPlans: ClassPlan[] = [
   {
     id: "class-8",
     classTypeId: "class-type-pilates-core",
+    venueId: "venue-besiktas",
     status: "active",
     instructorId: "instructor-1",
     schedule: {
@@ -217,6 +225,7 @@ export const mockClassPlans: ClassPlan[] = [
   {
     id: "class-9",
     classTypeId: "class-type-boxing-conditioning",
+    venueId: "venue-kadikoy",
     status: "active",
     instructorId: "instructor-1",
     schedule: {
@@ -233,6 +242,7 @@ export const mockClassPlans: ClassPlan[] = [
   {
     id: "class-10",
     classTypeId: "class-type-dance-cardio",
+    venueId: "venue-besiktas",
     status: "active",
     instructorId: null,
     schedule: {
@@ -249,6 +259,7 @@ export const mockClassPlans: ClassPlan[] = [
   {
     id: "class-11",
     classTypeId: "class-type-open-gym-skills",
+    venueId: "venue-kadikoy",
     status: "active",
     instructorId: "instructor-1",
     schedule: {
@@ -265,6 +276,7 @@ export const mockClassPlans: ClassPlan[] = [
   {
     id: "class-12",
     classTypeId: "class-type-power-yoga",
+    venueId: "venue-nisantasi",
     status: "paused",
     instructorId: "instructor-1",
     schedule: {
@@ -281,6 +293,7 @@ export const mockClassPlans: ClassPlan[] = [
   {
     id: "class-13",
     classTypeId: "class-type-intro-workshop",
+    venueId: "venue-besiktas",
     status: "active",
     instructorId: null,
     schedule: {
@@ -295,6 +308,7 @@ export const mockClassPlans: ClassPlan[] = [
   {
     id: "class-14",
     classTypeId: "class-type-advanced-crossfit",
+    venueId: "venue-besiktas",
     status: "active",
     instructorId: "instructor-1",
     schedule: {
@@ -311,6 +325,7 @@ export const mockClassPlans: ClassPlan[] = [
   {
     id: "class-15",
     classTypeId: "class-type-advanced-crossfit",
+    venueId: "venue-kadikoy",
     status: "active",
     instructorId: "instructor-1",
     schedule: {
@@ -327,6 +342,7 @@ export const mockClassPlans: ClassPlan[] = [
   {
     id: "class-16",
     classTypeId: "class-type-advanced-crossfit",
+    venueId: "venue-besiktas",
     status: "active",
     instructorId: "instructor-1",
     schedule: {

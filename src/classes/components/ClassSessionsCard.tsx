@@ -8,6 +8,7 @@ import { useI18n } from "@/i18n/i18n";
 import { addDays, formatTime } from "@/lib/date.utils";
 import { mockClassSessions } from "@/schedule/data/schedule.mock-data";
 import type { ClassSession } from "@/types/schedule";
+import { mockVenuesById } from "@/venues/data/venues.mock-data";
 
 function formatSessionDate(value: string, locale: string) {
   const date = new Date(value);
@@ -152,17 +153,24 @@ function SessionCardRow({
   locale: string;
   muted?: boolean;
 }) {
+  const { t } = useI18n();
+  const venueName =
+    mockVenuesById.get(session.venueId)?.name ?? t("venues.unknownVenue");
+
   return (
     <div className="flex min-h-11 items-center justify-between gap-4 py-3 text-sm">
       <span
         className={
           muted
-            ? "min-w-0 font-semibold text-muted-foreground"
-            : "min-w-0 font-semibold text-foreground"
+            ? "flex min-w-0 flex-col gap-0.5 font-semibold text-muted-foreground"
+            : "flex min-w-0 flex-col gap-0.5 font-semibold text-foreground"
         }
       >
-        {formatSessionDate(session.startAt, locale)} ·{" "}
-        {formatTime(new Date(session.startAt), locale)}
+        <span>
+          {formatSessionDate(session.startAt, locale)} ·{" "}
+          {formatTime(new Date(session.startAt), locale)}
+        </span>
+        <span className="font-medium">{venueName}</span>
       </span>
       <span
         className={
