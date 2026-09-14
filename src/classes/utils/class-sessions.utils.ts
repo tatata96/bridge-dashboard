@@ -13,7 +13,8 @@ export function getUpcomingSessionSummary(
   const now = Date.now();
   const upcomingSessions = sessions.filter(
     (session) =>
-      session.classId === entryId && new Date(session.startAt).getTime() > now,
+      session.classPlanId === entryId &&
+      new Date(session.startAt).getTime() > now,
   );
 
   return {
@@ -87,7 +88,7 @@ export function getClassPlanSummaryEntry(
   const upcomingSession = sessions
     .filter(
       (session) =>
-        session.classId === entry.id &&
+        session.classPlanId === entry.id &&
         new Date(session.startAt).getTime() > now,
     )
     .sort(
@@ -101,7 +102,7 @@ export function getClassPlanSummaryEntry(
   return {
     session: upcomingSession ?? {
       id: `${entry.id}-plan-summary`,
-      classId: entry.id,
+      classPlanId: entry.id,
       venueId: entry.venueId,
       instructorId: entry.instructorId,
       startAt: getNextClassPlanStart(entry).toISOString(),

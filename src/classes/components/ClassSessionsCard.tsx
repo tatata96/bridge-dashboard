@@ -52,7 +52,7 @@ export function ClassSessionsCard({ classPlanId }: { classPlanId: string }) {
   const sessions = useMemo(
     () =>
       mockClassSessions
-        .filter((session) => session.classId === classPlanId)
+        .filter((session) => session.classPlanId === classPlanId)
         .sort(
           (a, b) =>
             new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),

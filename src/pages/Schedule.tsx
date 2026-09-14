@@ -41,7 +41,7 @@ export function SchedulePage() {
       .filter((session) => isSameDay(new Date(session.startAt), selectedDate))
       .filter((session) => {
         if (typeFilter === "all") return true;
-        return getClassPlanCategoryId(session.classId) === typeFilter;
+        return getClassPlanCategoryId(session.classPlanId) === typeFilter;
       })
       .filter((session) => {
         if (venueFilter === "all") return true;
@@ -210,7 +210,10 @@ export function SchedulePage() {
   const entries: ScheduleListEntry[] = getVisibleSessions(sessions).map(
     (session) => ({
       session,
-      className: getClassPlanName(session.classId, t("schedule.unknownClass")),
+      className: getClassPlanName(
+        session.classPlanId,
+        t("schedule.unknownClass"),
+      ),
       venueName: getSessionVenueName(session, t("venues.unknownVenue")),
       instructorName: getInstructorName(session.instructorId),
     }),

@@ -10,7 +10,7 @@ export type Instructor = {
 
 export type ClassSession = {
   id: string;
-  classId: ClassPlan["id"];
+  classPlanId: ClassPlan["id"];
   venueId: Venue["id"];
   instructorId: string | null; // null => "No Staff Specified"
   startAt: string; // ISO 8601 datetime
