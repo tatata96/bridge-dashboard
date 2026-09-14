@@ -19,7 +19,7 @@ export type ClassSession = {
   reservedCount: number;
 };
 
-export type BookingSource = typeof APP_NAME | "direct";
+export type BookingSource = typeof APP_NAME;
 export type ReservationStatus =
   "booked" | "attended" | "no_show" | "late_cancelled";
 
