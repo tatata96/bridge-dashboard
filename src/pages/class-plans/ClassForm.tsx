@@ -275,7 +275,6 @@ export function ClassFormPage() {
       startTime,
       durationMinutes,
       capacity,
-      priceCredits: classPlanToEdit?.priceCredits ?? 1,
     };
 
     navigate(getPagePath("classes"), { state: { savedClassPlan } });

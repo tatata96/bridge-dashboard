@@ -34,7 +34,6 @@ export type ClassPlan = {
   startTime: string; // HH:mm local business time
   durationMinutes: number;
   capacity: number;
-  priceCredits: number;
 };
 
 export type ClassType = {

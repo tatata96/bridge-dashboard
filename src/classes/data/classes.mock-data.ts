@@ -101,7 +101,6 @@ export const mockClassPlans: ClassPlan[] = [
     startTime: "07:00",
     durationMinutes: 60,
     capacity: 8,
-    priceCredits: 2,
   },
   {
     id: "class-2",
@@ -118,7 +117,6 @@ export const mockClassPlans: ClassPlan[] = [
     startTime: "07:00",
     durationMinutes: 60,
     capacity: 6,
-    priceCredits: 1,
   },
   {
     id: "class-3",
@@ -135,7 +133,6 @@ export const mockClassPlans: ClassPlan[] = [
     startTime: "18:00",
     durationMinutes: 60,
     capacity: 10,
-    priceCredits: 2,
   },
   {
     id: "class-4",
@@ -152,7 +149,6 @@ export const mockClassPlans: ClassPlan[] = [
     startTime: "08:00",
     durationMinutes: 45,
     capacity: 12,
-    priceCredits: 1,
   },
   {
     id: "class-5",
@@ -169,7 +165,6 @@ export const mockClassPlans: ClassPlan[] = [
     startTime: "12:00",
     durationMinutes: 30,
     capacity: 10,
-    priceCredits: 1,
   },
   {
     id: "class-6",
@@ -186,7 +181,6 @@ export const mockClassPlans: ClassPlan[] = [
     startTime: "17:30",
     durationMinutes: 60,
     capacity: 8,
-    priceCredits: 2,
   },
   {
     id: "class-7",
@@ -203,7 +197,6 @@ export const mockClassPlans: ClassPlan[] = [
     startTime: "10:00",
     durationMinutes: 45,
     capacity: 14,
-    priceCredits: 2,
   },
   {
     id: "class-8",
@@ -220,7 +213,6 @@ export const mockClassPlans: ClassPlan[] = [
     startTime: "09:30",
     durationMinutes: 45,
     capacity: 9,
-    priceCredits: 2,
   },
   {
     id: "class-9",
@@ -237,7 +229,6 @@ export const mockClassPlans: ClassPlan[] = [
     startTime: "19:00",
     durationMinutes: 60,
     capacity: 12,
-    priceCredits: 2,
   },
   {
     id: "class-10",
@@ -254,7 +245,6 @@ export const mockClassPlans: ClassPlan[] = [
     startTime: "18:30",
     durationMinutes: 45,
     capacity: 16,
-    priceCredits: 1,
   },
   {
     id: "class-11",
@@ -271,7 +261,6 @@ export const mockClassPlans: ClassPlan[] = [
     startTime: "11:00",
     durationMinutes: 90,
     capacity: 18,
-    priceCredits: 1,
   },
   {
     id: "class-12",
@@ -288,7 +277,6 @@ export const mockClassPlans: ClassPlan[] = [
     startTime: "16:30",
     durationMinutes: 60,
     capacity: 12,
-    priceCredits: 2,
   },
   {
     id: "class-13",
@@ -303,7 +291,6 @@ export const mockClassPlans: ClassPlan[] = [
     startTime: "13:00",
     durationMinutes: 75,
     capacity: 20,
-    priceCredits: 0,
   },
   {
     id: "class-14",
@@ -320,7 +307,6 @@ export const mockClassPlans: ClassPlan[] = [
     startTime: "12:30",
     durationMinutes: 60,
     capacity: 8,
-    priceCredits: 2,
   },
   {
     id: "class-15",
@@ -337,7 +323,6 @@ export const mockClassPlans: ClassPlan[] = [
     startTime: "18:00",
     durationMinutes: 60,
     capacity: 10,
-    priceCredits: 2,
   },
   {
     id: "class-16",
@@ -354,6 +339,5 @@ export const mockClassPlans: ClassPlan[] = [
     startTime: "09:00",
     durationMinutes: 75,
     capacity: 12,
-    priceCredits: 2,
   },
 ];
