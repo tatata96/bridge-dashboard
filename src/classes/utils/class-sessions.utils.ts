@@ -1,10 +1,13 @@
 import { weekdayIndexes } from "@/config/class-labels";
+import type { TranslationKey } from "@/i18n/i18n";
 import { atTime, dateFromYmdString } from "@/lib/date.utils";
 import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
 import type { ClassPlan, ClassType } from "@/types/classes";
 import type { ClassSession } from "@/types/schedule";
 import type { Instructor } from "@/types/schedule";
 import type { Venue } from "@/types/venues";
+
+type Translate = (key: TranslationKey) => string;
 
 export function getUpcomingSessionSummary(
   sessions: ClassSession[],
@@ -79,10 +82,7 @@ export function getClassPlanSummaryEntry(
   instructors: Instructor[],
   classTypesById: Map<ClassType["id"], ClassType>,
   venuesById: Map<Venue["id"], Venue>,
-  unknownClassLabel: string,
-  fallbackVenueName: string,
-  noInstructorLabel: string,
-  unknownInstructorLabel: string,
+  t: Translate,
 ): ScheduleListEntry {
   const now = Date.now();
   const upcomingSession = sessions
@@ -96,8 +96,8 @@ export function getClassPlanSummaryEntry(
     )[0];
   const instructorName = entry.instructorId
     ? (instructors.find((instructor) => instructor.id === entry.instructorId)
-        ?.name ?? unknownInstructorLabel)
-    : noInstructorLabel;
+        ?.name ?? t("classes.unknownInstructor"))
+    : t("classes.noInstructorAssigned");
 
   return {
     session: upcomingSession ?? {
@@ -109,9 +109,11 @@ export function getClassPlanSummaryEntry(
       durationMinutes: entry.durationMinutes,
       capacity: entry.capacity,
       reservedCount: 0,
+      status: "scheduled",
     },
-    className: classTypesById.get(entry.classTypeId)?.name ?? unknownClassLabel,
-    venueName: venuesById.get(entry.venueId)?.name ?? fallbackVenueName,
+    className:
+      classTypesById.get(entry.classTypeId)?.name ?? t("schedule.unknownClass"),
+    venueName: venuesById.get(entry.venueId)?.name ?? t("venues.unknownVenue"),
     instructorName,
   };
 }

@@ -662,10 +662,7 @@ export function ClassFormPage() {
             mockInstructors,
             mockClassTypesById,
             mockVenuesById,
-            t("schedule.unknownClass"),
-            t("venues.unknownVenue"),
-            t("classes.noInstructorAssigned"),
-            t("classes.unknownInstructor"),
+            t,
           )}
           isPausing={isPausing}
           pauseError={pauseError}

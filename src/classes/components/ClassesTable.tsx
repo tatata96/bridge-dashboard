@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { weekdayShortLabelKeys } from "@/config/class-labels";
-import { useI18n } from "@/i18n/i18n";
+import { useI18n, type TranslationKey } from "@/i18n/i18n";
 import { cn } from "@/lib/classnames.utils";
 import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
 import type { ClassPlan, ClassType } from "@/types/classes";
@@ -21,13 +21,12 @@ import type { Venue } from "@/types/venues";
 function getInstructorName(
   instructorId: string | null,
   instructors: Instructor[],
-  noInstructorLabel: string,
-  unknownInstructorLabel: string,
+  t: (key: TranslationKey) => string,
 ) {
-  if (!instructorId) return noInstructorLabel;
+  if (!instructorId) return t("classes.noInstructorAssigned");
   return (
     instructors.find((instructor) => instructor.id === instructorId)?.name ??
-    unknownInstructorLabel
+    t("classes.unknownInstructor")
   );
 }
 
@@ -185,12 +184,7 @@ export function ClassesTable({
                       {entry.startTime}
                     </td>
                     <td className="px-2 py-4 text-muted-foreground sm:px-4">
-                      {getInstructorName(
-                        entry.instructorId,
-                        instructors,
-                        t("classes.noInstructorAssigned"),
-                        t("classes.unknownInstructor"),
-                      )}
+                      {getInstructorName(entry.instructorId, instructors, t)}
                     </td>
                     <td className="px-2 py-4 text-muted-foreground sm:px-4">
                       {scheduleLabel}

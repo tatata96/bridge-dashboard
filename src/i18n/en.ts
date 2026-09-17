@@ -245,7 +245,7 @@ export const en = {
   "class.edit": "Edit session",
   "class.editDescription": "Update the staff or capacity for this session.",
   "class.instructor": "Instructor",
-  "class.noStaff": "Eğitmen atanmadı",
+  "class.noStaff": "No staff assigned",
   "class.capacity": "Capacity",
   "class.alreadyBookedCantGoLower": "{count} already booked - can't go lower",
   "class.bookedSpotsLeft": "{booked} booked · {spotsLeft} {spotLabel} left",

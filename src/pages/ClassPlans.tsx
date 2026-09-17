@@ -169,10 +169,7 @@ export function ClassPlansPage() {
               mockInstructors,
               mockClassTypesById,
               mockVenuesById,
-              t("schedule.unknownClass"),
-              t("venues.unknownVenue"),
-              t("classes.noInstructorAssigned"),
-              t("classes.unknownInstructor"),
+              t,
             )
           }
           isFiltering={isFiltering}

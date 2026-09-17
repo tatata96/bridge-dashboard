@@ -90,7 +90,7 @@ export function SchedulePage() {
     if (changes.instructorId !== originalSession.instructorId) {
       changeMessages.push(
         t("toast.instructorChanged", {
-          instructor: getInstructorName(changes.instructorId),
+          instructor: getInstructorName(changes.instructorId, t),
         }),
       );
     }
@@ -235,12 +235,9 @@ export function SchedulePage() {
   const entries: ScheduleListEntry[] = getVisibleSessions(sessions).map(
     (session) => ({
       session,
-      className: getClassPlanName(
-        session.classPlanId,
-        t("schedule.unknownClass"),
-      ),
-      venueName: getSessionVenueName(session, t("venues.unknownVenue")),
-      instructorName: getInstructorName(session.instructorId),
+      className: getClassPlanName(session.classPlanId, t),
+      venueName: getSessionVenueName(session, t),
+      instructorName: getInstructorName(session.instructorId, t),
     }),
   );
 
