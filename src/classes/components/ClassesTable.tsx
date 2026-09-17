@@ -11,22 +11,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { weekdayShortLabelKeys } from "@/config/class-labels";
-import { useI18n } from "@/i18n/i18n";
+import { useI18n, type TranslationKey } from "@/i18n/i18n";
 import { cn } from "@/lib/classnames.utils";
 import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
-import type { ClassPlan } from "@/types/classes";
+import type { ClassPlan, ClassType } from "@/types/classes";
 import type { Instructor } from "@/types/schedule";
+import type { Venue } from "@/types/venues";
 
 function getInstructorName(
   instructorId: string | null,
   instructors: Instructor[],
-  noInstructorLabel: string,
-  unknownInstructorLabel: string,
+  t: (key: TranslationKey) => string,
 ) {
-  if (!instructorId) return noInstructorLabel;
+  if (!instructorId) return t("classes.noInstructorAssigned");
   return (
     instructors.find((instructor) => instructor.id === instructorId)?.name ??
-    unknownInstructorLabel
+    t("classes.unknownInstructor")
   );
 }
 
@@ -36,6 +36,8 @@ export function ClassesTable({
   onEditEntry,
   onPauseEntry,
   onActivateEntry,
+  classTypesById,
+  venuesById,
   getClassPlanSummaryEntry,
   isFiltering,
   onClearFilters,
@@ -45,6 +47,8 @@ export function ClassesTable({
   onEditEntry: (entryId: string) => void;
   onPauseEntry: (entryId: string) => Promise<void>;
   onActivateEntry: (entryId: string) => void;
+  classTypesById: Map<ClassType["id"], ClassType>;
+  venuesById: Map<Venue["id"], Venue>;
   getClassPlanSummaryEntry: (entry: ClassPlan) => ScheduleListEntry;
   isFiltering: boolean;
   onClearFilters: () => void;
@@ -95,16 +99,19 @@ export function ClassesTable({
         <table className="w-full table-fixed text-left text-sm">
           <thead className="sticky top-0 z-10 border-b border-border bg-muted text-xs font-medium text-muted-foreground">
             <tr>
-              <th scope="col" className="w-[24%] px-2 py-3 sm:px-4">
+              <th scope="col" className="w-[22%] px-2 py-3 sm:px-4">
                 {t("classes.className")}
               </th>
-              <th scope="col" className="w-[18%] px-2 py-3 sm:px-4">
+              <th scope="col" className="w-[17%] px-2 py-3 sm:px-4">
+                {t("venues.venue")}
+              </th>
+              <th scope="col" className="w-[14%] px-2 py-3 sm:px-4">
                 {t("classes.time")}
               </th>
-              <th scope="col" className="w-[18%] px-2 py-3 sm:px-4">
+              <th scope="col" className="w-[15%] px-2 py-3 sm:px-4">
                 {t("classes.staff")}
               </th>
-              <th scope="col" className="w-[17%] px-2 py-3 sm:px-4">
+              <th scope="col" className="w-[15%] px-2 py-3 sm:px-4">
                 {t("classes.repeatOn")}
               </th>
               <th scope="col" className="w-[7%] px-2 py-3 sm:px-4">
@@ -122,7 +129,7 @@ export function ClassesTable({
             {entries.length === 0 ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={8}
                   className="px-4 py-6 text-center text-sm text-muted-foreground"
                 >
                   <span>{t("classes.noFilterMatches")}</span>
@@ -137,6 +144,11 @@ export function ClassesTable({
               </tr>
             ) : (
               entries.map((entry) => {
+                const classType = classTypesById.get(entry.classTypeId);
+                const className = classType?.name ?? t("schedule.unknownClass");
+                const venueName =
+                  venuesById.get(entry.venueId)?.name ??
+                  t("venues.unknownVenue");
                 const isPlaceholder = entry.id === "new-class";
                 const isPaused = entry.status === "paused";
                 const scheduleLabel =
@@ -158,7 +170,10 @@ export function ClassesTable({
                         isPaused ? "text-muted-foreground" : "text-foreground",
                       )}
                     >
-                      {entry.name}
+                      {className}
+                    </td>
+                    <td className="px-2 py-4 text-muted-foreground sm:px-4">
+                      {venueName}
                     </td>
                     <td
                       className={cn(
@@ -169,12 +184,7 @@ export function ClassesTable({
                       {entry.startTime}
                     </td>
                     <td className="px-2 py-4 text-muted-foreground sm:px-4">
-                      {getInstructorName(
-                        entry.instructorId,
-                        instructors,
-                        t("classes.noInstructorAssigned"),
-                        t("classes.unknownInstructor"),
-                      )}
+                      {getInstructorName(entry.instructorId, instructors, t)}
                     </td>
                     <td className="px-2 py-4 text-muted-foreground sm:px-4">
                       {scheduleLabel}
@@ -218,7 +228,7 @@ export function ClassesTable({
                               variant="ghost"
                               size="icon-sm"
                               aria-label={t("classes.entryActions", {
-                                name: entry.name,
+                                name: className,
                               })}
                               aria-haspopup="menu"
                               aria-expanded={openMenuEntryId === entry.id}

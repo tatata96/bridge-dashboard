@@ -1,9 +1,13 @@
 import { weekdayIndexes } from "@/config/class-labels";
+import type { TranslationKey } from "@/i18n/i18n";
 import { atTime, dateFromYmdString } from "@/lib/date.utils";
 import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
-import type { ClassPlan } from "@/types/classes";
+import type { ClassPlan, ClassType } from "@/types/classes";
 import type { ClassSession } from "@/types/schedule";
 import type { Instructor } from "@/types/schedule";
+import type { Venue } from "@/types/venues";
+
+type Translate = (key: TranslationKey) => string;
 
 export function getUpcomingSessionSummary(
   sessions: ClassSession[],
@@ -12,7 +16,8 @@ export function getUpcomingSessionSummary(
   const now = Date.now();
   const upcomingSessions = sessions.filter(
     (session) =>
-      session.classId === entryId && new Date(session.startAt).getTime() > now,
+      session.classPlanId === entryId &&
+      new Date(session.startAt).getTime() > now,
   );
 
   return {
@@ -75,14 +80,15 @@ export function getClassPlanSummaryEntry(
   entry: ClassPlan,
   sessions: ClassSession[],
   instructors: Instructor[],
-  noInstructorLabel: string,
-  unknownInstructorLabel: string,
+  classTypesById: Map<ClassType["id"], ClassType>,
+  venuesById: Map<Venue["id"], Venue>,
+  t: Translate,
 ): ScheduleListEntry {
   const now = Date.now();
   const upcomingSession = sessions
     .filter(
       (session) =>
-        session.classId === entry.id &&
+        session.classPlanId === entry.id &&
         new Date(session.startAt).getTime() > now,
     )
     .sort(
@@ -90,20 +96,24 @@ export function getClassPlanSummaryEntry(
     )[0];
   const instructorName = entry.instructorId
     ? (instructors.find((instructor) => instructor.id === entry.instructorId)
-        ?.name ?? unknownInstructorLabel)
-    : noInstructorLabel;
+        ?.name ?? t("classes.unknownInstructor"))
+    : t("classes.noInstructorAssigned");
 
   return {
     session: upcomingSession ?? {
       id: `${entry.id}-plan-summary`,
-      classId: entry.id,
+      classPlanId: entry.id,
+      venueId: entry.venueId,
       instructorId: entry.instructorId,
       startAt: getNextClassPlanStart(entry).toISOString(),
       durationMinutes: entry.durationMinutes,
       capacity: entry.capacity,
       reservedCount: 0,
+      status: "scheduled",
     },
-    className: entry.name,
+    className:
+      classTypesById.get(entry.classTypeId)?.name ?? t("schedule.unknownClass"),
+    venueName: venuesById.get(entry.venueId)?.name ?? t("venues.unknownVenue"),
     instructorName,
   };
 }

@@ -9,26 +9,29 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { categories } from "@/config/class-types";
+import { mockClassTypesById } from "@/classes/data/classes.mock-data";
+import { getCategoryIdsForClassPlans } from "@/classes/utils/classes.utils";
 import { useI18n } from "@/i18n/i18n";
 import type { Instructor } from "@/types/schedule";
 import type { ClassFilters, ClassPlan } from "@/types/classes";
 
 export function ClassesToolbar({
-  classes,
+  classPlans,
   instructors,
   filters,
   onFilterChange,
   onAddClass,
 }: {
-  classes: ClassPlan[];
+  classPlans: ClassPlan[];
   instructors: Instructor[];
   filters: ClassFilters;
   onFilterChange: (filters: ClassFilters) => void;
   onAddClass: () => void;
 }) {
   const { t } = useI18n();
-  const categoryIdsWithClasses = new Set(
-    classes.map((classItem) => classItem.classTypeId),
+  const categoryIdsWithClassPlans = getCategoryIdsForClassPlans(
+    classPlans,
+    mockClassTypesById,
   );
 
   function updateFilter(key: keyof ClassFilters, value: string) {
@@ -39,8 +42,8 @@ export function ClassesToolbar({
     <div className="flex w-full items-center justify-between gap-3 max-[1100px]:flex-col max-[1100px]:items-stretch">
       <div className="flex flex-wrap items-center gap-2">
         <Select
-          value={filters.classTypeId}
-          onValueChange={(value) => updateFilter("classTypeId", value)}
+          value={filters.categoryId}
+          onValueChange={(value) => updateFilter("categoryId", value)}
         >
           <SelectTrigger className="h-9 min-w-36">
             <SelectValue />
@@ -48,7 +51,7 @@ export function ClassesToolbar({
           <SelectContent>
             <SelectItem value="all">{t("classes.allClasses")}</SelectItem>
             {categories
-              .filter((category) => categoryIdsWithClasses.has(category.id))
+              .filter((category) => categoryIdsWithClassPlans.has(category.id))
               .map((category) => (
                 <SelectItem key={category.id} value={category.id}>
                   {t(category.labelKey)}

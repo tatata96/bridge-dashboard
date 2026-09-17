@@ -55,7 +55,7 @@ export function ScheduleDetailPanel({
     );
   }
 
-  const { session, className, instructorName } = entry;
+  const { session, className, venueName, instructorName } = entry;
   const spotsLeft = session.capacity - session.reservedCount;
   const bookedPercent =
     session.capacity > 0 ? (session.reservedCount / session.capacity) * 100 : 0;
@@ -68,8 +68,8 @@ export function ScheduleDetailPanel({
             {formatTime(new Date(session.startAt), dateLocale)} {className}
           </h2>
           <span className="text-sm text-muted-foreground">
-            {session.durationMinutes} {t("schedule.minuteShort")} ·{" "}
-            {instructorName}
+            {venueName} · {session.durationMinutes} {t("schedule.minuteShort")}{" "}
+            · {instructorName}
           </span>
         </div>
 

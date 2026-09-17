@@ -1,4 +1,5 @@
 import type { CategoryId } from "@/config/class-types";
+import type { Venue } from "@/types/venues";
 
 export type ClassStatus = "active" | "paused";
 
@@ -25,16 +26,14 @@ export type ClassSchedule =
 
 export type ClassPlan = {
   id: string;
-  name: string;
-  classTypeId: CategoryId;
-  description: string;
+  classTypeId: ClassType["id"];
+  venueId: Venue["id"];
   status: ClassStatus;
   instructorId: string | null;
   schedule: ClassSchedule;
   startTime: string; // HH:mm local business time
   durationMinutes: number;
   capacity: number;
-  priceCredits: number;
 };
 
 export type ClassType = {
@@ -45,6 +44,6 @@ export type ClassType = {
 };
 
 export type ClassFilters = {
-  classTypeId: string;
+  categoryId: string;
   instructorId: string;
 };

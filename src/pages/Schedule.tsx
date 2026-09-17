@@ -15,18 +15,27 @@ import {
 } from "@/schedule/data/schedule.mock-data";
 import { ScheduleToolbar } from "@/schedule/components/session-detail-right-panel/ScheduleToolbar";
 import {
-  classesById,
+  getClassPlanCategoryId,
+  getClassPlanName,
+  getSessionVenueName,
   getInstructorName,
   hasSessionEnded,
   hasSessionStarted,
 } from "@/schedule/utils/schedule.utils";
 import type { ClassSession } from "@/types/schedule";
 
+const CANCELLED_BOOKING_STATUSES = new Set([
+  "cancelled",
+  "late_cancelled",
+  "cancelled_by_partner",
+]);
+
 export function SchedulePage() {
   const { toast } = useToast();
   const { t } = useI18n();
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const [typeFilter, setTypeFilter] = useState("all");
+  const [venueFilter, setVenueFilter] = useState("all");
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
     null,
   );
@@ -35,10 +44,15 @@ export function SchedulePage() {
 
   function getVisibleSessions(sourceSessions: ClassSession[]) {
     return sourceSessions
+      .filter((session) => session.status !== "cancelled")
       .filter((session) => isSameDay(new Date(session.startAt), selectedDate))
       .filter((session) => {
         if (typeFilter === "all") return true;
-        return classesById.get(session.classId)?.classTypeId === typeFilter;
+        return getClassPlanCategoryId(session.classPlanId) === typeFilter;
+      })
+      .filter((session) => {
+        if (venueFilter === "all") return true;
+        return session.venueId === venueFilter;
       })
       .sort(
         (a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
@@ -76,7 +90,7 @@ export function SchedulePage() {
     if (changes.instructorId !== originalSession.instructorId) {
       changeMessages.push(
         t("toast.instructorChanged", {
-          instructor: getInstructorName(changes.instructorId),
+          instructor: getInstructorName(changes.instructorId, t),
         }),
       );
     }
@@ -112,7 +126,21 @@ export function SchedulePage() {
       nextVisibleSessions[cancelledIndex - 1] ??
       null;
 
-    setSessions((prev) => prev.filter((session) => session.id !== sessionId));
+    setSessions((prev) =>
+      prev.map((session) =>
+        session.id === sessionId
+          ? { ...session, status: "cancelled" }
+          : session,
+      ),
+    );
+    setReservations((prev) =>
+      prev.map((reservation) =>
+        reservation.sessionId === sessionId &&
+        !CANCELLED_BOOKING_STATUSES.has(reservation.status)
+          ? { ...reservation, status: "cancelled_by_partner" }
+          : reservation,
+      ),
+    );
     setSelectedSessionId(nextSelectedSession?.id ?? null);
 
     toast({
@@ -123,6 +151,7 @@ export function SchedulePage() {
   function checkInReservation(reservationId: string) {
     const reservation = reservations.find((r) => r.id === reservationId);
     if (!reservation) return;
+    if (reservation.status !== "booked") return;
 
     setReservations((prev) =>
       prev.map((r) =>
@@ -142,14 +171,14 @@ export function SchedulePage() {
 
   function undoCheckInReservation(reservationId: string) {
     const reservation = reservations.find((r) => r.id === reservationId);
+    if (!reservation) return;
+    if (reservation.status !== "attended") return;
 
     setReservations((prev) =>
       prev.map((r) =>
         r.id === reservationId ? { ...r, status: "booked" } : r,
       ),
     );
-
-    if (!reservation) return;
 
     const firstName = reservation.clientName.split(" ")[0];
     toast({
@@ -160,10 +189,15 @@ export function SchedulePage() {
   function cancelBooking(reservationId: string) {
     const reservation = reservations.find((r) => r.id === reservationId);
     if (!reservation) return;
+    if (CANCELLED_BOOKING_STATUSES.has(reservation.status)) return;
 
     const firstName = reservation.clientName.split(" ")[0];
 
-    setReservations((prev) => prev.filter((r) => r.id !== reservationId));
+    setReservations((prev) =>
+      prev.map((r) =>
+        r.id === reservationId ? { ...r, status: "cancelled" } : r,
+      ),
+    );
     setSessions((prev) =>
       prev.map((session) => {
         if (session.id !== reservation.sessionId) return session;
@@ -181,9 +215,7 @@ export function SchedulePage() {
         label: t("common.undo"),
         onClick: () => {
           setReservations((prev) =>
-            prev.some((r) => r.id === reservationId)
-              ? prev
-              : [...prev, reservation],
+            prev.map((r) => (r.id === reservationId ? reservation : r)),
           );
           setSessions((prev) =>
             prev.map((session) => {
@@ -203,9 +235,9 @@ export function SchedulePage() {
   const entries: ScheduleListEntry[] = getVisibleSessions(sessions).map(
     (session) => ({
       session,
-      className:
-        classesById.get(session.classId)?.name ?? t("schedule.unknownClass"),
-      instructorName: getInstructorName(session.instructorId),
+      className: getClassPlanName(session.classPlanId, t),
+      venueName: getSessionVenueName(session, t),
+      instructorName: getInstructorName(session.instructorId, t),
     }),
   );
 
@@ -235,6 +267,8 @@ export function SchedulePage() {
         onNextDay={() => setSelectedDate((date) => addDays(date, 1))}
         typeFilter={typeFilter}
         onTypeFilterChange={setTypeFilter}
+        venueFilter={venueFilter}
+        onVenueFilterChange={setVenueFilter}
       />
 
       <div className="flex min-w-0 flex-1 flex-col gap-4 xl:flex-row">

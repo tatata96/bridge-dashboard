@@ -10,13 +10,18 @@ const inFourDays = addDays(today, 4);
 const nextWeek = addDays(today, 7);
 
 export const mockInstructors: Instructor[] = [
-  { id: "instructor-1", name: "Betty White" },
+  {
+    id: "instructor-1",
+    name: "Betty White",
+    venueIds: ["venue-kadikoy", "venue-besiktas"],
+  },
 ];
 
 export const mockClassSessions: ClassSession[] = [
   {
     id: "session-yesterday-1",
-    classId: "class-1",
+    classPlanId: "class-1",
+    venueId: "venue-kadikoy",
     instructorId: "instructor-1",
     startAt: atTime(yesterday, 7, 0).toISOString(),
     durationMinutes: 60,
@@ -25,7 +30,8 @@ export const mockClassSessions: ClassSession[] = [
   },
   {
     id: "session-yesterday-2",
-    classId: "class-2",
+    classPlanId: "class-2",
+    venueId: "venue-besiktas",
     instructorId: null,
     startAt: atTime(yesterday, 9, 30).toISOString(),
     durationMinutes: 45,
@@ -34,7 +40,8 @@ export const mockClassSessions: ClassSession[] = [
   },
   {
     id: "session-yesterday-3",
-    classId: "class-3",
+    classPlanId: "class-3",
+    venueId: "venue-kadikoy",
     instructorId: "instructor-1",
     startAt: atTime(yesterday, 18, 0).toISOString(),
     durationMinutes: 60,
@@ -43,7 +50,8 @@ export const mockClassSessions: ClassSession[] = [
   },
   {
     id: "session-1",
-    classId: "class-1",
+    classPlanId: "class-1",
+    venueId: "venue-kadikoy",
     instructorId: "instructor-1",
     startAt: atTime(today, 7, 0).toISOString(),
     durationMinutes: 60,
@@ -52,7 +60,8 @@ export const mockClassSessions: ClassSession[] = [
   },
   {
     id: "session-2",
-    classId: "class-2",
+    classPlanId: "class-2",
+    venueId: "venue-besiktas",
     instructorId: null,
     startAt: atTime(today, 7, 0).toISOString(),
     durationMinutes: 60,
@@ -61,7 +70,8 @@ export const mockClassSessions: ClassSession[] = [
   },
   {
     id: "session-3",
-    classId: "class-3",
+    classPlanId: "class-3",
+    venueId: "venue-kadikoy",
     instructorId: "instructor-1",
     startAt: atTime(today, 7, 0).toISOString(),
     durationMinutes: 60,
@@ -70,7 +80,8 @@ export const mockClassSessions: ClassSession[] = [
   },
   {
     id: "session-4",
-    classId: "class-1",
+    classPlanId: "class-1",
+    venueId: "venue-kadikoy",
     instructorId: "instructor-1",
     startAt: atTime(today, 8, 0).toISOString(),
     durationMinutes: 60,
@@ -79,7 +90,8 @@ export const mockClassSessions: ClassSession[] = [
   },
   {
     id: "session-5",
-    classId: "class-1",
+    classPlanId: "class-1",
+    venueId: "venue-kadikoy",
     instructorId: "instructor-1",
     startAt: atTime(today, 11, 45).toISOString(),
     durationMinutes: 60,
@@ -88,7 +100,8 @@ export const mockClassSessions: ClassSession[] = [
   },
   {
     id: "session-6",
-    classId: "class-1",
+    classPlanId: "class-1",
+    venueId: "venue-kadikoy",
     instructorId: "instructor-1",
     // Anchored to the actual current time (not a fixed hour like the sessions
     // above) so this class is always mid-session whenever the app is opened,
@@ -97,11 +110,12 @@ export const mockClassSessions: ClassSession[] = [
     startAt: new Date(Date.now() - 20 * 60_000).toISOString(),
     durationMinutes: 60,
     capacity: 8,
-    reservedCount: 6,
+    reservedCount: 4,
   },
   {
     id: "session-class-1-upcoming-1",
-    classId: "class-1",
+    classPlanId: "class-1",
+    venueId: "venue-kadikoy",
     instructorId: "instructor-1",
     startAt: atTime(inTwoDays, 7, 0).toISOString(),
     durationMinutes: 60,
@@ -110,7 +124,8 @@ export const mockClassSessions: ClassSession[] = [
   },
   {
     id: "session-class-1-upcoming-2",
-    classId: "class-1",
+    classPlanId: "class-1",
+    venueId: "venue-kadikoy",
     instructorId: "instructor-1",
     startAt: atTime(inFourDays, 7, 0).toISOString(),
     durationMinutes: 60,
@@ -119,7 +134,8 @@ export const mockClassSessions: ClassSession[] = [
   },
   {
     id: "session-class-1-upcoming-3",
-    classId: "class-1",
+    classPlanId: "class-1",
+    venueId: "venue-kadikoy",
     instructorId: "instructor-1",
     startAt: atTime(nextWeek, 7, 0).toISOString(),
     durationMinutes: 60,
@@ -128,7 +144,8 @@ export const mockClassSessions: ClassSession[] = [
   },
   {
     id: "session-tomorrow-1",
-    classId: "class-4",
+    classPlanId: "class-4",
+    venueId: "venue-besiktas",
     instructorId: "instructor-1",
     startAt: atTime(tomorrow, 8, 0).toISOString(),
     durationMinutes: 45,
@@ -137,7 +154,8 @@ export const mockClassSessions: ClassSession[] = [
   },
   {
     id: "session-tomorrow-2",
-    classId: "class-8",
+    classPlanId: "class-8",
+    venueId: "venue-besiktas",
     instructorId: "instructor-1",
     startAt: atTime(tomorrow, 9, 30).toISOString(),
     durationMinutes: 45,
@@ -146,7 +164,8 @@ export const mockClassSessions: ClassSession[] = [
   },
   {
     id: "session-tomorrow-3",
-    classId: "class-5",
+    classPlanId: "class-5",
+    venueId: "venue-kadikoy",
     instructorId: null,
     startAt: atTime(tomorrow, 12, 0).toISOString(),
     durationMinutes: 30,
@@ -155,14 +174,15 @@ export const mockClassSessions: ClassSession[] = [
   },
   {
     id: "session-tomorrow-4",
-    classId: "class-15",
+    classPlanId: "class-15",
+    venueId: "venue-kadikoy",
     instructorId: "instructor-1",
     startAt: atTime(tomorrow, 18, 0).toISOString(),
     durationMinutes: 60,
     capacity: 10,
     reservedCount: 4,
   },
-];
+].map((session) => ({ ...session, status: "scheduled" }));
 
 export const mockReservations: Reservation[] = [
   {
@@ -333,7 +353,7 @@ export const mockReservations: Reservation[] = [
     clientName: "Taylor Chen",
     clientTotalVisits: 12,
     bookingSource: APP_NAME,
-    status: "booked",
+    status: "cancelled",
     bookedAt: atTime(today, 6, 20).toISOString(),
   },
   {
@@ -342,7 +362,7 @@ export const mockReservations: Reservation[] = [
     clientName: "Morgan Diaz",
     clientTotalVisits: 2,
     bookingSource: APP_NAME,
-    status: "booked",
+    status: "late_cancelled",
     bookedAt: atTime(today, 6, 25).toISOString(),
   },
   {
@@ -359,7 +379,7 @@ export const mockReservations: Reservation[] = [
     sessionId: "session-tomorrow-1",
     clientName: "Jonah Miller",
     clientTotalVisits: 4,
-    bookingSource: "direct",
+    bookingSource: APP_NAME,
     status: "booked",
     bookedAt: atTime(today, 9, 18).toISOString(),
   },
@@ -386,7 +406,7 @@ export const mockReservations: Reservation[] = [
     sessionId: "session-tomorrow-1",
     clientName: "Eden Clark",
     clientTotalVisits: 2,
-    bookingSource: "direct",
+    bookingSource: APP_NAME,
     status: "booked",
     bookedAt: atTime(today, 9, 42).toISOString(),
   },
@@ -413,7 +433,7 @@ export const mockReservations: Reservation[] = [
     sessionId: "session-tomorrow-2",
     clientName: "Grace Collins",
     clientTotalVisits: 33,
-    bookingSource: "direct",
+    bookingSource: APP_NAME,
     status: "booked",
     bookedAt: atTime(today, 10, 20).toISOString(),
   },
@@ -440,7 +460,7 @@ export const mockReservations: Reservation[] = [
     sessionId: "session-tomorrow-2",
     clientName: "Isaac Turner",
     clientTotalVisits: 22,
-    bookingSource: "direct",
+    bookingSource: APP_NAME,
     status: "booked",
     bookedAt: atTime(today, 10, 44).toISOString(),
   },
@@ -467,7 +487,7 @@ export const mockReservations: Reservation[] = [
     sessionId: "session-tomorrow-3",
     clientName: "Violet Price",
     clientTotalVisits: 16,
-    bookingSource: "direct",
+    bookingSource: APP_NAME,
     status: "booked",
     bookedAt: atTime(today, 11, 14).toISOString(),
   },
@@ -494,7 +514,7 @@ export const mockReservations: Reservation[] = [
     sessionId: "session-tomorrow-4",
     clientName: "Logan Reed",
     clientTotalVisits: 7,
-    bookingSource: "direct",
+    bookingSource: APP_NAME,
     status: "booked",
     bookedAt: atTime(today, 12, 46).toISOString(),
   },

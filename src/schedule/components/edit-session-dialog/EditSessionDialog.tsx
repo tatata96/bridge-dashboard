@@ -64,7 +64,7 @@ export function EditSessionDialog({
   );
   const [scopeNoticePrefix, scopeNoticeLink, scopeNoticeSuffix] =
     t("dialog.scopeNotice").split("**");
-  const classPlanEditPath = `${getPagePath("classes")}/${session.classId}/edit`;
+  const classPlanEditPath = `${getPagePath("classes")}/${session.classPlanId}/edit`;
 
   function handleOpenChange(nextOpen: boolean) {
     setOpen(nextOpen);

@@ -6,6 +6,7 @@ import type { ClassSession } from "@/types/schedule";
 export type ScheduleListEntry = {
   session: ClassSession;
   className: string;
+  venueName: string;
   instructorName: string;
 };
 
@@ -30,7 +31,7 @@ export function ScheduleClassList({
 
   return (
     <ul className="flex min-w-0 flex-1 divide-x divide-border overflow-x-auto rounded-lg border border-border bg-background xl:flex-col xl:divide-x-0 xl:divide-y xl:overflow-x-visible xl:overflow-y-auto">
-      {entries.map(({ session, className, instructorName }) => {
+      {entries.map(({ session, className, venueName, instructorName }) => {
         const isSelected = session.id === selectedSessionId;
 
         return (
@@ -51,6 +52,9 @@ export function ScheduleClassList({
                 </span>
                 <span className="text-sm font-semibold text-foreground">
                   {className}
+                </span>
+                <span className="text-sm text-muted-foreground">
+                  {venueName}
                 </span>
                 <span className="text-sm text-muted-foreground">
                   {instructorName}

@@ -16,7 +16,13 @@ import {
   type AttendeesFilter,
 } from "@/schedule/types/attendees-filter.types";
 import { CancelBookingDialog } from "@/schedule/components/cancel-booking-dialog/CancelBookingDialog";
-import type { Reservation } from "@/types/schedule";
+import type { BookingStatus, Reservation } from "@/types/schedule";
+
+const CANCELLED_BOOKING_STATUSES = new Set<BookingStatus>([
+  "cancelled",
+  "late_cancelled",
+  "cancelled_by_partner",
+]);
 
 function matchesFilter(reservation: Reservation, filter: AttendeesFilter) {
   const statusMatches =
@@ -27,7 +33,7 @@ function matchesFilter(reservation: Reservation, filter: AttendeesFilter) {
         : filter.status === "attended"
           ? reservation.status === "attended"
           : reservation.status === "no_show" ||
-            reservation.status === "late_cancelled";
+            CANCELLED_BOOKING_STATUSES.has(reservation.status);
 
   const userTypeMatches =
     filter.userType === "all" ||
@@ -120,6 +126,7 @@ function BookingRow({
 }) {
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const { t } = useI18n();
+  const isCancelled = CANCELLED_BOOKING_STATUSES.has(reservation.status);
 
   return (
     <li className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
@@ -145,7 +152,7 @@ function BookingRow({
           classHasEnded={classHasEnded}
           onCheckIn={onCheckIn}
         />
-        {!classHasEnded ? (
+        {!classHasEnded && !isCancelled ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -196,6 +203,30 @@ function AttendanceStatus({
   onCheckIn: (reservationId: string) => void;
 }) {
   const { t } = useI18n();
+
+  if (reservation.status === "cancelled") {
+    return (
+      <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+        {t("bookings.cancelled")}
+      </span>
+    );
+  }
+
+  if (reservation.status === "late_cancelled") {
+    return (
+      <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+        {t("bookings.lateCancelled")}
+      </span>
+    );
+  }
+
+  if (reservation.status === "cancelled_by_partner") {
+    return (
+      <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+        {t("bookings.cancelledByPartner")}
+      </span>
+    );
+  }
 
   if (reservation.status === "attended") {
     return (
