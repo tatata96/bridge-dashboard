@@ -227,6 +227,9 @@ export const tr = {
   "bookings.checkedIn": "Giriş yapıldı",
   "bookings.checkIn": "Yoklama al",
   "bookings.notCheckedIn": "Giriş yapılmadı",
+  "bookings.cancelled": "İptal edildi",
+  "bookings.lateCancelled": "Geç iptal edildi",
+  "bookings.cancelledByPartner": "İşletme tarafından iptal edildi",
   "bookings.keepBooking": "Rezervasyonu koru",
   "bookings.cancelBookingDescription":
     "{name} bilgilendirilecek ve 2 kredi iade edilecek. Yer tekrar açılır.",

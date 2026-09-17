@@ -110,7 +110,7 @@ export const mockClassSessions: ClassSession[] = [
     startAt: new Date(Date.now() - 20 * 60_000).toISOString(),
     durationMinutes: 60,
     capacity: 8,
-    reservedCount: 6,
+    reservedCount: 4,
   },
   {
     id: "session-class-1-upcoming-1",
@@ -182,7 +182,7 @@ export const mockClassSessions: ClassSession[] = [
     capacity: 10,
     reservedCount: 4,
   },
-];
+].map((session) => ({ ...session, status: "scheduled" }));
 
 export const mockReservations: Reservation[] = [
   {
@@ -353,7 +353,7 @@ export const mockReservations: Reservation[] = [
     clientName: "Taylor Chen",
     clientTotalVisits: 12,
     bookingSource: APP_NAME,
-    status: "booked",
+    status: "cancelled",
     bookedAt: atTime(today, 6, 20).toISOString(),
   },
   {
@@ -362,7 +362,7 @@ export const mockReservations: Reservation[] = [
     clientName: "Morgan Diaz",
     clientTotalVisits: 2,
     bookingSource: APP_NAME,
-    status: "booked",
+    status: "late_cancelled",
     bookedAt: atTime(today, 6, 25).toISOString(),
   },
   {

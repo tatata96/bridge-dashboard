@@ -222,6 +222,9 @@ export const en = {
   "bookings.checkedIn": "Checked in",
   "bookings.checkIn": "Check in",
   "bookings.notCheckedIn": "Not checked in",
+  "bookings.cancelled": "Cancelled",
+  "bookings.lateCancelled": "Late cancelled",
+  "bookings.cancelledByPartner": "Cancelled by partner",
   "bookings.keepBooking": "Keep booking",
   "bookings.cancelBookingDescription":
     "{name} will be notified and 2 credits refunded. The spot reopens.",
