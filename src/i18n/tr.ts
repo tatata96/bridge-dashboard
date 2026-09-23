@@ -279,4 +279,6 @@ export const tr = {
   "auth.signingIn": "Giriş yapılıyor…",
   "auth.invalidCredentials": "E-posta veya şifre hatalı.",
   "auth.genericError": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+  "auth.session": "Oturum",
+  "auth.logout": "Çıkış yap",
 } satisfies Record<TranslationKey, string>;

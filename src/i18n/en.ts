@@ -272,6 +272,8 @@ export const en = {
   "auth.signingIn": "Signing in…",
   "auth.invalidCredentials": "Incorrect email or password.",
   "auth.genericError": "Something went wrong. Please try again.",
+  "auth.session": "Session",
+  "auth.logout": "Log out",
 } as const;
 
 export type TranslationKey = keyof typeof en;

@@ -1,3 +1,5 @@
+import { useAuth } from "@/auth/AuthContext";
+import { Button } from "@/components/ui/button";
 import { SegmentedToggle } from "@/components/ui/segmented-toggle";
 import { useI18n, type Language } from "@/i18n/i18n";
 
@@ -12,6 +14,7 @@ const languageOptions: {
 
 export function AccountPage() {
   const { language, setLanguage, t } = useI18n();
+  const { signOut } = useAuth();
 
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-6 p-4 sm:p-6">
@@ -29,6 +32,15 @@ export function AccountPage() {
           onValueChange={setLanguage}
           aria-label={t("common.language")}
         />
+      </section>
+
+      <section className="flex max-w-2xl flex-col gap-3">
+        <h2 className="text-lg font-semibold tracking-normal">
+          {t("auth.session")}
+        </h2>
+        <Button variant="outline" onClick={signOut} className="w-fit">
+          {t("auth.logout")}
+        </Button>
       </section>
     </main>
   );
