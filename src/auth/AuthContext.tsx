@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -20,7 +21,7 @@ type AuthContextValue = {
     email: string,
     password: string,
   ) => Promise<{ error: AuthError | null }>;
-  signOut: () => Promise<void>;
+  signOut: () => Promise<{ error: AuthError | null }>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -28,9 +29,11 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const lastUserIdRef = useRef<string | null | undefined>(undefined);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
+      lastUserIdRef.current = session?.user.id ?? null;
       setSession(session);
       setLoading(false);
     });
@@ -38,6 +41,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      const userId = session?.user.id ?? null;
+
+      // undefined means initial restoration hasn't landed yet; skip the
+      // clear so this first callback doesn't wipe a cache that was never
+      // populated for a previous user.
+      if (
+        lastUserIdRef.current !== undefined &&
+        lastUserIdRef.current !== userId
+      ) {
+        queryClient.clear();
+      }
+      lastUserIdRef.current = userId;
+
       setSession(session);
       setLoading(false);
     });
@@ -58,8 +74,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { error };
       },
       signOut: async () => {
-        await supabase.auth.signOut();
-        queryClient.clear();
+        const { error } = await supabase.auth.signOut();
+        return { error };
       },
     }),
     [session, loading],

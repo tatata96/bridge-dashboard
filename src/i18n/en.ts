@@ -274,6 +274,7 @@ export const en = {
   "auth.genericError": "Something went wrong. Please try again.",
   "auth.session": "Session",
   "auth.logout": "Log out",
+  "auth.logoutError": "Failed to log out. Please try again.",
 } as const;
 
 export type TranslationKey = keyof typeof en;

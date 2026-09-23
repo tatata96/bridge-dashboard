@@ -281,4 +281,5 @@ export const tr = {
   "auth.genericError": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
   "auth.session": "Oturum",
   "auth.logout": "Çıkış yap",
+  "auth.logoutError": "Çıkış yapılamadı. Lütfen tekrar deneyin.",
 } satisfies Record<TranslationKey, string>;
