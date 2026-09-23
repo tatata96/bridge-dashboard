@@ -42,23 +42,31 @@ no session.
 ## File layout
 
 Following `CODING_CONVENTIONS.md` (domain folder for domain-specific code,
-`src/lib` for shared utilities, `src/pages` for route entries only):
+`src/lib` for shared utilities, `src/pages` for route entries only). `auth`
+ended up as a top-level domain folder (like `src/schedule`, `src/classes`)
+rather than nested under `lib`, since it's a full domain — client, context,
+and route guard — not just a utility; `src/lib/network` holds the generic,
+domain-agnostic server-communication pieces:
 
 ```
-.env.example                        new — VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_API_BASE_URL
-src/vite-env.d.ts                   new — typed ImportMetaEnv for those three vars
-src/lib/supabase-client.ts          new — the supabase-js client singleton
-src/lib/api-client.ts               new — apiFetch<T>() fetch wrapper + ApiError
-src/lib/query-client.ts             new — QueryClient instance
-src/auth/AuthContext.tsx            new — AuthProvider + useAuth()
-src/auth/ProtectedRoute.tsx         new — redirect-if-unauthenticated layout route
-src/auth/components/LoginForm.tsx   new — email/password form
-src/pages/Login.tsx                 new — route entry
-src/main.tsx                        edit — wrap with AuthProvider + QueryClientProvider
-src/App.tsx                         edit — public /login route; existing routes nest under ProtectedRoute
-src/i18n/en.ts, tr.ts               edit — auth.* translation keys (login form/errors)
-package.json                        edit — add @supabase/supabase-js, @tanstack/react-query
+.env                                 new, gitignored — real Supabase + backend values, not committed
+src/vite-env.d.ts                    new — typed ImportMetaEnv for the three VITE_ vars
+src/auth/supabase-client.ts          new — the supabase-js client singleton
+src/auth/AuthContext.tsx             new — AuthProvider + useAuth()
+src/auth/ProtectedRoute.tsx          new — redirect-if-unauthenticated layout route
+src/lib/network/api-client.ts        new — apiFetch<T>() fetch wrapper + ApiError
+src/lib/network/query-client.ts      new — QueryClient instance
+src/pages/login/Login.tsx            new — route entry, exports LoginPage
+src/pages/login/LoginForm.tsx        new — email/password form
+src/main.tsx                         edit — wrap with AuthProvider + QueryClientProvider
+src/App.tsx                          edit — public /login route; existing routes nest under ProtectedRoute
+src/i18n/en.ts, tr.ts                edit — auth.* translation keys (login form/errors)
+package.json                         edit — add @supabase/supabase-js, @tanstack/react-query
 ```
+
+No `.env.example` template — real values live only in the gitignored
+`.env`; other developers get their own values directly rather than from a
+placeholder file.
 
 ## Auth flow
 
@@ -106,6 +114,5 @@ redirects to `/login`.
 
 ## Open items for the user
 
-- Real Supabase project URL + anon key → `.env.local` (gitignored via
-  `*.local`).
-- Real NestJS backend URL (once available) → `.env.local`.
+Done — real Supabase project URL/anon key and the NestJS backend URL are
+in the local, gitignored `.env`.
