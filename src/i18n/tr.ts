@@ -272,4 +272,11 @@ export const tr = {
   "class.reason.facilityIssue": "Tesis sorunu",
   "class.reason.scheduleConflict": "Program çakışması",
   "class.reason.other": "Diğer",
+  "auth.login": "Giriş yap",
+  "auth.email": "E-posta",
+  "auth.password": "Şifre",
+  "auth.signIn": "Giriş yap",
+  "auth.signingIn": "Giriş yapılıyor…",
+  "auth.invalidCredentials": "E-posta veya şifre hatalı.",
+  "auth.genericError": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
 } satisfies Record<TranslationKey, string>;

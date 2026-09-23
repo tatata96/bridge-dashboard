@@ -265,6 +265,13 @@ export const en = {
   "class.reason.facilityIssue": "Facility issue",
   "class.reason.scheduleConflict": "Schedule conflict",
   "class.reason.other": "Other",
+  "auth.login": "Log in",
+  "auth.email": "Email",
+  "auth.password": "Password",
+  "auth.signIn": "Sign in",
+  "auth.signingIn": "Signing in…",
+  "auth.invalidCredentials": "Incorrect email or password.",
+  "auth.genericError": "Something went wrong. Please try again.",
 } as const;
 
 export type TranslationKey = keyof typeof en;
