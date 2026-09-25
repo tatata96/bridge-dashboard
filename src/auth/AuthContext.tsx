@@ -10,11 +10,16 @@ import {
 } from "react";
 import type { AuthError, Session, User } from "@supabase/supabase-js";
 
+import type { ClassistaUser } from "@/api/auth/auth.types";
 import { supabase } from "@/auth/supabase-client";
+import { useMeQuery } from "@/api/auth/auth.api";
 import { queryClient } from "@/lib/network/query-client";
 
 type AuthContextValue = {
   user: User | null;
+  classistaUser: ClassistaUser | null;
+  classistaUserLoading: boolean;
+  classistaUserError: Error | null;
   session: Session | null;
   loading: boolean;
   signIn: (
@@ -61,9 +66,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Cached per user id, so token refreshes don't refetch. The cache is
+  // cleared in onAuthStateChange when the authenticated identity changes.
+  const {
+    data: classistaUser = null,
+    isLoading: classistaUserLoading,
+    error: classistaUserError,
+  } = useMeQuery(session?.user.id);
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user: session?.user ?? null,
+      classistaUser,
+      classistaUserLoading,
+      classistaUserError,
       session,
       loading,
       signIn: async (email, password) => {
@@ -78,7 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { error };
       },
     }),
-    [session, loading],
+    [session, classistaUser, classistaUserLoading, classistaUserError, loading],
   );
 
   return <AuthContext value={value}>{children}</AuthContext>;
