@@ -10,14 +10,16 @@ import {
 } from "react";
 import type { AuthError, Session, User } from "@supabase/supabase-js";
 
-import { fetchMe } from "@/auth/auth.api";
-import type { ClassistaUser } from "@/auth/auth.types";
+import type { ClassistaUser } from "@/api/auth/auth.types";
 import { supabase } from "@/auth/supabase-client";
+import { useMeQuery } from "@/api/auth/auth.api";
 import { queryClient } from "@/lib/network/query-client";
 
 type AuthContextValue = {
   user: User | null;
   classistaUser: ClassistaUser | null;
+  classistaUserLoading: boolean;
+  classistaUserError: Error | null;
   session: Session | null;
   loading: boolean;
   signIn: (
@@ -31,9 +33,6 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
-  const [classistaUser, setClassistaUser] = useState<ClassistaUser | null>(
-    null,
-  );
   const [loading, setLoading] = useState(true);
   const lastUserIdRef = useRef<string | null | undefined>(undefined);
 
@@ -60,9 +59,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       lastUserIdRef.current = userId;
 
-      if (!session) {
-        setClassistaUser(null);
-      }
       setSession(session);
       setLoading(false);
     });
@@ -70,33 +66,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Keyed on the user id rather than the session object, so token refreshes
-  // (new session object, same user) don't refetch. Covers first login,
-  // session restoration and a change of identity. Clearing on logout is
-  // handled in onAuthStateChange above.
-  const userId = session?.user.id;
-  useEffect(() => {
-    if (!userId) return;
-
-    let cancelled = false;
-    fetchMe()
-      .then((me) => {
-        if (!cancelled) setClassistaUser(me);
-      })
-      .catch((error) => {
-        // Supabase auth is valid, so don't block the app; user stays unset.
-        console.error("Failed to load Classista user", error);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [userId]);
+  // Cached per user id, so token refreshes don't refetch. The cache is
+  // cleared in onAuthStateChange when the authenticated identity changes.
+  const {
+    data: classistaUser = null,
+    isLoading: classistaUserLoading,
+    error: classistaUserError,
+  } = useMeQuery(session?.user.id);
 
   const value = useMemo<AuthContextValue>(
     () => ({
       user: session?.user ?? null,
       classistaUser,
+      classistaUserLoading,
+      classistaUserError,
       session,
       loading,
       signIn: async (email, password) => {
@@ -111,7 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { error };
       },
     }),
-    [session, classistaUser, loading],
+    [session, classistaUser, classistaUserLoading, classistaUserError, loading],
   );
 
   return <AuthContext value={value}>{children}</AuthContext>;

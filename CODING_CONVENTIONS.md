@@ -25,11 +25,19 @@ Use `src/components` for shared app components that are not tied to one
 domain, such as the app shell, navigation, reusable empty states, shared
 dialogs, or generic page headers.
 
+Use `src/api/<domain>` for backend API modules, one folder per backend domain.
+Each folder holds the API functions, the TanStack Query hooks and query keys
+that wrap them, and the request/response types, for example
+`src/api/auth/auth.api.ts` and `src/api/auth/auth.types.ts`. Components and
+providers import from there instead of calling `apiFetch` directly. The shared
+client stays in `src/lib/network`.
+
 A practical rule:
 
 - If it is a route entry, put it in `src/pages`.
 - If it depends on schedule data or only makes sense in Schedule, put it in
   `src/schedule`.
+- If it calls the backend, put it in `src/api/<domain>`.
 - If it is a raw shadcn primitive, put it in `src/components/ui`.
 - If it is reusable across multiple product areas, put it in `src/components`.
 
