@@ -282,4 +282,8 @@ export const tr = {
   "auth.session": "Oturum",
   "auth.logout": "Çıkış yap",
   "auth.logoutError": "Çıkış yapılamadı. Lütfen tekrar deneyin.",
+  "auth.accountLoading": "Hesabınız yükleniyor…",
+  "auth.accountError": "Hesabınız yüklenirken bir hata oluştu.",
+  "auth.retry": "Tekrar dene",
+  "onboarding.title": "İşletmenizi oluşturun",
 } satisfies Record<TranslationKey, string>;

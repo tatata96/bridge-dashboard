@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { Toaster } from "@/components/Toaster";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { PartnerGate } from "@/auth/PartnerGate";
 import { ProtectedRoute } from "@/auth/ProtectedRoute";
 import {
   defaultPageId,
@@ -19,6 +20,7 @@ import { useI18n } from "@/i18n/i18n";
 import { BusinessProfilePage } from "@/pages/business-profile";
 import { ClassFormPage } from "@/pages/class-plans/ClassForm";
 import { LoginPage } from "@/pages/login/Login";
+import { OnboardingPage } from "@/pages/onboarding/Onboarding";
 import { AccountPage } from "@/pages/secondary-pages/Account";
 import { SchedulePage } from "@/pages/Schedule";
 import { ClassPlansPage } from "./pages/ClassPlans";
@@ -80,64 +82,80 @@ function App() {
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route
+        path="/onboarding"
+        element={
+          <ProtectedRoute>
+            <PartnerGate isOnboardingCompleted={false}>
+              <OnboardingPage />
+            </PartnerGate>
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/*"
         element={
           <ProtectedRoute>
-            <DashboardLayout
-              activePage={activePage}
-              activePageTitle={activePageTitle}
-            >
-              <Routes>
-                <Route
-                  path={getPagePath("schedule")}
-                  element={<SchedulePage />}
-                />
-                <Route
-                  path={getPagePath("business-profile")}
-                  element={<BusinessProfilePage />}
-                />
-                <Route
-                  path={getPagePath("classes")}
-                  element={<ClassPlansPage />}
-                />
-                <Route
-                  path={`${getPagePath("classes")}/add`}
-                  element={<ClassFormPage key={location.pathname} />}
-                />
-                <Route
-                  path={`${getPagePath("classes")}/:classId/edit`}
-                  element={<ClassFormPage key={location.pathname} />}
-                />
-                <Route
-                  path={getPagePath("class-types")}
-                  element={<PlaceholderPage activePage="class-types" />}
-                />
-                <Route
-                  path={getPagePath("instructors")}
-                  element={<PlaceholderPage activePage="instructors" />}
-                />
-                <Route
-                  path={getPagePath("performance")}
-                  element={<PlaceholderPage activePage="performance" />}
-                />
-                <Route
-                  path={getPagePath("ratings-and-reviews")}
-                  element={<PlaceholderPage activePage="ratings-and-reviews" />}
-                />
-                <Route
-                  path={getPagePath("support")}
-                  element={<PlaceholderPage activePage="support" />}
-                />
-                <Route
-                  path={getPagePath("account")}
-                  element={<AccountPage />}
-                />
-                <Route
-                  path="*"
-                  element={<Navigate to={getPagePath(defaultPageId)} replace />}
-                />
-              </Routes>
-            </DashboardLayout>
+            <PartnerGate isOnboardingCompleted>
+              <DashboardLayout
+                activePage={activePage}
+                activePageTitle={activePageTitle}
+              >
+                <Routes>
+                  <Route
+                    path={getPagePath("schedule")}
+                    element={<SchedulePage />}
+                  />
+                  <Route
+                    path={getPagePath("business-profile")}
+                    element={<BusinessProfilePage />}
+                  />
+                  <Route
+                    path={getPagePath("classes")}
+                    element={<ClassPlansPage />}
+                  />
+                  <Route
+                    path={`${getPagePath("classes")}/add`}
+                    element={<ClassFormPage key={location.pathname} />}
+                  />
+                  <Route
+                    path={`${getPagePath("classes")}/:classId/edit`}
+                    element={<ClassFormPage key={location.pathname} />}
+                  />
+                  <Route
+                    path={getPagePath("class-types")}
+                    element={<PlaceholderPage activePage="class-types" />}
+                  />
+                  <Route
+                    path={getPagePath("instructors")}
+                    element={<PlaceholderPage activePage="instructors" />}
+                  />
+                  <Route
+                    path={getPagePath("performance")}
+                    element={<PlaceholderPage activePage="performance" />}
+                  />
+                  <Route
+                    path={getPagePath("ratings-and-reviews")}
+                    element={
+                      <PlaceholderPage activePage="ratings-and-reviews" />
+                    }
+                  />
+                  <Route
+                    path={getPagePath("support")}
+                    element={<PlaceholderPage activePage="support" />}
+                  />
+                  <Route
+                    path={getPagePath("account")}
+                    element={<AccountPage />}
+                  />
+                  <Route
+                    path="*"
+                    element={
+                      <Navigate to={getPagePath(defaultPageId)} replace />
+                    }
+                  />
+                </Routes>
+              </DashboardLayout>
+            </PartnerGate>
           </ProtectedRoute>
         }
       />

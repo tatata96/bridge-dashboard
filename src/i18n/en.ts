@@ -275,6 +275,10 @@ export const en = {
   "auth.session": "Session",
   "auth.logout": "Log out",
   "auth.logoutError": "Failed to log out. Please try again.",
+  "auth.accountLoading": "Loading your account…",
+  "auth.accountError": "We couldn't load your account.",
+  "auth.retry": "Retry",
+  "onboarding.title": "Set up your business",
 } as const;
 
 export type TranslationKey = keyof typeof en;
