@@ -93,6 +93,8 @@ export const tr = {
   "businessProfile.additionalPhotosDescription":
     "İşletme profili için en fazla 5 destekleyici fotoğraf yükleyin.",
   "businessProfile.additionalPhotosUpload": "Ek fotoğrafları buraya bırakın",
+  "businessProfile.loading": "İşletme profiliniz yükleniyor…",
+  "businessProfile.loadError": "İşletme profiliniz yüklenemedi.",
   "businessProfile.locations": "Lokasyonlar",
   "businessProfile.locationsDescription":
     "Her lokasyon için mekan bilgilerini ve olanakları yönetin.",

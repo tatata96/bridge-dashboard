@@ -91,6 +91,8 @@ export const en = {
   "businessProfile.additionalPhotosDescription":
     "Upload up to 5 supporting photos for the business profile.",
   "businessProfile.additionalPhotosUpload": "Drop additional photos here",
+  "businessProfile.loading": "Loading your business profile…",
+  "businessProfile.loadError": "We couldn't load your business profile.",
   "businessProfile.locations": "Locations",
   "businessProfile.locationsDescription":
     "Manage venue-level details and amenities for each location.",
