@@ -1,7 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { meQueryKey } from "@/api/auth/auth.api";
 import type {
+  PartnerBusinessProfileResponse,
   PartnerOnboardingRequest,
   PartnerOnboardingResponse,
 } from "@/api/partners/partners.types";
@@ -40,5 +41,13 @@ export function usePartnerOnboardingMutation() {
         return refetchMe();
       }
     },
+  });
+}
+
+export function useBusinessProfileQuery() {
+  return useQuery({
+    queryKey: ["partner", "business-profile"],
+    queryFn: () =>
+      apiFetch<PartnerBusinessProfileResponse>("/partner/business-profile"),
   });
 }
