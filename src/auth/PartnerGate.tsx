@@ -22,9 +22,10 @@ export function PartnerGate({
   const { classistaUser, classistaUserError, refetchClassistaUser } = useAuth();
   const { t } = useI18n();
 
-  // An error must never be read as "no partner", so it is checked first
-  // and never redirects.
-  if (classistaUserError) {
+  // An error must never be read as "no partner", so it never redirects.
+  // It blocks the page only when there is no loaded user to fall back on; a
+  // failed refetch keeps rendering from the cached user.
+  if (classistaUserError && !classistaUser) {
     return (
       <div className="flex min-h-svh flex-col items-center justify-center gap-4">
         <p role="alert" className="text-sm text-muted-foreground">
