@@ -1,12 +1,24 @@
 import { useState } from "react";
 
+import { ApiError } from "@/lib/network/api-client";
+import { usePartnerOnboardingMutation } from "@/api/partners/partners.api";
 import { useAuth } from "@/auth/AuthContext";
 import { Button } from "@/components/ui/button";
-import { useI18n } from "@/i18n/i18n";
+import { useI18n, type TranslationKey } from "@/i18n/i18n";
 import { OnboardingForm } from "@/onboarding/components/OnboardingForm";
+
+// Backend details are never shown; each case maps to a translated message.
+function getOnboardingErrorKey(error: Error): TranslationKey {
+  if (error instanceof ApiError) {
+    if (error.status === 400) return "onboarding.error.invalid";
+    if (error.status === 409) return "onboarding.error.conflict";
+  }
+  return "onboarding.error.generic";
+}
 
 export function OnboardingPage() {
   const { t } = useI18n();
+  const onboarding = usePartnerOnboardingMutation();
   const { signOut } = useAuth();
   const [signingOut, setSigningOut] = useState(false);
   const [signOutError, setSignOutError] = useState<string | null>(null);
@@ -33,8 +45,15 @@ export function OnboardingPage() {
           <p className="mt-1 mb-6 text-sm text-muted-foreground">
             {t("onboarding.subtitle")}
           </p>
-          {/* Step 4 connects the form to the onboarding mutation. */}
-          <OnboardingForm onSubmit={() => undefined} />
+          <OnboardingForm
+            onSubmit={(request) => onboarding.mutate(request)}
+            submitting={onboarding.isPending}
+            errorMessage={
+              onboarding.error
+                ? t(getOnboardingErrorKey(onboarding.error))
+                : null
+            }
+          />
         </div>
 
         <div className="flex flex-col items-center gap-2">

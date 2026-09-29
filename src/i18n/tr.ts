@@ -302,4 +302,11 @@ export const tr = {
   "onboarding.optional": "isteğe bağlı",
   "onboarding.submit": "İşletmeyi oluştur",
   "onboarding.submitting": "Oluşturuluyor…",
+  "onboarding.error.required": "Lütfen bu alanı doldurun.",
+  "onboarding.error.invalid":
+    "Bazı bilgiler geçersiz görünüyor. Lütfen formu kontrol edip tekrar deneyin.",
+  "onboarding.error.conflict":
+    "Hesap kurulumunuz doğrulanamadı. Lütfen tekrar deneyin.",
+  "onboarding.error.generic":
+    "İşletmeniz oluşturulamadı. Lütfen tekrar deneyin.",
 } satisfies Record<TranslationKey, string>;

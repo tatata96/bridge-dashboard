@@ -296,6 +296,13 @@ export const en = {
   "onboarding.optional": "optional",
   "onboarding.submit": "Create business",
   "onboarding.submitting": "Creating…",
+  "onboarding.error.required": "Please fill in this field.",
+  "onboarding.error.invalid":
+    "Some details look invalid. Please check the form and try again.",
+  "onboarding.error.conflict":
+    "We couldn't confirm your account setup. Please try again.",
+  "onboarding.error.generic":
+    "We couldn't create your business. Please try again.",
 } as const;
 
 export type TranslationKey = keyof typeof en;
