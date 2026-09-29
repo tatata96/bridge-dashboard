@@ -1,30 +1,24 @@
+import type { VenueAmenity } from "@/api/partners/partners.types";
 import type { TranslationKey } from "@/i18n/i18n";
 
-export const BUSINESS_AMENITIES = [
-  { id: "car-parking", labelKey: "businessProfile.amenity.carParking" },
-  { id: "prayer-area", labelKey: "businessProfile.amenity.prayerArea" },
-  { id: "toilets", labelKey: "businessProfile.amenity.toilets" },
-  { id: "lockers", labelKey: "businessProfile.amenity.lockers" },
-  { id: "ac", labelKey: "businessProfile.amenity.ac" },
-  {
-    id: "wheelchair-access",
-    labelKey: "businessProfile.amenity.wheelchairAccess",
-  },
-  {
-    id: "child-friendly-area",
-    labelKey: "businessProfile.amenity.childFriendlyArea",
-  },
-  { id: "wifi", labelKey: "businessProfile.amenity.wifi" },
-  { id: "showers", labelKey: "businessProfile.amenity.showers" },
-  { id: "changing-rooms", labelKey: "businessProfile.amenity.changingRooms" },
+// Ids are the backend VenueAmenity values, so they are sent as they are.
+export const VENUE_AMENITIES = [
+  { id: "SHOWER", labelKey: "businessProfile.amenity.SHOWER" },
+  { id: "CHANGING_ROOM", labelKey: "businessProfile.amenity.CHANGING_ROOM" },
+  { id: "LOCKERS", labelKey: "businessProfile.amenity.LOCKERS" },
+  { id: "PARKING", labelKey: "businessProfile.amenity.PARKING" },
+  { id: "TOWELS", labelKey: "businessProfile.amenity.TOWELS" },
+  { id: "EQUIPMENT", labelKey: "businessProfile.amenity.EQUIPMENT" },
+  { id: "WIFI", labelKey: "businessProfile.amenity.WIFI" },
+  { id: "ACCESSIBLE", labelKey: "businessProfile.amenity.ACCESSIBLE" },
+  { id: "WATER", labelKey: "businessProfile.amenity.WATER" },
+  { id: "MAT_PROVIDED", labelKey: "businessProfile.amenity.MAT_PROVIDED" },
 ] as const satisfies {
-  id: string;
+  id: VenueAmenity;
   labelKey: TranslationKey;
 }[];
 
-export type BusinessAmenityId = (typeof BUSINESS_AMENITIES)[number]["id"];
-
-export const BUSINESS_CONTACT_FIELDS = [
+export const PARTNER_CONTACT_FIELDS = [
   {
     id: "phone",
     labelKey: "businessProfile.contact.phone",
@@ -68,8 +62,8 @@ export const BUSINESS_CONTACT_FIELDS = [
   icon: "phone" | "website" | "facebook" | "instagram" | "x" | "tiktok";
 }[];
 
-export type BusinessContactFieldId =
-  (typeof BUSINESS_CONTACT_FIELDS)[number]["id"];
+export type PartnerContactFieldId =
+  (typeof PARTNER_CONTACT_FIELDS)[number]["id"];
 
 export const RESERVATION_DEADLINE_OPTIONS = [
   { value: "5-min", labelKey: "businessProfile.reservationDeadline.5Min" },

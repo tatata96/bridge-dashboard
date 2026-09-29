@@ -3,6 +3,7 @@ import { GlobeIcon, PhoneIcon } from "lucide-react";
 
 import type {
   PartnerBusinessProfileResponse,
+  VenueAmenity,
   VenueResponse,
 } from "@/api/partners/partners.types";
 import { useBusinessProfileQuery } from "@/api/partners/partners.api";
@@ -26,11 +27,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { useI18n } from "@/i18n/i18n";
 import {
-  BUSINESS_AMENITIES,
-  BUSINESS_CONTACT_FIELDS,
+  VENUE_AMENITIES,
+  PARTNER_CONTACT_FIELDS,
   RESERVATION_DEADLINE_OPTIONS,
-  type BusinessAmenityId,
-  type BusinessContactFieldId,
+  type PartnerContactFieldId,
   type ReservationDeadlineValue,
 } from "@/pages/business-profile/business-profile.constants";
 
@@ -40,7 +40,7 @@ const CONTACT_ICON_URLS = {
   instagram: instagramIconUrl,
   tiktok: tiktokIconUrl,
   x: xIconUrl,
-} satisfies Partial<Record<BusinessContactFieldId, string>>;
+} satisfies Partial<Record<PartnerContactFieldId, string>>;
 
 function SectionHeader({
   children,
@@ -64,15 +64,10 @@ function SectionHeader({
   );
 }
 
-// TODO: the amenity checkboxes still use the old mock ids, so amenityIds is
-// widened to string[] and loaded backend amenities show as unchecked until the
-// amenity options are switched to VenueAmenity.
-type VenueDraft = Omit<VenueResponse, "amenityIds"> & { amenityIds: string[] };
-
 // The form's contact ids are not the backend field names yet.
 function toContactValues(
   profile: PartnerBusinessProfileResponse,
-): Record<BusinessContactFieldId, string> {
+): Record<PartnerContactFieldId, string> {
   return {
     phone: profile.phone ?? "",
     website: profile.websiteUrl ?? "",
@@ -141,13 +136,13 @@ function BusinessProfileForm({
   initialVenues,
 }: {
   profile: PartnerBusinessProfileResponse;
-  initialVenues: VenueDraft[];
+  initialVenues: VenueResponse[];
 }) {
   const { t } = useI18n();
   const [businessName, setBusinessName] = useState(profile.name);
   const [description, setDescription] = useState(profile.description ?? "");
   const [contacts, setContacts] = useState(() => toContactValues(profile));
-  const [venues, setVenues] = useState<VenueDraft[]>(initialVenues);
+  const [venues, setVenues] = useState<VenueResponse[]>(initialVenues);
   const [reservationDeadline, setReservationDeadline] =
     useState<ReservationDeadlineValue>("12-hours");
   // TODO: restore with the photo cards once the backend supports photos.
@@ -166,7 +161,7 @@ function BusinessProfileForm({
   //   maxHeight: t("imageUpload.maxHeight"),
   // };
 
-  function updateContact(fieldId: BusinessContactFieldId, value: string) {
+  function updateContact(fieldId: PartnerContactFieldId, value: string) {
     setContacts((currentContacts) => ({
       ...currentContacts,
       [fieldId]: value,
@@ -177,7 +172,7 @@ function BusinessProfileForm({
     venueId: string,
     updates: Partial<
       Pick<
-        VenueDraft,
+        VenueResponse,
         "name" | "addressLine" | "district" | "city" | "phone" | "status"
       >
     >,
@@ -191,7 +186,7 @@ function BusinessProfileForm({
 
   function updateVenueAmenity(
     venueId: string,
-    amenityId: BusinessAmenityId,
+    amenityId: VenueAmenity,
     isSelected: boolean,
   ) {
     setVenues((currentVenues) =>
@@ -311,7 +306,7 @@ function BusinessProfileForm({
                   value={venue.status}
                   onValueChange={(value) =>
                     updateVenue(venue.id, {
-                      status: value as VenueDraft["status"],
+                      status: value as VenueResponse["status"],
                     })
                   }
                 >
@@ -395,7 +390,7 @@ function BusinessProfileForm({
                     {t("businessProfile.amenities")}
                   </legend>
                   <div className="grid gap-2 sm:grid-cols-2">
-                    {BUSINESS_AMENITIES.map((amenity) => (
+                    {VENUE_AMENITIES.map((amenity) => (
                       <label
                         key={amenity.id}
                         className="flex min-h-10 cursor-pointer items-center gap-3 rounded-lg border border-border bg-input/20 px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-input/40"
@@ -431,7 +426,7 @@ function BusinessProfileForm({
           {t("businessProfile.contacts")}
         </SectionHeader>
         <div className="grid gap-3 sm:grid-cols-2">
-          {BUSINESS_CONTACT_FIELDS.map((field) => (
+          {PARTNER_CONTACT_FIELDS.map((field) => (
             <div key={field.id} className="relative min-w-0">
               <span className="pointer-events-none absolute top-1/2 left-3 flex size-5 -translate-y-1/2 items-center justify-center text-foreground">
                 {field.icon === "phone" ? (
