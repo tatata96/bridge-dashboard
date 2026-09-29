@@ -282,4 +282,31 @@ export const tr = {
   "auth.session": "Oturum",
   "auth.logout": "Çıkış yap",
   "auth.logoutError": "Çıkış yapılamadı. Lütfen tekrar deneyin.",
+  "auth.accountLoading": "Hesabınız yükleniyor…",
+  "auth.accountError": "Hesabınız yüklenirken bir hata oluştu.",
+  "auth.retry": "Tekrar dene",
+  "onboarding.title": "İşletmenizi oluşturun",
+  "onboarding.subtitle":
+    "İşletmeniz ve ilk lokasyonunuz hakkında bilgi verin. Bunları daha sonra değiştirebilirsiniz.",
+  "onboarding.business.title": "İşletme",
+  "onboarding.business.name": "İşletme adı",
+  "onboarding.business.description": "Açıklama",
+  "onboarding.location.title": "İlk lokasyon",
+  "onboarding.location.name": "Lokasyon adı",
+  "onboarding.location.nameHint": "Boş bırakırsanız işletme adınız kullanılır.",
+  "onboarding.location.address": "Adres",
+  "onboarding.location.district": "İlçe",
+  "onboarding.location.city": "Şehir",
+  "onboarding.location.postalCode": "Posta kodu",
+  "onboarding.location.phone": "Telefon",
+  "onboarding.optional": "isteğe bağlı",
+  "onboarding.submit": "İşletmeyi oluştur",
+  "onboarding.submitting": "Oluşturuluyor…",
+  "onboarding.error.required": "Lütfen bu alanı doldurun.",
+  "onboarding.error.invalid":
+    "Bazı bilgiler geçersiz görünüyor. Lütfen formu kontrol edip tekrar deneyin.",
+  "onboarding.error.conflict":
+    "Hesap kurulumunuz doğrulanamadı. Lütfen tekrar deneyin.",
+  "onboarding.error.generic":
+    "İşletmeniz oluşturulamadı. Lütfen tekrar deneyin.",
 } satisfies Record<TranslationKey, string>;

@@ -275,6 +275,34 @@ export const en = {
   "auth.session": "Session",
   "auth.logout": "Log out",
   "auth.logoutError": "Failed to log out. Please try again.",
+  "auth.accountLoading": "Loading your account…",
+  "auth.accountError": "We couldn't load your account.",
+  "auth.retry": "Retry",
+  "onboarding.title": "Set up your business",
+  "onboarding.subtitle":
+    "Tell us about your business and your first location. You can change this later.",
+  "onboarding.business.title": "Business",
+  "onboarding.business.name": "Business name",
+  "onboarding.business.description": "Description",
+  "onboarding.location.title": "First location",
+  "onboarding.location.name": "Location name",
+  "onboarding.location.nameHint":
+    "If left empty, your business name will be used.",
+  "onboarding.location.address": "Address",
+  "onboarding.location.district": "District",
+  "onboarding.location.city": "City",
+  "onboarding.location.postalCode": "Postal code",
+  "onboarding.location.phone": "Phone",
+  "onboarding.optional": "optional",
+  "onboarding.submit": "Create business",
+  "onboarding.submitting": "Creating…",
+  "onboarding.error.required": "Please fill in this field.",
+  "onboarding.error.invalid":
+    "Some details look invalid. Please check the form and try again.",
+  "onboarding.error.conflict":
+    "We couldn't confirm your account setup. Please try again.",
+  "onboarding.error.generic":
+    "We couldn't create your business. Please try again.",
 } as const;
 
 export type TranslationKey = keyof typeof en;

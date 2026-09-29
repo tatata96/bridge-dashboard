@@ -20,6 +20,7 @@ type AuthContextValue = {
   classistaUser: ClassistaUser | null;
   classistaUserLoading: boolean;
   classistaUserError: Error | null;
+  refetchClassistaUser: () => void;
   session: Session | null;
   loading: boolean;
   signIn: (
@@ -72,6 +73,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     data: classistaUser = null,
     isLoading: classistaUserLoading,
     error: classistaUserError,
+    refetch: refetchClassistaUser,
   } = useMeQuery(session?.user.id);
 
   const value = useMemo<AuthContextValue>(
@@ -80,6 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       classistaUser,
       classistaUserLoading,
       classistaUserError,
+      refetchClassistaUser,
       session,
       loading,
       signIn: async (email, password) => {
@@ -94,7 +97,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { error };
       },
     }),
-    [session, classistaUser, classistaUserLoading, classistaUserError, loading],
+    [
+      session,
+      classistaUser,
+      classistaUserLoading,
+      classistaUserError,
+      refetchClassistaUser,
+      loading,
+    ],
   );
 
   return <AuthContext value={value}>{children}</AuthContext>;
