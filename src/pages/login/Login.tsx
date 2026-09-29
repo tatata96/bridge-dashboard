@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, type Location } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { APP_NAME } from "@/config/constants";
 import { defaultPageId, getPagePath } from "@/config/navigation";
@@ -6,14 +6,11 @@ import { LoginForm } from "@/pages/login/LoginForm";
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const location = useLocation() as Location & {
-    state?: { from?: Location };
-  };
 
   function handleSuccess() {
-    const redirectTo =
-      location.state?.from?.pathname ?? getPagePath(defaultPageId);
-    navigate(redirectTo, { replace: true });
+    // Always enter through the default route; PartnerGate then decides
+    // between the dashboard and onboarding.
+    navigate(getPagePath(defaultPageId), { replace: true });
   }
 
   return (
