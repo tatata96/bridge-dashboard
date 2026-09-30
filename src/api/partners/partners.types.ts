@@ -67,3 +67,26 @@ export type PartnerOnboardingResponse = {
   partner: PartnerBusinessProfileResponse;
   venue: VenueResponse;
 };
+
+export type UpdatePartnerBusinessProfileRequest = {
+  name?: string;
+  description?: string | null;
+  phone?: string | null;
+  websiteUrl?: string | null;
+  facebookUrl?: string | null;
+  instagramHandle?: string | null;
+  xHandle?: string | null;
+  tiktokHandle?: string | null;
+  bookingCutoffMinutes?: number;
+};
+
+export type UpdateVenueRequest = {
+  name?: string;
+  addressLine?: string;
+  district?: string;
+  city?: string;
+  timezone?: string;
+  postalCode?: string | null;
+  phone?: string | null;
+  amenityIds?: VenueAmenity[];
+};
