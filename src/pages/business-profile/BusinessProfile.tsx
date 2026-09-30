@@ -46,7 +46,6 @@ import {
   PARTNER_CONTACT_FIELDS,
   RESERVATION_DEADLINE_OPTIONS,
   type PartnerContactFieldId,
-  type ReservationDeadlineValue,
 } from "@/pages/business-profile/business-profile.constants";
 
 const DESCRIPTION_MAX_LENGTH = 3000;
@@ -164,8 +163,9 @@ function BusinessProfileForm({
   // );
   // const archiveVenue = useArchiveVenueMutation();
   // const { toast } = useToast();
-  const [reservationDeadline, setReservationDeadline] =
-    useState<ReservationDeadlineValue>("12-hours");
+  const [reservationDeadline, setReservationDeadline] = useState(
+    profile.bookingCutoffMinutes,
+  );
   // TODO: restore with the photo cards once the backend supports photos.
   // const [coverPhoto, setCoverPhoto] = useState<File[]>([]);
   // const [additionalPhotos, setAdditionalPhotos] = useState<File[]>([]);
@@ -502,10 +502,8 @@ function BusinessProfileForm({
           {t("businessProfile.reservationDeadline")}
         </SectionHeader>
         <Select
-          value={reservationDeadline}
-          onValueChange={(value) =>
-            setReservationDeadline(value as ReservationDeadlineValue)
-          }
+          value={String(reservationDeadline)}
+          onValueChange={(value) => setReservationDeadline(Number(value))}
         >
           <SelectTrigger
             aria-label={t("businessProfile.reservationDeadline")}
@@ -515,7 +513,7 @@ function BusinessProfileForm({
           </SelectTrigger>
           <SelectContent>
             {RESERVATION_DEADLINE_OPTIONS.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
+              <SelectItem key={option.value} value={String(option.value)}>
                 {t(option.labelKey)}
               </SelectItem>
             ))}

@@ -65,25 +65,14 @@ export const PARTNER_CONTACT_FIELDS = [
 export type PartnerContactFieldId =
   (typeof PARTNER_CONTACT_FIELDS)[number]["id"];
 
+// Values are minutes before class start, as stored in bookingCutoffMinutes.
 export const RESERVATION_DEADLINE_OPTIONS = [
-  { value: "5-min", labelKey: "businessProfile.reservationDeadline.5Min" },
-  { value: "15-min", labelKey: "businessProfile.reservationDeadline.15Min" },
-  { value: "30-min", labelKey: "businessProfile.reservationDeadline.30Min" },
-  { value: "1-hour", labelKey: "businessProfile.reservationDeadline.1Hour" },
-  { value: "2-hours", labelKey: "businessProfile.reservationDeadline.2Hours" },
-  { value: "6-hours", labelKey: "businessProfile.reservationDeadline.6Hours" },
-  {
-    value: "12-hours",
-    labelKey: "businessProfile.reservationDeadline.12Hours",
-  },
-  {
-    value: "24-hours",
-    labelKey: "businessProfile.reservationDeadline.24Hours",
-  },
+  { value: 15, labelKey: "businessProfile.reservationDeadline.15Min" },
+  { value: 60, labelKey: "businessProfile.reservationDeadline.1Hour" },
+  { value: 120, labelKey: "businessProfile.reservationDeadline.2Hours" },
+  { value: 360, labelKey: "businessProfile.reservationDeadline.6Hours" },
+  { value: 720, labelKey: "businessProfile.reservationDeadline.12Hours" },
 ] as const satisfies {
-  value: string;
+  value: number;
   labelKey: TranslationKey;
 }[];
-
-export type ReservationDeadlineValue =
-  (typeof RESERVATION_DEADLINE_OPTIONS)[number]["value"];
