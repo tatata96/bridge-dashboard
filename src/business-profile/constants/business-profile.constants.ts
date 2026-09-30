@@ -24,44 +24,53 @@ export const PARTNER_CONTACT_FIELDS = [
     labelKey: "businessProfile.contact.phone",
     placeholderKey: "businessProfile.contact.phonePlaceholder",
     icon: "phone",
+    isHandle: false,
   },
   {
-    id: "website",
+    id: "websiteUrl",
     labelKey: "businessProfile.contact.website",
     placeholderKey: "businessProfile.contact.websitePlaceholder",
     icon: "website",
+    isHandle: false,
   },
   {
-    id: "facebook",
+    id: "facebookUrl",
     labelKey: "businessProfile.contact.facebook",
     placeholderKey: "businessProfile.contact.facebookPlaceholder",
     icon: "facebook",
+    isHandle: false,
   },
   {
-    id: "instagram",
+    id: "instagramHandle",
     labelKey: "businessProfile.contact.instagram",
     placeholderKey: "businessProfile.contact.instagramPlaceholder",
     icon: "instagram",
+    isHandle: true,
   },
   {
-    id: "x",
+    id: "xHandle",
     labelKey: "businessProfile.contact.x",
     placeholderKey: "businessProfile.contact.xPlaceholder",
     icon: "x",
+    isHandle: true,
   },
   {
-    id: "tiktok",
+    id: "tiktokHandle",
     labelKey: "businessProfile.contact.tiktok",
     placeholderKey: "businessProfile.contact.tiktokPlaceholder",
     icon: "tiktok",
+    isHandle: true,
   },
 ] as const satisfies {
   id: string;
   labelKey: TranslationKey;
   placeholderKey: TranslationKey;
   icon: "phone" | "website" | "facebook" | "instagram" | "x" | "tiktok";
+  // Handles are stored without the leading "@".
+  isHandle: boolean;
 }[];
 
+// The ids are the backend business-profile field names.
 export type PartnerContactFieldId =
   (typeof PARTNER_CONTACT_FIELDS)[number]["id"];
 

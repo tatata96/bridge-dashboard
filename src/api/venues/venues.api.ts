@@ -10,13 +10,13 @@ export const venuesQueryKey = ["partner", "venues"] as const;
 
 // The backend lists only the partner's ACTIVE venues.
 export function fetchVenues() {
-  return;
+  return apiFetch<VenueResponse[]>("/partner/venues");
 }
 
 export function useVenuesQuery() {
   return useQuery({
     queryKey: venuesQueryKey,
-    queryFn: () => apiFetch<VenueResponse[]>("/partner/venues"),
+    queryFn: fetchVenues,
   });
 }
 

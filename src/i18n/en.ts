@@ -28,17 +28,12 @@ export const en = {
   "venues.addressLine": "Address",
   "venues.district": "District",
   "venues.city": "City",
-  "venues.postalCode": "Postal code",
   "venues.phone": "Phone",
-  "venues.timezone": "Timezone",
   "venues.archiveLocation": "Archive location",
   "venues.archiveQuestion": "Archive this location?",
   "venues.archiveDescription":
     "{venue} will no longer appear in your locations.",
   "venues.keepLocation": "Keep location",
-  "venues.status": "Venue status",
-  "venues.status.active": "Active",
-  "venues.status.archived": "Archived",
   "businessProfile.businessInformation": "Business information",
   "businessProfile.businessInformationDescription":
     "Manage partner-level details shown across the business profile.",
@@ -80,14 +75,11 @@ export const en = {
   "businessProfile.reservationDeadline": "Reservation deadline",
   "businessProfile.reservationDeadlineDescription":
     "Set a deadline for when members need to make reservations prior to start time.",
-  "businessProfile.reservationDeadline.5Min": "5 min",
   "businessProfile.reservationDeadline.15Min": "15 min",
-  "businessProfile.reservationDeadline.30Min": "30 min",
   "businessProfile.reservationDeadline.1Hour": "1 hour",
   "businessProfile.reservationDeadline.2Hours": "2 hours",
   "businessProfile.reservationDeadline.6Hours": "6 hours",
   "businessProfile.reservationDeadline.12Hours": "12 hours",
-  "businessProfile.reservationDeadline.24Hours": "24 hours",
   "businessProfile.coverPhoto": "Add your cover photo",
   "businessProfile.coverPhotoDescription":
     "Upload one wide photo for the business profile header.",
