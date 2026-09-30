@@ -31,6 +31,11 @@ export const en = {
   "venues.postalCode": "Postal code",
   "venues.phone": "Phone",
   "venues.timezone": "Timezone",
+  "venues.archiveLocation": "Archive location",
+  "venues.archiveQuestion": "Archive this location?",
+  "venues.archiveDescription":
+    "{venue} will no longer appear in your locations.",
+  "venues.keepLocation": "Keep location",
   "venues.status": "Venue status",
   "venues.status.active": "Active",
   "venues.status.archived": "Archived",
@@ -208,6 +213,9 @@ export const en = {
   "toast.capacityChanged": "Capacity changed from {from} to {to}",
   "toast.instructorChanged": "Instructor is now {instructor}",
   "toast.classChangesSaved": "Class changes saved",
+  "toast.locationArchived": "Location archived",
+  "toast.locationArchiveFailed":
+    "Couldn't archive the location. Please try again.",
   "toast.classPaused": "Class paused",
   "toast.classActivated": "Class activated",
   "toast.sessionCancelled": "Session cancelled",

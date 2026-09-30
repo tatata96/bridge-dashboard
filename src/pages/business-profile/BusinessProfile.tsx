@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { GlobeIcon, PhoneIcon } from "lucide-react";
+import { GlobeIcon, MoreVerticalIcon, PhoneIcon } from "lucide-react";
 
 import type {
   PartnerBusinessProfileResponse,
@@ -7,14 +7,24 @@ import type {
   VenueResponse,
 } from "@/api/partners/partners.types";
 import { useBusinessProfileQuery } from "@/api/partners/partners.api";
-import { useVenuesQuery } from "@/api/venues/venues.api";
+import {
+  useArchiveVenueMutation,
+  useVenuesQuery,
+} from "@/api/venues/venues.api";
 import facebookIconUrl from "@/assets/icons/facebook.svg";
 import instagramIconUrl from "@/assets/icons/instagram.svg";
 import tiktokIconUrl from "@/assets/icons/tiktok.svg";
 import xIconUrl from "@/assets/icons/x.svg";
 // TODO: restore with the photo cards once the backend supports photos.
 // import { ImageUpload } from "@/components/ImageUpload";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -25,6 +35,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/i18n/i18n";
 import {
   VENUE_AMENITIES,
@@ -143,6 +154,11 @@ function BusinessProfileForm({
   const [description, setDescription] = useState(profile.description ?? "");
   const [contacts, setContacts] = useState(() => toContactValues(profile));
   const [venues, setVenues] = useState<VenueResponse[]>(initialVenues);
+  const [venueToArchive, setVenueToArchive] = useState<VenueResponse | null>(
+    null,
+  );
+  const archiveVenue = useArchiveVenueMutation();
+  const { toast } = useToast();
   const [reservationDeadline, setReservationDeadline] =
     useState<ReservationDeadlineValue>("12-hours");
   // TODO: restore with the photo cards once the backend supports photos.
@@ -161,6 +177,24 @@ function BusinessProfileForm({
   //   maxHeight: t("imageUpload.maxHeight"),
   // };
 
+  // The venues in state are a draft copy of the query data, so an archived
+  // venue has to be dropped from both.
+  function handleArchiveConfirm() {
+    if (!venueToArchive) return;
+    const { id } = venueToArchive;
+
+    archiveVenue.mutate(id, {
+      onSuccess: () => {
+        setVenues((currentVenues) =>
+          currentVenues.filter((venue) => venue.id !== id),
+        );
+        setVenueToArchive(null);
+        toast({ title: t("toast.locationArchived") });
+      },
+      onError: () => toast({ title: t("toast.locationArchiveFailed") }),
+    });
+  }
+
   function updateContact(fieldId: PartnerContactFieldId, value: string) {
     setContacts((currentContacts) => ({
       ...currentContacts,
@@ -173,7 +207,7 @@ function BusinessProfileForm({
     updates: Partial<
       Pick<
         VenueResponse,
-        "name" | "addressLine" | "district" | "city" | "phone" | "status"
+        "name" | "addressLine" | "district" | "city" | "phone"
       >
     >,
   ) {
@@ -302,29 +336,26 @@ function BusinessProfileForm({
                 <h4 className="text-sm font-semibold text-foreground">
                   {venue.name || t("venues.unknownVenue")}
                 </h4>
-                <Select
-                  value={venue.status}
-                  onValueChange={(value) =>
-                    updateVenue(venue.id, {
-                      status: value as VenueResponse["status"],
-                    })
-                  }
-                >
-                  <SelectTrigger
-                    aria-label={t("venues.status")}
-                    className="h-8 w-32 rounded-lg bg-background"
-                  >
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ACTIVE">
-                      {t("venues.status.active")}
-                    </SelectItem>
-                    <SelectItem value="ARCHIVED">
-                      {t("venues.status.archived")}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      aria-label={t("common.moreActions")}
+                    >
+                      <MoreVerticalIcon />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem
+                      className="text-destructive focus:text-destructive"
+                      onSelect={() => setVenueToArchive(venue)}
+                    >
+                      {t("venues.archiveLocation")}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
 
               <div className="grid gap-4 lg:grid-cols-2">
@@ -483,6 +514,22 @@ function BusinessProfileForm({
           </SelectContent>
         </Select>
       </section>
+
+      <ConfirmDialog
+        open={venueToArchive !== null}
+        onOpenChange={(open) => {
+          if (!open && !archiveVenue.isPending) setVenueToArchive(null);
+        }}
+        title={t("venues.archiveQuestion")}
+        body={t("venues.archiveDescription", {
+          venue: venueToArchive?.name ?? "",
+        })}
+        cancelLabel={t("venues.keepLocation")}
+        confirmLabel={t("venues.archiveLocation")}
+        tone="destructive"
+        onConfirm={handleArchiveConfirm}
+        confirmDisabled={archiveVenue.isPending}
+      />
     </main>
   );
 }
