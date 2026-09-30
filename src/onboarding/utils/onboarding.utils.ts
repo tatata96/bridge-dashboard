@@ -3,6 +3,7 @@ import type {
   OnboardingFormValues,
   RequiredOnboardingField,
 } from "@/onboarding/types/onboarding-form.types";
+import { getMissingFields, normalizeOptionalText } from "@/lib/form.utils";
 
 const requiredFields: RequiredOnboardingField[] = [
   "partnerName",
@@ -11,18 +12,10 @@ const requiredFields: RequiredOnboardingField[] = [
   "city",
 ];
 
-// HTML `required` accepts whitespace-only values, so check the trimmed text.
 export function getMissingRequiredFields(
   values: OnboardingFormValues,
 ): RequiredOnboardingField[] {
-  return requiredFields.filter((field) => values[field].trim() === "");
-}
-
-// Optional fields that are empty after trimming are omitted: the backend
-// rejects empty strings on them.
-function optional(value: string) {
-  const trimmed = value.trim();
-  return trimmed === "" ? undefined : trimmed;
+  return getMissingFields(values, requiredFields);
 }
 
 export function toPartnerOnboardingRequest(
@@ -31,15 +24,15 @@ export function toPartnerOnboardingRequest(
   return {
     partner: {
       name: values.partnerName.trim(),
-      description: optional(values.partnerDescription),
+      description: normalizeOptionalText(values.partnerDescription),
     },
     venue: {
-      name: optional(values.venueName),
+      name: normalizeOptionalText(values.venueName),
       addressLine: values.addressLine.trim(),
       district: values.district.trim(),
       city: values.city.trim(),
-      postalCode: optional(values.postalCode),
-      phone: optional(values.phone),
+      postalCode: normalizeOptionalText(values.postalCode),
+      phone: normalizeOptionalText(values.phone),
     },
   };
 }
