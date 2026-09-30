@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { GlobeIcon, MoreVerticalIcon, PhoneIcon } from "lucide-react";
+import { GlobeIcon, PhoneIcon } from "lucide-react";
+// TODO: restore with the archive location action.
+// import { MoreVerticalIcon } from "lucide-react";
 
 import type {
   PartnerBusinessProfileResponse,
@@ -7,24 +9,25 @@ import type {
   VenueResponse,
 } from "@/api/partners/partners.types";
 import { useBusinessProfileQuery } from "@/api/partners/partners.api";
-import {
-  useArchiveVenueMutation,
-  useVenuesQuery,
-} from "@/api/venues/venues.api";
+import { useVenuesQuery } from "@/api/venues/venues.api";
+// TODO: restore with the archive location action.
+// import { useArchiveVenueMutation } from "@/api/venues/venues.api";
 import facebookIconUrl from "@/assets/icons/facebook.svg";
 import instagramIconUrl from "@/assets/icons/instagram.svg";
 import tiktokIconUrl from "@/assets/icons/tiktok.svg";
 import xIconUrl from "@/assets/icons/x.svg";
 // TODO: restore with the photo cards once the backend supports photos.
 // import { ImageUpload } from "@/components/ImageUpload";
-import { ConfirmDialog } from "@/components/ConfirmDialog";
+// TODO: restore with the archive location action.
+// import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+// TODO: restore with the archive location action.
+// import {
+//   DropdownMenu,
+//   DropdownMenuContent,
+//   DropdownMenuItem,
+//   DropdownMenuTrigger,
+// } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -35,7 +38,8 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
+// TODO: restore with the archive location action.
+// import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/i18n/i18n";
 import {
   VENUE_AMENITIES,
@@ -154,11 +158,12 @@ function BusinessProfileForm({
   const [description, setDescription] = useState(profile.description ?? "");
   const [contacts, setContacts] = useState(() => toContactValues(profile));
   const [venues, setVenues] = useState<VenueResponse[]>(initialVenues);
-  const [venueToArchive, setVenueToArchive] = useState<VenueResponse | null>(
-    null,
-  );
-  const archiveVenue = useArchiveVenueMutation();
-  const { toast } = useToast();
+  // TODO: restore with the archive location action.
+  // const [venueToArchive, setVenueToArchive] = useState<VenueResponse | null>(
+  //   null,
+  // );
+  // const archiveVenue = useArchiveVenueMutation();
+  // const { toast } = useToast();
   const [reservationDeadline, setReservationDeadline] =
     useState<ReservationDeadlineValue>("12-hours");
   // TODO: restore with the photo cards once the backend supports photos.
@@ -177,23 +182,24 @@ function BusinessProfileForm({
   //   maxHeight: t("imageUpload.maxHeight"),
   // };
 
-  // The venues in state are a draft copy of the query data, so an archived
-  // venue has to be dropped from both.
-  function handleArchiveConfirm() {
-    if (!venueToArchive) return;
-    const { id } = venueToArchive;
-
-    archiveVenue.mutate(id, {
-      onSuccess: () => {
-        setVenues((currentVenues) =>
-          currentVenues.filter((venue) => venue.id !== id),
-        );
-        setVenueToArchive(null);
-        toast({ title: t("toast.locationArchived") });
-      },
-      onError: () => toast({ title: t("toast.locationArchiveFailed") }),
-    });
-  }
+  // TODO: restore with the archive location action.
+  // // The venues in state are a draft copy of the query data, so an archived
+  // // venue has to be dropped from both.
+  // function handleArchiveConfirm() {
+  //   if (!venueToArchive) return;
+  //   const { id } = venueToArchive;
+  //
+  //   archiveVenue.mutate(id, {
+  //     onSuccess: () => {
+  //       setVenues((currentVenues) =>
+  //         currentVenues.filter((venue) => venue.id !== id),
+  //       );
+  //       setVenueToArchive(null);
+  //       toast({ title: t("toast.locationArchived") });
+  //     },
+  //     onError: () => toast({ title: t("toast.locationArchiveFailed") }),
+  //   });
+  // }
 
   function updateContact(fieldId: PartnerContactFieldId, value: string) {
     setContacts((currentContacts) => ({
@@ -336,6 +342,7 @@ function BusinessProfileForm({
                 <h4 className="text-sm font-semibold text-foreground">
                   {venue.name || t("venues.unknownVenue")}
                 </h4>
+                {/* TODO: restore with the archive location action.
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -356,6 +363,7 @@ function BusinessProfileForm({
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
+                */}
               </div>
 
               <div className="grid gap-4 lg:grid-cols-2">
@@ -515,6 +523,7 @@ function BusinessProfileForm({
         </Select>
       </section>
 
+      {/* TODO: restore with the archive location action.
       <ConfirmDialog
         open={venueToArchive !== null}
         onOpenChange={(open) => {
@@ -530,6 +539,7 @@ function BusinessProfileForm({
         onConfirm={handleArchiveConfirm}
         confirmDisabled={archiveVenue.isPending}
       />
+      */}
     </main>
   );
 }
