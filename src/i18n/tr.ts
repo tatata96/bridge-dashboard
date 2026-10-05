@@ -91,6 +91,16 @@ export const tr = {
   "businessProfile.additionalPhotosUpload": "Ek fotoğrafları buraya bırakın",
   "businessProfile.loading": "İşletme profiliniz yükleniyor…",
   "businessProfile.loadError": "İşletme profiliniz yüklenemedi.",
+  "businessProfile.saving": "Kaydediliyor…",
+  "businessProfile.saved": "İşletme profili kaydedildi",
+  "businessProfile.partiallySaved":
+    "Bazı değişiklikler kaydedildi. Hataları gözden geçirip tekrar kaydedin.",
+  "businessProfile.error.requiredFields":
+    "Kaydetmeden önce tüm zorunlu alanları doldurun.",
+  "businessProfile.error.businessSave": "İşletme bilgileri kaydedilemedi.",
+  "businessProfile.error.venueSave": "{venue} kaydedilemedi.",
+  "businessProfile.error.invalid": "Değerleri kontrol edip tekrar deneyin.",
+  "businessProfile.error.generic": "Lütfen tekrar deneyin.",
   "businessProfile.locations": "Lokasyonlar",
   "businessProfile.locationsDescription":
     "Her lokasyon için mekan bilgilerini ve olanakları yönetin.",

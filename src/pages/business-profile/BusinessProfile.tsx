@@ -16,7 +16,7 @@ export function BusinessProfilePage() {
     return (
       <BusinessProfileForm
         profile={profileQuery.data}
-        initialVenues={venuesQuery.data}
+        savedVenues={venuesQuery.data}
       />
     );
   }

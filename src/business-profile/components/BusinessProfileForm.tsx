@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useState, type SubmitEvent } from "react";
 import { GlobeIcon, PhoneIcon } from "lucide-react";
 // TODO: restore with the archive location action.
 // import { MoreVerticalIcon } from "lucide-react";
 
+import { useUpdateBusinessProfileMutation } from "@/api/partners/partners.api";
 import type {
   PartnerBusinessProfileResponse,
   VenueAmenity,
   VenueResponse,
 } from "@/api/partners/partners.types";
+import { useUpdateVenueMutation } from "@/api/venues/venues.api";
 // TODO: restore with the archive location action.
 // import { useArchiveVenueMutation } from "@/api/venues/venues.api";
 import facebookIconUrl from "@/assets/icons/facebook.svg";
@@ -21,20 +23,23 @@ import {
   type PartnerContactFieldId,
 } from "@/business-profile/constants/business-profile.constants";
 import {
+  buildPartnerPatch,
+  buildVenuePatch,
   stripHandlePrefix,
   toContactValues,
 } from "@/business-profile/utils/business-profile.utils";
+import { saveBusinessProfileChanges } from "@/business-profile/utils/save-business-profile";
 // TODO: restore with the photo cards once the backend supports photos.
 // import { ImageUpload } from "@/components/ImageUpload";
 // TODO: restore with the archive location action.
 // import { ConfirmDialog } from "@/components/ConfirmDialog";
-// import { Button } from "@/components/ui/button";
 // import {
 //   DropdownMenu,
 //   DropdownMenuContent,
 //   DropdownMenuItem,
 //   DropdownMenuTrigger,
 // } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -44,9 +49,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-// TODO: restore with the archive location action.
-// import { useToast } from "@/hooks/use-toast";
-import { useI18n } from "@/i18n/i18n";
+import { useToast } from "@/hooks/use-toast";
+import { useI18n, type TranslationKey } from "@/i18n/i18n";
+import { getMissingFields } from "@/lib/form.utils";
+import { ApiError } from "@/lib/network/api-client";
 
 // Matches the backend limit for the business description.
 const DESCRIPTION_MAX_LENGTH = 2000;
@@ -79,26 +85,43 @@ function SectionHeader({
   );
 }
 
+type SaveErrors = { partner: string | null; venues: Record<string, string> };
+
+const noSaveErrors: SaveErrors = { partner: null, venues: {} };
+
+// Backend details are never shown; each case maps to a translated message.
+function getSaveErrorReasonKey(error: unknown): TranslationKey {
+  return error instanceof ApiError && error.status === 400
+    ? "businessProfile.error.invalid"
+    : "businessProfile.error.generic";
+}
+
+// The props are the saved server data (from the query cache) and the state
+// below is the draft. After a save the cache updates, so the saved data
+// catches up with the draft and what still differs is what failed to save.
+//
 // Mounted only once both queries have data, so the state below starts from
 // the server values and no effect is needed to copy them in.
 export function BusinessProfileForm({
   profile,
-  initialVenues,
+  savedVenues,
 }: {
   profile: PartnerBusinessProfileResponse;
-  initialVenues: VenueResponse[];
+  savedVenues: VenueResponse[];
 }) {
   const { t } = useI18n();
+  const { toast } = useToast();
+  const updatePartner = useUpdateBusinessProfileMutation();
+  const updateVenueRequest = useUpdateVenueMutation();
   const [businessName, setBusinessName] = useState(profile.name);
   const [description, setDescription] = useState(profile.description ?? "");
   const [contacts, setContacts] = useState(() => toContactValues(profile));
-  const [venues, setVenues] = useState<VenueResponse[]>(initialVenues);
+  const [venues, setVenues] = useState<VenueResponse[]>(savedVenues);
   // TODO: restore with the archive location action.
   // const [venueToArchive, setVenueToArchive] = useState<VenueResponse | null>(
   //   null,
   // );
   // const archiveVenue = useArchiveVenueMutation();
-  // const { toast } = useToast();
   const [reservationDeadline, setReservationDeadline] = useState(
     profile.bookingCutoffMinutes,
   );
@@ -136,6 +159,89 @@ export function BusinessProfileForm({
   //     onError: () => toast({ title: t("toast.locationArchiveFailed") }),
   //   });
   // }
+
+  const [submitted, setSubmitted] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveErrors, setSaveErrors] = useState(noSaveErrors);
+
+  const partnerPatch = buildPartnerPatch(profile, {
+    name: businessName,
+    description,
+    contacts,
+    bookingCutoffMinutes: reservationDeadline,
+  });
+  const venuePatches = venues.flatMap((draft) => {
+    const saved = savedVenues.find((venue) => venue.id === draft.id);
+    const request = saved && buildVenuePatch(saved, draft);
+    return request ? [{ venueId: draft.id, request }] : [];
+  });
+  const isDirty = partnerPatch !== null || venuePatches.length > 0;
+
+  const hasMissingFields =
+    getMissingFields({ name: businessName }, ["name"]).length > 0 ||
+    venues.some(
+      (venue) =>
+        getMissingFields(
+          {
+            name: venue.name,
+            addressLine: venue.addressLine,
+            district: venue.district,
+            city: venue.city,
+          },
+          ["name", "addressLine", "district", "city"],
+        ).length > 0,
+    );
+  const isMissing = (value: string) => submitted && value.trim() === "";
+
+  async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (isSaving) return;
+
+    setSubmitted(true);
+    if (hasMissingFields || !isDirty) return;
+
+    setSaveErrors(noSaveErrors);
+    setIsSaving(true);
+    const result = await saveBusinessProfileChanges(
+      { partner: partnerPatch, venues: venuePatches },
+      {
+        updatePartner: (request) => updatePartner.mutateAsync(request),
+        updateVenue: (input) => updateVenueRequest.mutateAsync(input),
+      },
+    );
+    setIsSaving(false);
+
+    const partnerFailure =
+      result.partner?.status === "failed" ? result.partner : null;
+    const venueFailures = result.venues.flatMap(({ venueId, outcome }) =>
+      outcome.status === "failed" ? [{ venueId, error: outcome.error }] : [],
+    );
+    const anySaved =
+      result.partner?.status === "saved" ||
+      result.venues.some(({ outcome }) => outcome.status === "saved");
+
+    setSaveErrors({
+      partner: partnerFailure
+        ? `${t("businessProfile.error.businessSave")} ${t(getSaveErrorReasonKey(partnerFailure.error))}`
+        : null,
+      venues: Object.fromEntries(
+        venueFailures.map(({ venueId, error }) => [
+          venueId,
+          `${t("businessProfile.error.venueSave", {
+            venue:
+              savedVenues.find((venue) => venue.id === venueId)?.name ??
+              t("venues.unknownVenue"),
+          })} ${t(getSaveErrorReasonKey(error))}`,
+        ]),
+      ),
+    });
+
+    if (!partnerFailure && venueFailures.length === 0) {
+      toast({ title: t("businessProfile.saved") });
+    } else if (anySaved) {
+      toast({ title: t("businessProfile.partiallySaved") });
+    }
+  }
 
   function updateContact(fieldId: PartnerContactFieldId, value: string) {
     setContacts((currentContacts) => ({
@@ -182,7 +288,11 @@ export function BusinessProfileForm({
   }
 
   return (
-    <main className="grid min-w-0 flex-1 grid-cols-1 items-start gap-4 p-4 sm:gap-6 sm:p-6 lg:grid-cols-2">
+    <form
+      onSubmit={handleSubmit}
+      noValidate
+      className="grid min-w-0 flex-1 grid-cols-1 items-start gap-4 p-4 sm:gap-6 sm:p-6 lg:grid-cols-2"
+    >
       <section className="flex w-full min-w-0 flex-col gap-3 rounded-lg border border-border bg-card p-4 lg:col-span-2">
         <SectionHeader
           description={t("businessProfile.businessInformationDescription")}
@@ -196,6 +306,7 @@ export function BusinessProfileForm({
             <Input
               value={businessName}
               onChange={(event) => setBusinessName(event.target.value)}
+              aria-invalid={isMissing(businessName)}
               className="rounded-lg bg-background"
             />
           </label>
@@ -311,6 +422,7 @@ export function BusinessProfileForm({
                       onChange={(event) =>
                         updateVenue(venue.id, { name: event.target.value })
                       }
+                      aria-invalid={isMissing(venue.name)}
                       className="rounded-lg bg-background"
                     />
                   </label>
@@ -323,6 +435,7 @@ export function BusinessProfileForm({
                           addressLine: event.target.value,
                         })
                       }
+                      aria-invalid={isMissing(venue.addressLine)}
                       className="rounded-lg bg-background"
                     />
                   </label>
@@ -333,6 +446,7 @@ export function BusinessProfileForm({
                       onChange={(event) =>
                         updateVenue(venue.id, { district: event.target.value })
                       }
+                      aria-invalid={isMissing(venue.district)}
                       className="rounded-lg bg-background"
                     />
                   </label>
@@ -343,6 +457,7 @@ export function BusinessProfileForm({
                       onChange={(event) =>
                         updateVenue(venue.id, { city: event.target.value })
                       }
+                      aria-invalid={isMissing(venue.city)}
                       className="rounded-lg bg-background"
                     />
                   </label>
@@ -479,6 +594,29 @@ export function BusinessProfileForm({
         confirmDisabled={archiveVenue.isPending}
       />
       */}
-    </main>
+
+      <div className="flex flex-col items-end gap-2 lg:col-span-2">
+        {submitted && hasMissingFields && (
+          <p role="alert" className="text-sm text-destructive">
+            {t("businessProfile.error.requiredFields")}
+          </p>
+        )}
+        {[saveErrors.partner, ...Object.values(saveErrors.venues)].map(
+          (message) =>
+            message && (
+              <p
+                key={message}
+                role="alert"
+                className="text-sm text-destructive"
+              >
+                {message}
+              </p>
+            ),
+        )}
+        <Button type="submit" disabled={!isDirty || isSaving}>
+          {isSaving ? t("businessProfile.saving") : t("common.save")}
+        </Button>
+      </div>
+    </form>
   );
 }

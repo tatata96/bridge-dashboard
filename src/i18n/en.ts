@@ -90,6 +90,16 @@ export const en = {
   "businessProfile.additionalPhotosUpload": "Drop additional photos here",
   "businessProfile.loading": "Loading your business profile…",
   "businessProfile.loadError": "We couldn't load your business profile.",
+  "businessProfile.saving": "Saving…",
+  "businessProfile.saved": "Business profile saved",
+  "businessProfile.partiallySaved":
+    "Some changes were saved. Review the errors and save again.",
+  "businessProfile.error.requiredFields":
+    "Fill in all required fields before saving.",
+  "businessProfile.error.businessSave": "Business details couldn't be saved.",
+  "businessProfile.error.venueSave": "{venue} couldn't be saved.",
+  "businessProfile.error.invalid": "Check the values and try again.",
+  "businessProfile.error.generic": "Please try again.",
   "businessProfile.locations": "Locations",
   "businessProfile.locationsDescription":
     "Manage venue-level details and amenities for each location.",
