@@ -103,12 +103,10 @@ function getSaveErrorReasonKey(error: unknown): TranslationKey {
     : "businessProfile.error.generic";
 }
 
-// The props are the saved server data (from the query cache) and the state
-// below is the draft. After a save the cache updates, so the saved data
-// catches up with the draft and what still differs is what failed to save.
-//
 // Mounted only once both queries have data, so the state below starts from
-// the server values and no effect is needed to copy them in.
+// the server values and no effect is needed to copy them in. The baseline is
+// intentionally kept separate from query props so a background refetch does
+// not make untouched draft fields look dirty.
 export function BusinessProfileForm({
   profile,
   savedVenues,
@@ -120,6 +118,9 @@ export function BusinessProfileForm({
   const { toast } = useToast();
   const updatePartner = useUpdateBusinessProfileMutation();
   const updateVenueRequest = useUpdateVenueMutation();
+  const [partnerBaseline, setPartnerBaseline] = useState(profile);
+  const [venueBaselines, setVenueBaselines] =
+    useState<VenueResponse[]>(savedVenues);
   const [businessName, setBusinessName] = useState(profile.name);
   const [description, setDescription] = useState(profile.description ?? "");
   const [contacts, setContacts] = useState(() => toContactValues(profile));
@@ -173,14 +174,14 @@ export function BusinessProfileForm({
   const [isSaving, setIsSaving] = useState(false);
   const [saveErrors, setSaveErrors] = useState(noSaveErrors);
 
-  const partnerPatch = buildPartnerPatch(profile, {
+  const partnerPatch = buildPartnerPatch(partnerBaseline, {
     name: businessName,
     description,
     contacts,
     bookingCutoffMinutes: reservationDeadline,
   });
   const venuePatches = venues.flatMap((draft) => {
-    const saved = savedVenues.find((venue) => venue.id === draft.id);
+    const saved = venueBaselines.find((venue) => venue.id === draft.id);
     const request = saved && buildVenuePatch(saved, draft);
     return request ? [{ venueId: draft.id, request }] : [];
   });
@@ -261,6 +262,40 @@ export function BusinessProfileForm({
       toast({ title: t("businessProfile.saved") });
     } else if (anySaved) {
       toast({ title: t("businessProfile.partiallySaved") });
+    }
+
+    if (result.partner?.status === "saved" && partnerPatch) {
+      setPartnerBaseline((currentBaseline) => ({
+        ...currentBaseline,
+        ...partnerPatch,
+      }));
+    }
+
+    const savedVenuePatches = result.venues.flatMap(({ venueId, outcome }) => {
+      if (outcome.status !== "saved") {
+        return [];
+      }
+
+      const savedPatch = venuePatches.find(
+        (venuePatch) => venuePatch.venueId === venueId,
+      );
+      return savedPatch ? [savedPatch] : [];
+    });
+
+    if (savedVenuePatches.length > 0) {
+      setVenueBaselines((currentBaselines) =>
+        currentBaselines.map((venue) => {
+          const savedPatch = savedVenuePatches.find(
+            (venuePatch) => venuePatch.venueId === venue.id,
+          );
+
+          if (!savedPatch) {
+            return venue;
+          }
+
+          return { ...venue, ...savedPatch.request };
+        }),
+      );
     }
   }
 
