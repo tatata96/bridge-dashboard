@@ -5,8 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useI18n } from "@/i18n/i18n";
 
-// Data wins over errors: a failed background refetch keeps the form on screen
-// with the last loaded values.
 export function BusinessProfilePage() {
   const { t } = useI18n();
   const profileQuery = useBusinessProfileQuery();

@@ -62,6 +62,13 @@ const CONTACT_ICON_URLS = {
   tiktokHandle: tiktokIconUrl,
   xHandle: xIconUrl,
 } satisfies Partial<Record<PartnerContactFieldId, string>>;
+const PARTNER_REQUIRED_FIELDS = ["name"] as const;
+const VENUE_REQUIRED_FIELDS = [
+  "name",
+  "addressLine",
+  "district",
+  "city",
+] as const;
 
 function SectionHeader({
   children,
@@ -177,21 +184,29 @@ export function BusinessProfileForm({
   });
   const isDirty = partnerPatch !== null || venuePatches.length > 0;
 
+  const partnerMissingFields = getMissingFields(
+    { name: businessName },
+    PARTNER_REQUIRED_FIELDS,
+  );
+  const venueMissingFieldsById = Object.fromEntries(
+    venues.map((venue) => [
+      venue.id,
+      getMissingFields(
+        {
+          name: venue.name,
+          addressLine: venue.addressLine,
+          district: venue.district,
+          city: venue.city,
+        },
+        VENUE_REQUIRED_FIELDS,
+      ),
+    ]),
+  );
   const hasMissingFields =
-    getMissingFields({ name: businessName }, ["name"]).length > 0 ||
-    venues.some(
-      (venue) =>
-        getMissingFields(
-          {
-            name: venue.name,
-            addressLine: venue.addressLine,
-            district: venue.district,
-            city: venue.city,
-          },
-          ["name", "addressLine", "district", "city"],
-        ).length > 0,
+    partnerMissingFields.length > 0 ||
+    Object.values(venueMissingFieldsById).some(
+      (missingFields) => missingFields.length > 0,
     );
-  const isMissing = (value: string) => submitted && value.trim() === "";
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -306,7 +321,7 @@ export function BusinessProfileForm({
             <Input
               value={businessName}
               onChange={(event) => setBusinessName(event.target.value)}
-              aria-invalid={isMissing(businessName)}
+              aria-invalid={submitted && partnerMissingFields.includes("name")}
               className="rounded-lg bg-background"
             />
           </label>
@@ -380,16 +395,19 @@ export function BusinessProfileForm({
           {t("businessProfile.locations")}
         </SectionHeader>
         <div className="grid gap-4">
-          {venues.map((venue) => (
-            <div
-              key={venue.id}
-              className="flex min-w-0 flex-col gap-4 rounded-lg border border-border bg-background p-4"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <h4 className="text-sm font-semibold text-foreground">
-                  {venue.name || t("venues.unknownVenue")}
-                </h4>
-                {/* TODO: restore with the archive location action.
+          {venues.map((venue) => {
+            const missingFields = venueMissingFieldsById[venue.id] ?? [];
+
+            return (
+              <div
+                key={venue.id}
+                className="flex min-w-0 flex-col gap-4 rounded-lg border border-border bg-background p-4"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <h4 className="text-sm font-semibold text-foreground">
+                    {venue.name || t("venues.unknownVenue")}
+                  </h4>
+                  {/* TODO: restore with the archive location action.
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -411,100 +429,111 @@ export function BusinessProfileForm({
                   </DropdownMenuContent>
                 </DropdownMenu>
                 */}
-              </div>
-
-              <div className="grid gap-4 lg:grid-cols-2">
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <label className="flex min-w-0 flex-col gap-1.5 text-sm font-medium text-muted-foreground">
-                    {t("venues.venueName")}
-                    <Input
-                      value={venue.name}
-                      onChange={(event) =>
-                        updateVenue(venue.id, { name: event.target.value })
-                      }
-                      aria-invalid={isMissing(venue.name)}
-                      className="rounded-lg bg-background"
-                    />
-                  </label>
-                  <label className="flex min-w-0 flex-col gap-1.5 text-sm font-medium text-muted-foreground sm:col-span-2">
-                    {t("venues.addressLine")}
-                    <Input
-                      value={venue.addressLine}
-                      onChange={(event) =>
-                        updateVenue(venue.id, {
-                          addressLine: event.target.value,
-                        })
-                      }
-                      aria-invalid={isMissing(venue.addressLine)}
-                      className="rounded-lg bg-background"
-                    />
-                  </label>
-                  <label className="flex min-w-0 flex-col gap-1.5 text-sm font-medium text-muted-foreground">
-                    {t("venues.district")}
-                    <Input
-                      value={venue.district}
-                      onChange={(event) =>
-                        updateVenue(venue.id, { district: event.target.value })
-                      }
-                      aria-invalid={isMissing(venue.district)}
-                      className="rounded-lg bg-background"
-                    />
-                  </label>
-                  <label className="flex min-w-0 flex-col gap-1.5 text-sm font-medium text-muted-foreground">
-                    {t("venues.city")}
-                    <Input
-                      value={venue.city}
-                      onChange={(event) =>
-                        updateVenue(venue.id, { city: event.target.value })
-                      }
-                      aria-invalid={isMissing(venue.city)}
-                      className="rounded-lg bg-background"
-                    />
-                  </label>
-                  <label className="flex min-w-0 flex-col gap-1.5 text-sm font-medium text-muted-foreground">
-                    {t("venues.phone")}
-                    <Input
-                      value={venue.phone ?? ""}
-                      onChange={(event) =>
-                        updateVenue(venue.id, {
-                          phone: event.target.value || null,
-                        })
-                      }
-                      className="rounded-lg bg-background"
-                    />
-                  </label>
                 </div>
 
-                <fieldset className="flex min-w-0 flex-col gap-2">
-                  <legend className="text-sm font-medium text-muted-foreground">
-                    {t("businessProfile.amenities")}
-                  </legend>
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    {VENUE_AMENITIES.map((amenity) => (
-                      <label
-                        key={amenity.id}
-                        className="flex min-h-10 cursor-pointer items-center gap-3 rounded-lg border border-border bg-input/20 px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-input/40"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={venue.amenityIds.includes(amenity.id)}
-                          onChange={(event) =>
-                            updateVenueAmenity(
-                              venue.id,
-                              amenity.id,
-                              event.target.checked,
-                            )
-                          }
-                          className="size-4 shrink-0 accent-primary"
-                        />
-                        <span>{t(amenity.labelKey)}</span>
-                      </label>
-                    ))}
+                <div className="grid gap-4 lg:grid-cols-2">
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <label className="flex min-w-0 flex-col gap-1.5 text-sm font-medium text-muted-foreground">
+                      {t("venues.venueName")}
+                      <Input
+                        value={venue.name}
+                        onChange={(event) =>
+                          updateVenue(venue.id, { name: event.target.value })
+                        }
+                        aria-invalid={
+                          submitted && missingFields.includes("name")
+                        }
+                        className="rounded-lg bg-background"
+                      />
+                    </label>
+                    <label className="flex min-w-0 flex-col gap-1.5 text-sm font-medium text-muted-foreground sm:col-span-2">
+                      {t("venues.addressLine")}
+                      <Input
+                        value={venue.addressLine}
+                        onChange={(event) =>
+                          updateVenue(venue.id, {
+                            addressLine: event.target.value,
+                          })
+                        }
+                        aria-invalid={
+                          submitted && missingFields.includes("addressLine")
+                        }
+                        className="rounded-lg bg-background"
+                      />
+                    </label>
+                    <label className="flex min-w-0 flex-col gap-1.5 text-sm font-medium text-muted-foreground">
+                      {t("venues.district")}
+                      <Input
+                        value={venue.district}
+                        onChange={(event) =>
+                          updateVenue(venue.id, {
+                            district: event.target.value,
+                          })
+                        }
+                        aria-invalid={
+                          submitted && missingFields.includes("district")
+                        }
+                        className="rounded-lg bg-background"
+                      />
+                    </label>
+                    <label className="flex min-w-0 flex-col gap-1.5 text-sm font-medium text-muted-foreground">
+                      {t("venues.city")}
+                      <Input
+                        value={venue.city}
+                        onChange={(event) =>
+                          updateVenue(venue.id, { city: event.target.value })
+                        }
+                        aria-invalid={
+                          submitted && missingFields.includes("city")
+                        }
+                        className="rounded-lg bg-background"
+                      />
+                    </label>
+                    <label className="flex min-w-0 flex-col gap-1.5 text-sm font-medium text-muted-foreground">
+                      {t("venues.phone")}
+                      <Input
+                        value={venue.phone ?? ""}
+                        onChange={(event) =>
+                          updateVenue(venue.id, {
+                            phone: event.target.value || null,
+                          })
+                        }
+                        className="rounded-lg bg-background"
+                      />
+                    </label>
                   </div>
-                </fieldset>
+
+                  <fieldset className="flex min-w-0 flex-col gap-2">
+                    <legend className="text-sm font-medium text-muted-foreground">
+                      {t("businessProfile.amenities")}
+                    </legend>
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {VENUE_AMENITIES.map((amenity) => (
+                        <label
+                          key={amenity.id}
+                          className="flex min-h-10 cursor-pointer items-center gap-3 rounded-lg border border-border bg-input/20 px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-input/40"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={venue.amenityIds.includes(amenity.id)}
+                            onChange={(event) =>
+                              updateVenueAmenity(
+                                venue.id,
+                                amenity.id,
+                                event.target.checked,
+                              )
+                            }
+                            className="size-4 shrink-0 accent-primary"
+                          />
+                          <span>{t(amenity.labelKey)}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
