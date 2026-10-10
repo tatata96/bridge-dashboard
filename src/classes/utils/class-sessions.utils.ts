@@ -57,7 +57,9 @@ function getNextClassPlanStart(entry: ClassPlan) {
     const candidateDate = new Date(searchStart);
     candidateDate.setDate(searchStart.getDate() + offset);
 
-    if (!selectedWeekdayIndexes.includes(candidateDate.getDay())) continue;
+    if (!selectedWeekdayIndexes.includes(candidateDate.getDay())) {
+      continue;
+    }
 
     const candidateStart = atTime(
       candidateDate,
@@ -65,13 +67,17 @@ function getNextClassPlanStart(entry: ClassPlan) {
       Number(minutes),
     );
 
-    if (candidateStart.getTime() <= now.getTime()) continue;
+    if (candidateStart.getTime() <= now.getTime()) {
+      continue;
+    }
 
     nextStart = candidateStart;
     break;
   }
 
-  if (nextStart) return nextStart;
+  if (nextStart) {
+    return nextStart;
+  }
 
   return atTime(searchStart, Number(hours), Number(minutes));
 }

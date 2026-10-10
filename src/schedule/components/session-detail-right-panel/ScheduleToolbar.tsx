@@ -14,7 +14,9 @@ function TypeFilterValue({ value }: { value: string }) {
   const { t } = useI18n();
   const classType = categories.find((option) => option.id === value);
 
-  if (value === "all") return t("schedule.allClasses");
+  if (value === "all") {
+    return t("schedule.allClasses");
+  }
 
   return classType ? t(classType.labelKey) : value;
 }
@@ -45,7 +47,9 @@ export function ScheduleToolbar({
       <DatePicker
         value={selectedDate}
         onChange={(date) => {
-          if (date) onDateChange(date);
+          if (date) {
+            onDateChange(date);
+          }
         }}
         label={t("schedule.date")}
         locale={dateLocale}

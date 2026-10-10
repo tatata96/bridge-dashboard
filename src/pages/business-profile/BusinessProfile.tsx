@@ -28,8 +28,12 @@ export function BusinessProfilePage() {
         <Button
           variant="outline"
           onClick={() => {
-            if (profileQuery.isError) profileQuery.refetch();
-            if (venuesQuery.isError) venuesQuery.refetch();
+            if (profileQuery.isError) {
+              profileQuery.refetch();
+            }
+            if (venuesQuery.isError) {
+              venuesQuery.refetch();
+            }
           }}
         >
           {t("auth.retry")}

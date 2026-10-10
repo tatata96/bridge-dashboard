@@ -6,6 +6,8 @@ export function getVenueName(
   venueId: string | null | undefined,
   fallbackName: string,
 ) {
-  if (!venueId) return fallbackName;
+  if (!venueId) {
+    return fallbackName;
+  }
   return venuesById.get(venueId)?.name ?? fallbackName;
 }

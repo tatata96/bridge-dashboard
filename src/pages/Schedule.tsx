@@ -47,11 +47,15 @@ export function SchedulePage() {
       .filter((session) => session.status !== "cancelled")
       .filter((session) => isSameDay(new Date(session.startAt), selectedDate))
       .filter((session) => {
-        if (typeFilter === "all") return true;
+        if (typeFilter === "all") {
+          return true;
+        }
         return getClassPlanCategoryId(session.classPlanId) === typeFilter;
       })
       .filter((session) => {
-        if (venueFilter === "all") return true;
+        if (venueFilter === "all") {
+          return true;
+        }
         return session.venueId === venueFilter;
       })
       .sort(
@@ -70,7 +74,9 @@ export function SchedulePage() {
       console.warn(`Cannot update missing session: ${sessionId}`);
       return;
     }
-    if (hasSessionStarted(originalSession)) return;
+    if (hasSessionStarted(originalSession)) {
+      return;
+    }
 
     setSessions((prev) =>
       prev.map((session) =>
@@ -113,8 +119,12 @@ export function SchedulePage() {
 
   function cancelSession(sessionId: string) {
     const session = sessions.find((s) => s.id === sessionId);
-    if (!session) return;
-    if (hasSessionStarted(session)) return;
+    if (!session) {
+      return;
+    }
+    if (hasSessionStarted(session)) {
+      return;
+    }
 
     const visibleSessions = getVisibleSessions(sessions);
     const cancelledIndex = visibleSessions.findIndex((s) => s.id === sessionId);
@@ -150,8 +160,12 @@ export function SchedulePage() {
 
   function checkInReservation(reservationId: string) {
     const reservation = reservations.find((r) => r.id === reservationId);
-    if (!reservation) return;
-    if (reservation.status !== "booked") return;
+    if (!reservation) {
+      return;
+    }
+    if (reservation.status !== "booked") {
+      return;
+    }
 
     setReservations((prev) =>
       prev.map((r) =>
@@ -171,8 +185,12 @@ export function SchedulePage() {
 
   function undoCheckInReservation(reservationId: string) {
     const reservation = reservations.find((r) => r.id === reservationId);
-    if (!reservation) return;
-    if (reservation.status !== "attended") return;
+    if (!reservation) {
+      return;
+    }
+    if (reservation.status !== "attended") {
+      return;
+    }
 
     setReservations((prev) =>
       prev.map((r) =>
@@ -188,8 +206,12 @@ export function SchedulePage() {
 
   function cancelBooking(reservationId: string) {
     const reservation = reservations.find((r) => r.id === reservationId);
-    if (!reservation) return;
-    if (CANCELLED_BOOKING_STATUSES.has(reservation.status)) return;
+    if (!reservation) {
+      return;
+    }
+    if (CANCELLED_BOOKING_STATUSES.has(reservation.status)) {
+      return;
+    }
 
     const firstName = reservation.clientName.split(" ")[0];
 
@@ -200,7 +222,9 @@ export function SchedulePage() {
     );
     setSessions((prev) =>
       prev.map((session) => {
-        if (session.id !== reservation.sessionId) return session;
+        if (session.id !== reservation.sessionId) {
+          return session;
+        }
 
         return {
           ...session,
@@ -219,7 +243,9 @@ export function SchedulePage() {
           );
           setSessions((prev) =>
             prev.map((session) => {
-              if (session.id !== reservation.sessionId) return session;
+              if (session.id !== reservation.sessionId) {
+                return session;
+              }
 
               return {
                 ...session,

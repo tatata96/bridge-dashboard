@@ -61,7 +61,9 @@ export function ConfirmDialog({
         {...contentProps}
         onOpenAutoFocus={(event) => {
           contentProps?.onOpenAutoFocus?.(event);
-          if (event.defaultPrevented) return;
+          if (event.defaultPrevented) {
+            return;
+          }
           event.preventDefault();
           internalCancelButtonRef.current?.focus();
         }}

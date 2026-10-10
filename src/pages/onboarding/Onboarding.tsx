@@ -10,8 +10,12 @@ import { OnboardingForm } from "@/onboarding/components/OnboardingForm";
 // Backend details are never shown; each case maps to a translated message.
 function getOnboardingErrorKey(error: Error): TranslationKey {
   if (error instanceof ApiError) {
-    if (error.status === 400) return "onboarding.error.invalid";
-    if (error.status === 409) return "onboarding.error.conflict";
+    if (error.status === 400) {
+      return "onboarding.error.invalid";
+    }
+    if (error.status === 409) {
+      return "onboarding.error.conflict";
+    }
   }
   return "onboarding.error.generic";
 }

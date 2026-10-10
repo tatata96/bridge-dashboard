@@ -32,6 +32,8 @@ export function getOptionalTextPatchValue(
   current: string,
 ) {
   const trimmed = getTextPatchValue(initial ?? "", current);
-  if (trimmed === undefined) return undefined;
+  if (trimmed === undefined) {
+    return undefined;
+  }
   return trimmed === "" ? null : trimmed;
 }

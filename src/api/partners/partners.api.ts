@@ -25,7 +25,9 @@ export function usePartnerOnboardingMutation() {
   // Returning the promise keeps the mutation pending until the refetch
   // finishes, so the UI never sees a settled POST with a stale `partner: null`.
   function refetchMe() {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     return queryClient.invalidateQueries({
       queryKey: meQueryKey(user.id),

@@ -32,7 +32,9 @@ type I18nContextValue = {
 const I18nContext = createContext<I18nContextValue | null>(null);
 
 function getInitialLanguage(): Language {
-  if (typeof window === "undefined") return "en";
+  if (typeof window === "undefined") {
+    return "en";
+  }
 
   const storedLanguage = window.localStorage.getItem(languageStorageKey);
   if (storedLanguage === "en" || storedLanguage === "tr") {
@@ -57,7 +59,9 @@ export function I18nProvider({ children }: { children: ReactNode }) {
       dateLocale: language === "tr" ? "tr-TR" : "en-US",
       t: (key, params) => {
         const template = translations[language][key];
-        if (!params) return template;
+        if (!params) {
+          return template;
+        }
 
         return Object.entries(params).reduce(
           (message, [paramKey, paramValue]) =>

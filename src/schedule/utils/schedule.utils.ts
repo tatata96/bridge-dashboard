@@ -29,7 +29,9 @@ export function hasSessionEnded(session: ClassSession) {
 }
 
 export function getInstructorName(instructorId: string | null, t: Translate) {
-  if (!instructorId) return t("classes.noInstructorAssigned");
+  if (!instructorId) {
+    return t("classes.noInstructorAssigned");
+  }
   return (
     instructorsById.get(instructorId)?.name ?? t("classes.unknownInstructor")
   );
@@ -37,7 +39,9 @@ export function getInstructorName(instructorId: string | null, t: Translate) {
 
 export function getClassPlanName(classPlanId: string, t: Translate) {
   const classPlan = classPlansById.get(classPlanId);
-  if (!classPlan) return t("schedule.unknownClass");
+  if (!classPlan) {
+    return t("schedule.unknownClass");
+  }
 
   return (
     classTypesById.get(classPlan.classTypeId)?.name ??
@@ -47,7 +51,9 @@ export function getClassPlanName(classPlanId: string, t: Translate) {
 
 export function getClassPlanCategoryId(classPlanId: string): CategoryId | null {
   const classPlan = classPlansById.get(classPlanId);
-  if (!classPlan) return null;
+  if (!classPlan) {
+    return null;
+  }
 
   return classTypesById.get(classPlan.classTypeId)?.categoryId ?? null;
 }

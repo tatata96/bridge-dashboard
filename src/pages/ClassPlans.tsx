@@ -38,7 +38,9 @@ function mergeSavedClassPlan(
     (classPlan) => classPlan.id === savedClassPlan.id,
   );
 
-  if (existingIndex === -1) return [savedClassPlan, ...classPlans];
+  if (existingIndex === -1) {
+    return [savedClassPlan, ...classPlans];
+  }
 
   return classPlans.map((classPlan) =>
     classPlan.id === savedClassPlan.id ? savedClassPlan : classPlan,
@@ -111,7 +113,9 @@ export function ClassPlansPage() {
   }
 
   useEffect(() => {
-    if (!returnedPausedClassId && !returnedSavedClassPlan) return;
+    if (!returnedPausedClassId && !returnedSavedClassPlan) {
+      return;
+    }
 
     navigate(location.pathname, { replace: true, state: null });
   }, [

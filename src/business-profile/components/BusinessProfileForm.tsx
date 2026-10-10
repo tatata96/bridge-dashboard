@@ -152,7 +152,9 @@ export function BusinessProfileForm({
   // // The venues in state are a draft copy of the query data, so an archived
   // // venue has to be dropped from both.
   // function handleArchiveConfirm() {
-  //   if (!venueToArchive) return;
+  //   if (!venueToArchive) {
+  //     return;
+  //   }
   //   const { id } = venueToArchive;
   //
   //   archiveVenue.mutate(id, {
@@ -210,10 +212,14 @@ export function BusinessProfileForm({
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (isSaving) return;
+    if (isSaving) {
+      return;
+    }
 
     setSubmitted(true);
-    if (hasMissingFields || !isDirty) return;
+    if (hasMissingFields || !isDirty) {
+      return;
+    }
 
     setSaveErrors(noSaveErrors);
     setIsSaving(true);
@@ -288,7 +294,9 @@ export function BusinessProfileForm({
   ) {
     setVenues((currentVenues) =>
       currentVenues.map((venue) => {
-        if (venue.id !== venueId) return venue;
+        if (venue.id !== venueId) {
+          return venue;
+        }
 
         return {
           ...venue,
@@ -610,7 +618,9 @@ export function BusinessProfileForm({
       <ConfirmDialog
         open={venueToArchive !== null}
         onOpenChange={(open) => {
-          if (!open && !archiveVenue.isPending) setVenueToArchive(null);
+          if (!open && !archiveVenue.isPending) {
+            setVenueToArchive(null);
+          }
         }}
         title={t("venues.archiveQuestion")}
         body={t("venues.archiveDescription", {

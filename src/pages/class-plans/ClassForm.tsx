@@ -76,7 +76,9 @@ function withoutFormError(errors: FormErrors, key: keyof FormErrors) {
 }
 
 function getFirstClassDate(startDate: Date, repeatOn: Weekday[]) {
-  if (repeatOn.length === 0) return null;
+  if (repeatOn.length === 0) {
+    return null;
+  }
 
   const selectedWeekdayIndexes = repeatOn.map((day) => weekdayIndexes[day]);
   const daysUntilNextClass = selectedWeekdayIndexes.reduce(
@@ -169,7 +171,9 @@ export function ClassFormPage() {
     classType === "one_time" ? t("classes.date") : t("classes.startDate");
   const canPauseClassPlan = isEditMode && classPlanToEdit?.status === "active";
   const formTitle = useMemo(() => {
-    if (!isEditMode || !classPlanToEdit) return t("classes.addClass");
+    if (!isEditMode || !classPlanToEdit) {
+      return t("classes.addClass");
+    }
 
     const schedule = classPlanToEdit.schedule;
     const scheduleLabel =
@@ -186,7 +190,9 @@ export function ClassFormPage() {
     ? "flex cursor-not-allowed items-center gap-2 text-sm font-medium text-muted-foreground"
     : "flex cursor-pointer items-center gap-2 text-sm font-medium text-foreground";
   const recurrenceSummary = useMemo(() => {
-    if (classType !== "recurring") return null;
+    if (classType !== "recurring") {
+      return null;
+    }
 
     const orderedRepeatOn = weekdays.filter((day) => repeatOn.includes(day));
     if (orderedRepeatOn.length === 0) {
@@ -281,14 +287,18 @@ export function ClassFormPage() {
   }
 
   function handleClassTypeChange(value: string) {
-    if (isClassTypeLocked) return;
+    if (isClassTypeLocked) {
+      return;
+    }
 
     setClassType(value as ClassSchedule["type"]);
     setFormErrors({});
   }
 
   function handleStartDateChange(date: Date | null) {
-    if (!date) return;
+    if (!date) {
+      return;
+    }
 
     setStartDate(date);
     setFormErrors((currentErrors) => {
@@ -336,7 +346,9 @@ export function ClassFormPage() {
   }
 
   async function confirmPause() {
-    if (!classPlanToEdit) return;
+    if (!classPlanToEdit) {
+      return;
+    }
 
     setIsPausing(true);
     setPauseError(null);
