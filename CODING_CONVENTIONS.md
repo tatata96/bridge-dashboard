@@ -106,6 +106,14 @@ src/lib/date.utils.ts
 src/lib/number.utils.ts
 ```
 
+## Function Naming
+
+Prefer function names that describe their domain intent and/or return
+semantics. Avoid vague names like `changedText`, `optionalText`, or
+`withoutUndefined` when the function actually has specific API/request
+semantics. For PATCH helpers in particular, make it obvious from the name that
+the function determines the value to send in a PATCH request.
+
 ## Accessibility
 
 ### Semantic Headings

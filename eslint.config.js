@@ -19,6 +19,16 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "VariableDeclarator[id.name='isMissing']",
+          message:
+            "Do not define component-local isMissing helpers. Use shared form utilities from src/lib/form.utils.ts instead.",
+        },
+      ],
+    },
   },
   {
     files: ["src/components/ui/**/*.{ts,tsx}"],
@@ -27,4 +37,10 @@ export default defineConfig([
     },
   },
   prettierRecommended,
+  {
+    files: ["**/*.{ts,tsx}"],
+    rules: {
+      curly: ["error", "all"],
+    },
+  },
 ]);

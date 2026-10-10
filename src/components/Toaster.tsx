@@ -40,7 +40,9 @@ export function Toaster({ children }: { children: ReactNode }) {
           <Toast
             key={item.id}
             onOpenChange={(open) => {
-              if (!open) dismiss(item.id);
+              if (!open) {
+                dismiss(item.id);
+              }
             }}
           >
             <div className="flex items-center gap-1.5">

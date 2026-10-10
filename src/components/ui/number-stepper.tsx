@@ -30,8 +30,12 @@ export function NumberStepper({
 
   function clamp(next: number) {
     let clamped = next;
-    if (min !== undefined) clamped = Math.max(min, clamped);
-    if (max !== undefined) clamped = Math.min(max, clamped);
+    if (min !== undefined) {
+      clamped = Math.max(min, clamped);
+    }
+    if (max !== undefined) {
+      clamped = Math.min(max, clamped);
+    }
     return clamped;
   }
 

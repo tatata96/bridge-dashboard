@@ -83,7 +83,9 @@ export function OnboardingForm({
 
     const missing = getMissingRequiredFields(values);
     setMissingFields(missing);
-    if (missing.length > 0) return;
+    if (missing.length > 0) {
+      return;
+    }
 
     onSubmit(toPartnerOnboardingRequest(values));
   }

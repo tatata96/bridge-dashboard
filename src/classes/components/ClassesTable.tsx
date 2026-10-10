@@ -23,7 +23,9 @@ function getInstructorName(
   instructors: Instructor[],
   t: (key: TranslationKey) => string,
 ) {
-  if (!instructorId) return t("classes.noInstructorAssigned");
+  if (!instructorId) {
+    return t("classes.noInstructorAssigned");
+  }
   return (
     instructors.find((instructor) => instructor.id === instructorId)?.name ??
     t("classes.unknownInstructor")
@@ -62,14 +64,18 @@ export function ClassesTable({
   const lastPauseEntryIdRef = useRef<string | null>(null);
 
   function closePauseDialog(open: boolean) {
-    if (open) return;
+    if (open) {
+      return;
+    }
     lastPauseEntryIdRef.current = entryToPause?.id ?? null;
     setEntryToPause(null);
     setPauseError(null);
   }
 
   async function confirmPause() {
-    if (!entryToPause) return;
+    if (!entryToPause) {
+      return;
+    }
 
     setIsPausing(true);
     setPauseError(null);
@@ -280,7 +286,9 @@ export function ClassesTable({
           contentProps={{
             onCloseAutoFocus: (event) => {
               const entryId = lastPauseEntryIdRef.current;
-              if (!entryId) return;
+              if (!entryId) {
+                return;
+              }
               event.preventDefault();
               actionTriggerRefs.current.get(entryId)?.focus();
               lastPauseEntryIdRef.current = null;
