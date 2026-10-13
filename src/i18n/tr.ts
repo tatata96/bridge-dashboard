@@ -157,6 +157,13 @@ export const tr = {
   "classTypes.saving": "Kaydediliyor…",
   "classTypes.error.notFound": "Bu ders tipi artık mevcut değil.",
   "classTypes.error.archived": "Bu ders tipi arşivlendi ve artık düzenlenemez.",
+  "classTypes.archiveTitle": "Ders tipi arşivlensin mi?",
+  "classTypes.archiveBody":
+    "{name} salt okunur olacak ve Arşivlenmiş bölümüne taşınacak. Bu ders tipiyle önceden planlanmış dersler devam edecek.",
+  "classTypes.archiveConfirm": "Arşivle",
+  "classTypes.archiving": "Arşivleniyor…",
+  "classTypes.error.archiveFailed":
+    "Ders tipi arşivlenemedi. Lütfen tekrar deneyin.",
   "schedule.date": "Tarih",
   "schedule.previousDay": "Önceki gün",
   "schedule.nextDay": "Sonraki gün",
@@ -261,6 +268,7 @@ export const tr = {
     "Lokasyon arşivlenemedi. Lütfen tekrar deneyin.",
   "toast.classTypeCreated": "Ders tipi oluşturuldu",
   "toast.classTypeUpdated": "Ders tipi güncellendi",
+  "toast.classTypeArchived": "Ders tipi arşivlendi",
   "toast.classPaused": "Ders duraklatıldı",
   "toast.classActivated": "Ders aktifleştirildi",
   "toast.sessionCancelled": "Seans iptal edildi",

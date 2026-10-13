@@ -1,8 +1,10 @@
 import { useRef, useState } from "react";
 import { MoreHorizontalIcon } from "lucide-react";
 
+import { useArchiveClassTypeMutation } from "@/api/class-types/class-types.api";
 import type { ClassTypeResponse } from "@/api/class-types/class-types.types";
 import { ClassTypeFormDialog } from "@/class-types/components/ClassTypeFormDialog";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,8 +12,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/classnames.utils";
+import { ApiError } from "@/lib/network/api-client";
 
 export function ClassTypesTable({
   classTypes,
@@ -23,15 +27,61 @@ export function ClassTypesTable({
   isArchived: boolean;
 }) {
   const { t } = useI18n();
+  const { toast } = useToast();
+  const archiveClassType = useArchiveClassTypeMutation();
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [classTypeToEdit, setClassTypeToEdit] =
     useState<ClassTypeResponse | null>(null);
+  const [classTypeToArchive, setClassTypeToArchive] =
+    useState<ClassTypeResponse | null>(null);
+  const [archiveError, setArchiveError] = useState<string | null>(null);
   const actionTriggerRefs = useRef(new Map<string, HTMLButtonElement>());
-  const lastEditedIdRef = useRef<string | null>(null);
+  const lastActionIdRef = useRef<string | null>(null);
 
   function closeEditDialog() {
-    lastEditedIdRef.current = classTypeToEdit?.id ?? null;
+    lastActionIdRef.current = classTypeToEdit?.id ?? null;
     setClassTypeToEdit(null);
+  }
+
+  function closeArchiveDialog() {
+    lastActionIdRef.current = classTypeToArchive?.id ?? null;
+    setClassTypeToArchive(null);
+    setArchiveError(null);
+  }
+
+  // The menu item that opened a dialog is gone by the time the dialog
+  // closes, so send focus back to the row's actions button.
+  function restoreActionFocus(event: Event) {
+    const classTypeId = lastActionIdRef.current;
+    if (!classTypeId) {
+      return;
+    }
+    event.preventDefault();
+    actionTriggerRefs.current.get(classTypeId)?.focus();
+    lastActionIdRef.current = null;
+  }
+
+  async function confirmArchive() {
+    if (!classTypeToArchive || archiveClassType.isPending) {
+      return;
+    }
+
+    setArchiveError(null);
+    try {
+      await archiveClassType.mutateAsync(classTypeToArchive.id);
+    } catch (error) {
+      setArchiveError(
+        t(
+          error instanceof ApiError && error.status === 404
+            ? "classTypes.error.notFound"
+            : "classTypes.error.archiveFailed",
+        ),
+      );
+      return;
+    }
+
+    toast({ title: t("toast.classTypeArchived") });
+    closeArchiveDialog();
   }
 
   if (classTypes.length === 0) {
@@ -129,8 +179,12 @@ export function ClassTypesTable({
                         >
                           {t("classTypes.edit")}
                         </DropdownMenuItem>
-                        {/* TODO: enable when archiving is connected. */}
-                        <DropdownMenuItem disabled>
+                        <DropdownMenuItem
+                          onSelect={() => {
+                            setArchiveError(null);
+                            setClassTypeToArchive(classType);
+                          }}
+                        >
                           {t("classTypes.archive")}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -147,18 +201,37 @@ export function ClassTypesTable({
           classType={classTypeToEdit}
           onClose={closeEditDialog}
           onSaved={closeEditDialog}
-          // The menu item that opened the dialog is gone by the time it
-          // closes, so send focus back to the row's actions button.
-          onCloseAutoFocus={(event) => {
-            const classTypeId = lastEditedIdRef.current;
-            if (!classTypeId) {
-              return;
-            }
-            event.preventDefault();
-            actionTriggerRefs.current.get(classTypeId)?.focus();
-            lastEditedIdRef.current = null;
-          }}
+          onCloseAutoFocus={restoreActionFocus}
         />
+      ) : null}
+      {classTypeToArchive ? (
+        <ConfirmDialog
+          open
+          onOpenChange={(open) => {
+            // Keep the dialog open while the request is in flight.
+            if (!open && !archiveClassType.isPending) {
+              closeArchiveDialog();
+            }
+          }}
+          title={t("classTypes.archiveTitle")}
+          body={t("classTypes.archiveBody", { name: classTypeToArchive.name })}
+          cancelLabel={t("common.cancel")}
+          confirmLabel={t(
+            archiveClassType.isPending
+              ? "classTypes.archiving"
+              : "classTypes.archiveConfirm",
+          )}
+          tone="destructive"
+          onConfirm={confirmArchive}
+          confirmDisabled={archiveClassType.isPending}
+          contentProps={{ onCloseAutoFocus: restoreActionFocus }}
+        >
+          {archiveError ? (
+            <p role="alert" className="text-sm text-destructive">
+              {archiveError}
+            </p>
+          ) : null}
+        </ConfirmDialog>
       ) : null}
     </div>
   );

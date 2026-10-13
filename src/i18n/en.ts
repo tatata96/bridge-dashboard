@@ -158,6 +158,13 @@ export const en = {
   "classTypes.error.notFound": "This class type no longer exists.",
   "classTypes.error.archived":
     "This class type was archived and can no longer be edited.",
+  "classTypes.archiveTitle": "Archive class type?",
+  "classTypes.archiveBody":
+    "{name} will become read-only and move to Archived. Classes already scheduled with this class type will continue to run.",
+  "classTypes.archiveConfirm": "Archive",
+  "classTypes.archiving": "Archiving…",
+  "classTypes.error.archiveFailed":
+    "The class type couldn't be archived. Please try again.",
   "schedule.date": "Date",
   "schedule.previousDay": "Previous day",
   "schedule.nextDay": "Next day",
@@ -259,6 +266,7 @@ export const en = {
     "Couldn't archive the location. Please try again.",
   "toast.classTypeCreated": "Class type created",
   "toast.classTypeUpdated": "Class type updated",
+  "toast.classTypeArchived": "Class type archived",
   "toast.classPaused": "Class paused",
   "toast.classActivated": "Class activated",
   "toast.sessionCancelled": "Session cancelled",

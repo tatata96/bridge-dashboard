@@ -30,6 +30,16 @@ export function useClassTypesQuery(status: ClassTypeStatus) {
   });
 }
 
+// Every mutation refreshes both lists through the shared key prefix, because
+// a change can move a type between them or within the name-sorted order.
+function useRefetchClassTypeLists() {
+  const queryClient = useQueryClient();
+
+  return function refetchClassTypeLists() {
+    void queryClient.invalidateQueries({ queryKey: classTypesQueryKey });
+  };
+}
+
 export function createClassType(request: CreateClassTypeRequest) {
   return apiFetch<ClassTypeResponse>("/partner/class-types", {
     method: "POST",
@@ -59,11 +69,7 @@ export function updateClassType(
 }
 
 export function useUpdateClassTypeMutation() {
-  const queryClient = useQueryClient();
-
-  function refetchLists() {
-    void queryClient.invalidateQueries({ queryKey: classTypesQueryKey });
-  }
+  const refetchClassTypeLists = useRefetchClassTypeLists();
 
   return useMutation({
     mutationFn: ({
@@ -73,9 +79,7 @@ export function useUpdateClassTypeMutation() {
       classTypeId: string;
       request: UpdateClassTypeRequest;
     }) => updateClassType(classTypeId, request),
-    // A rename can move the type in the name-sorted list, so refetch instead
-    // of patching it in place.
-    onSuccess: refetchLists,
+    onSuccess: refetchClassTypeLists,
     // 404 (gone) and 409 (archived elsewhere) mean the cached lists are
     // stale, so refresh them behind the error message.
     onError: (error) => {
@@ -83,7 +87,31 @@ export function useUpdateClassTypeMutation() {
         error instanceof ApiError &&
         (error.status === 404 || error.status === 409)
       ) {
-        refetchLists();
+        refetchClassTypeLists();
+      }
+    },
+  });
+}
+
+export function archiveClassType(classTypeId: string) {
+  return apiFetch<ClassTypeResponse>(
+    `/partner/class-types/${classTypeId}/archive`,
+    { method: "POST" },
+  );
+}
+
+export function useArchiveClassTypeMutation() {
+  const refetchClassTypeLists = useRefetchClassTypeLists();
+
+  return useMutation({
+    mutationFn: archiveClassType,
+    // The type moves from the active list to the archived one, so both lists
+    // are refetched.
+    onSuccess: refetchClassTypeLists,
+    // 404: it is gone, so the cached lists are stale.
+    onError: (error) => {
+      if (error instanceof ApiError && error.status === 404) {
+        refetchClassTypeLists();
       }
     },
   });
