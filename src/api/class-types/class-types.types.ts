@@ -19,3 +19,11 @@ export type CreateClassTypeRequest = {
   categoryId: string;
   description?: string;
 };
+
+// Edit body: only the fields that changed. `name` and `categoryId` are never
+// null; `description: null` clears the description.
+export type UpdateClassTypeRequest = {
+  name?: string;
+  categoryId?: string;
+  description?: string | null;
+};

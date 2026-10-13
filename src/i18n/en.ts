@@ -147,6 +147,17 @@ export const en = {
   "classTypes.error.invalid": "Check the values and try again.",
   "classTypes.error.generic":
     "The class type couldn't be saved. Please try again.",
+  "classTypes.actions": "Actions",
+  "classTypes.entryActions": "{name} actions",
+  "classTypes.edit": "Edit class type",
+  "classTypes.archive": "Archive class type",
+  "classTypes.editClassType": "Edit class type",
+  "classTypes.editClassTypeDescription":
+    "Changes apply everywhere this class type is used.",
+  "classTypes.saving": "Saving…",
+  "classTypes.error.notFound": "This class type no longer exists.",
+  "classTypes.error.archived":
+    "This class type was archived and can no longer be edited.",
   "schedule.date": "Date",
   "schedule.previousDay": "Previous day",
   "schedule.nextDay": "Next day",
@@ -247,6 +258,7 @@ export const en = {
   "toast.locationArchiveFailed":
     "Couldn't archive the location. Please try again.",
   "toast.classTypeCreated": "Class type created",
+  "toast.classTypeUpdated": "Class type updated",
   "toast.classPaused": "Class paused",
   "toast.classActivated": "Class activated",
   "toast.sessionCancelled": "Session cancelled",

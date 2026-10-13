@@ -1,13 +1,19 @@
 import { useId, useState, type SubmitEvent } from "react";
 
-import { useCreateClassTypeMutation } from "@/api/class-types/class-types.api";
+import {
+  useCreateClassTypeMutation,
+  useUpdateClassTypeMutation,
+} from "@/api/class-types/class-types.api";
+import type { ClassTypeResponse } from "@/api/class-types/class-types.types";
 import { CategoryPicker } from "@/class-types/components/CategoryPicker";
 import {
   CLASS_TYPE_DESCRIPTION_MAX_LENGTH,
   CLASS_TYPE_NAME_MAX_LENGTH,
 } from "@/class-types/constants/class-types.constants";
 import {
+  buildClassTypePatch,
   buildCreateClassTypeRequest,
+  toClassTypeFormValues,
   type ClassTypeFormValues,
 } from "@/class-types/utils/class-types.utils";
 import { Button } from "@/components/ui/button";
@@ -33,27 +39,52 @@ const emptyValues: ClassTypeFormValues = {
 };
 
 function getSubmitErrorKey(error: unknown): TranslationKey {
-  return error instanceof ApiError && error.status === 400
-    ? "classTypes.error.invalid"
-    : "classTypes.error.generic";
+  if (error instanceof ApiError) {
+    if (error.status === 400) {
+      return "classTypes.error.invalid";
+    }
+    if (error.status === 404) {
+      return "classTypes.error.notFound";
+    }
+    if (error.status === 409) {
+      return "classTypes.error.archived";
+    }
+  }
+
+  return "classTypes.error.generic";
 }
 
 export function ClassTypeFormDialog({
+  classType,
   onClose,
-  onCreated,
+  onSaved,
+  onCloseAutoFocus,
 }: {
+  // Edits this class type; creates a new one when omitted.
+  classType?: ClassTypeResponse;
   onClose: () => void;
-  onCreated: () => void;
+  onSaved: () => void;
+  onCloseAutoFocus?: (event: Event) => void;
 }) {
   const { t } = useI18n();
   const { toast } = useToast();
   const createClassType = useCreateClassTypeMutation();
-  const [values, setValues] = useState(emptyValues);
+  const updateClassType = useUpdateClassTypeMutation();
+  // The edit baseline is captured once, so a background refetch of the list
+  // doesn't change what counts as a change while the dialog is open.
+  const [baseline] = useState(classType);
+  const [values, setValues] = useState(
+    baseline ? toClassTypeFormValues(baseline) : emptyValues,
+  );
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const fieldId = useId();
 
-  const isSubmitting = createClassType.isPending;
+  const isEditing = baseline !== undefined;
+  const isSubmitting = createClassType.isPending || updateClassType.isPending;
+  const patch = baseline ? buildClassTypePatch(baseline, values) : null;
+  // Nothing to send: the backend rejects an empty PATCH.
+  const hasNoChanges = isEditing && patch === null;
   const missingFields = getMissingFields(
     { name: values.name, categoryId: values.categoryId },
     ["name", "categoryId"],
@@ -72,20 +103,29 @@ export function ClassTypeFormDialog({
     }
 
     setSubmitted(true);
-    if (missingFields.length > 0) {
+    if (missingFields.length > 0 || hasNoChanges) {
       return;
     }
 
     setSubmitError(null);
     try {
-      await createClassType.mutateAsync(buildCreateClassTypeRequest(values));
+      if (baseline && patch) {
+        await updateClassType.mutateAsync({
+          classTypeId: baseline.id,
+          request: patch,
+        });
+      } else {
+        await createClassType.mutateAsync(buildCreateClassTypeRequest(values));
+      }
     } catch (error) {
       setSubmitError(t(getSubmitErrorKey(error)));
       return;
     }
 
-    toast({ title: t("toast.classTypeCreated") });
-    onCreated();
+    toast({
+      title: t(isEditing ? "toast.classTypeUpdated" : "toast.classTypeCreated"),
+    });
+    onSaved();
   }
 
   return (
@@ -98,11 +138,21 @@ export function ClassTypeFormDialog({
         }
       }}
     >
-      <DialogContent>
+      <DialogContent onCloseAutoFocus={onCloseAutoFocus}>
         <DialogHeader>
-          <DialogTitle>{t("classTypes.addClassType")}</DialogTitle>
+          <DialogTitle>
+            {t(
+              isEditing
+                ? "classTypes.editClassType"
+                : "classTypes.addClassType",
+            )}
+          </DialogTitle>
           <DialogDescription>
-            {t("classTypes.addClassTypeDescription")}
+            {t(
+              isEditing
+                ? "classTypes.editClassTypeDescription"
+                : "classTypes.addClassTypeDescription",
+            )}
           </DialogDescription>
         </DialogHeader>
 
@@ -210,8 +260,14 @@ export function ClassTypeFormDialog({
             >
               {t("common.cancel")}
             </Button>
-            <Button type="submit" size="sm" disabled={isSubmitting}>
-              {t(isSubmitting ? "classTypes.creating" : "classTypes.create")}
+            <Button
+              type="submit"
+              size="sm"
+              disabled={isSubmitting || hasNoChanges}
+            >
+              {isEditing
+                ? t(isSubmitting ? "classTypes.saving" : "common.save")
+                : t(isSubmitting ? "classTypes.creating" : "classTypes.create")}
             </Button>
           </DialogFooter>
         </form>

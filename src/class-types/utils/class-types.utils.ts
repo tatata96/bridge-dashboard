@@ -2,8 +2,16 @@ import type {
   CategoryResponse,
   SubcategoryResponse,
 } from "@/api/categories/categories.types";
-import type { CreateClassTypeRequest } from "@/api/class-types/class-types.types";
-import { normalizeOptionalText } from "@/lib/form.utils";
+import type {
+  ClassTypeResponse,
+  CreateClassTypeRequest,
+  UpdateClassTypeRequest,
+} from "@/api/class-types/class-types.types";
+import {
+  getOptionalTextPatchValue,
+  getTextPatchValue,
+  normalizeOptionalText,
+} from "@/lib/form.utils";
 
 export type ClassTypeFormValues = {
   name: string;
@@ -20,6 +28,41 @@ export function buildCreateClassTypeRequest(
     categoryId: values.categoryId,
     description: normalizeOptionalText(values.description),
   };
+}
+
+export function toClassTypeFormValues(
+  classType: ClassTypeResponse,
+): ClassTypeFormValues {
+  return {
+    name: classType.name,
+    categoryId: classType.categoryId,
+    description: classType.description ?? "",
+  };
+}
+
+// Returns only the fields that changed, or null when nothing did, so the
+// caller can skip the request (the backend rejects an empty PATCH). An emptied
+// description becomes null (clear it); name and categoryId are never null.
+// Assumes the required fields are filled in (see getMissingFields).
+export function buildClassTypePatch(
+  initial: ClassTypeResponse,
+  current: ClassTypeFormValues,
+): UpdateClassTypeRequest | null {
+  const patch: UpdateClassTypeRequest = {
+    name: getTextPatchValue(initial.name, current.name),
+    categoryId:
+      current.categoryId === initial.categoryId
+        ? undefined
+        : current.categoryId,
+    description: getOptionalTextPatchValue(
+      initial.description,
+      current.description,
+    ),
+  };
+
+  return Object.values(patch).every((value) => value === undefined)
+    ? null
+    : patch;
 }
 
 // A group of selectable categories. `label` is the parent's name, or null for

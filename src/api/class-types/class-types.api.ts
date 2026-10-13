@@ -4,8 +4,9 @@ import type {
   ClassTypeResponse,
   ClassTypeStatus,
   CreateClassTypeRequest,
+  UpdateClassTypeRequest,
 } from "@/api/class-types/class-types.types";
-import { apiFetch } from "@/lib/network/api-client";
+import { ApiError, apiFetch } from "@/lib/network/api-client";
 
 // Prefix shared by the active and archived lists, so a mutation can
 // invalidate both with one call. Like the other partner keys it is not
@@ -43,6 +44,47 @@ export function useCreateClassTypeMutation() {
     mutationFn: createClassType,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: classTypesQueryKey });
+    },
+  });
+}
+
+export function updateClassType(
+  classTypeId: string,
+  request: UpdateClassTypeRequest,
+) {
+  return apiFetch<ClassTypeResponse>(`/partner/class-types/${classTypeId}`, {
+    method: "PATCH",
+    body: JSON.stringify(request),
+  });
+}
+
+export function useUpdateClassTypeMutation() {
+  const queryClient = useQueryClient();
+
+  function refetchLists() {
+    void queryClient.invalidateQueries({ queryKey: classTypesQueryKey });
+  }
+
+  return useMutation({
+    mutationFn: ({
+      classTypeId,
+      request,
+    }: {
+      classTypeId: string;
+      request: UpdateClassTypeRequest;
+    }) => updateClassType(classTypeId, request),
+    // A rename can move the type in the name-sorted list, so refetch instead
+    // of patching it in place.
+    onSuccess: refetchLists,
+    // 404 (gone) and 409 (archived elsewhere) mean the cached lists are
+    // stale, so refresh them behind the error message.
+    onError: (error) => {
+      if (
+        error instanceof ApiError &&
+        (error.status === 404 || error.status === 409)
+      ) {
+        refetchLists();
+      }
     },
   });
 }

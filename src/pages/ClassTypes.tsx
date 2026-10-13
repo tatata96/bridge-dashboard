@@ -88,7 +88,7 @@ export function ClassTypesPage() {
       {isCreateOpen ? (
         <ClassTypeFormDialog
           onClose={() => setIsCreateOpen(false)}
-          onCreated={() => {
+          onSaved={() => {
             // A new type is always active, so show the list it landed in.
             setStatus("active");
             setIsCreateOpen(false);
