@@ -9,6 +9,7 @@ export const en = {
   "common.dismiss": "Dismiss",
   "common.toggleSidebar": "Toggle sidebar",
   "common.required": "Required",
+  "common.cancel": "Cancel",
   "common.optional": "Optional",
   "nav.schedule": "Schedule",
   "nav.businessProfile": "Business profile",
@@ -131,6 +132,21 @@ export const en = {
   "classTypes.loadError": "We couldn't load your class types.",
   "classTypes.refreshError":
     "We couldn't refresh your class types. Showing the last loaded list.",
+  "classTypes.addClassType": "Add class type",
+  "classTypes.addClassTypeDescription":
+    "Class types are reused when you create class plans.",
+  "classTypes.create": "Create class type",
+  "classTypes.creating": "Creating…",
+  "classTypes.categoryPlaceholder": "Select a category",
+  "classTypes.categorySearch": "Search categories",
+  "classTypes.categoryNoMatches": "No categories match your search.",
+  "classTypes.categoriesLoading": "Loading categories…",
+  "classTypes.categoriesLoadError": "We couldn't load the categories.",
+  "classTypes.error.nameRequired": "Enter a name.",
+  "classTypes.error.categoryRequired": "Select a category.",
+  "classTypes.error.invalid": "Check the values and try again.",
+  "classTypes.error.generic":
+    "The class type couldn't be saved. Please try again.",
   "schedule.date": "Date",
   "schedule.previousDay": "Previous day",
   "schedule.nextDay": "Next day",
@@ -230,6 +246,7 @@ export const en = {
   "toast.locationArchived": "Location archived",
   "toast.locationArchiveFailed":
     "Couldn't archive the location. Please try again.",
+  "toast.classTypeCreated": "Class type created",
   "toast.classPaused": "Class paused",
   "toast.classActivated": "Class activated",
   "toast.sessionCancelled": "Session cancelled",

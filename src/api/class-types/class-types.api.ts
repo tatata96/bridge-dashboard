@@ -1,8 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type {
   ClassTypeResponse,
   ClassTypeStatus,
+  CreateClassTypeRequest,
 } from "@/api/class-types/class-types.types";
 import { apiFetch } from "@/lib/network/api-client";
 
@@ -25,5 +26,23 @@ export function useClassTypesQuery(status: ClassTypeStatus) {
   return useQuery({
     queryKey: classTypesListQueryKey(status),
     queryFn: () => fetchClassTypes(status),
+  });
+}
+
+export function createClassType(request: CreateClassTypeRequest) {
+  return apiFetch<ClassTypeResponse>("/partner/class-types", {
+    method: "POST",
+    body: JSON.stringify(request),
+  });
+}
+
+export function useCreateClassTypeMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createClassType,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: classTypesQueryKey });
+    },
   });
 }

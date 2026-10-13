@@ -13,3 +13,9 @@ export type ClassTypeResponse = {
 
 // "active" is the backend default; "archived" is `?isActive=false`.
 export type ClassTypeStatus = "active" | "archived";
+
+export type CreateClassTypeRequest = {
+  name: string;
+  categoryId: string;
+  description?: string;
+};
