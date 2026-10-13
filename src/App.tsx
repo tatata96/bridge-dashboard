@@ -18,6 +18,7 @@ import {
 } from "@/config/navigation";
 import { useI18n } from "@/i18n/i18n";
 import { BusinessProfilePage } from "@/pages/business-profile";
+import { ClassTypesPage } from "@/pages/ClassTypes";
 import { ClassFormPage } from "@/pages/class-plans/ClassForm";
 import { LoginPage } from "@/pages/login/Login";
 import { OnboardingPage } from "@/pages/onboarding/Onboarding";
@@ -123,7 +124,7 @@ function App() {
                   />
                   <Route
                     path={getPagePath("class-types")}
-                    element={<PlaceholderPage activePage="class-types" />}
+                    element={<ClassTypesPage />}
                   />
                   <Route
                     path={getPagePath("instructors")}
