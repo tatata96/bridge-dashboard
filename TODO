@@ -1,2 +1,5 @@
 No live region for silent state changes. 
 Stepping the date, selecting a different class, or applying a filter that empties the list all update the page purely visually — nothing announces the change to a screen reader user who isn't manually re-reading the panel.
+
+No shadcn Table primitive.
+ClassesTable and ClassTypesTable both use hand-written <table> markup with duplicated Tailwind classes. Add the shadcn Table component to src/components/ui/ and migrate both tables to it.
