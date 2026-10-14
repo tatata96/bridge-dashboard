@@ -3,16 +3,22 @@ import { type ReactNode } from "react";
 
 import { useAuth } from "@/auth/AuthContext";
 
-export function ProtectedRoute({ children }: { children: ReactNode }) {
+type ProtectedRouteProps = {
+  children: ReactNode;
+  // Rendered while the stored session is being restored, so the app shell
+  // can stay on screen instead of a blank full-page loader.
+  loadingContent: ReactNode;
+};
+
+export function ProtectedRoute({
+  children,
+  loadingContent,
+}: ProtectedRouteProps) {
   const { session, loading } = useAuth();
   const location = useLocation();
 
   if (loading) {
-    return (
-      <div className="flex min-h-svh items-center justify-center">
-        <span className="text-sm text-muted-foreground">Loading…</span>
-      </div>
-    );
+    return loadingContent;
   }
 
   if (!session) {
