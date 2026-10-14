@@ -96,10 +96,6 @@ export function ClassPlansPage() {
     navigate(`${getPagePath("classes")}/add`);
   }
 
-  function editEntry(entryId: string) {
-    navigate(`${getPagePath("classes")}/${entryId}/edit`);
-  }
-
   function clearFilters() {
     setFilters(DEFAULT_FILTERS);
   }
@@ -137,17 +133,6 @@ export function ClassPlansPage() {
     }
   }
 
-  function activateEntry(entryId: string) {
-    updateClassStatus(entryId, "active");
-    toast({
-      title: t("toast.classActivated"),
-      action: {
-        label: t("common.undo"),
-        onClick: () => updateClassStatus(entryId, "paused"),
-      },
-    });
-  }
-
   return (
     <main className="flex h-[calc(100svh-var(--header-height))] min-w-0 flex-col gap-4 overflow-hidden p-4">
       <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col gap-4">
@@ -161,9 +146,7 @@ export function ClassPlansPage() {
         <ClassesTable
           entries={filteredEntries}
           instructors={mockInstructors}
-          onEditEntry={editEntry}
           onPauseEntry={pauseEntry}
-          onActivateEntry={activateEntry}
           classTypesById={mockClassTypesById}
           venuesById={mockVenuesById}
           getClassPlanSummaryEntry={(entry) =>

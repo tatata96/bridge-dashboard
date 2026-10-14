@@ -1,15 +1,7 @@
 import { useRef, useState } from "react";
-import { MoreHorizontalIcon } from "lucide-react";
 
 import { ClassStatusIndicator } from "@/classes/components/ClassStatusIndicator";
 import { PauseClassPlanDialog } from "@/classes/components/pause-class-plan-dialogue/PauseClassPlanDialog";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { weekdayShortLabelKeys } from "@/config/class-labels";
 import { useI18n, type TranslationKey } from "@/i18n/i18n";
 import { cn } from "@/lib/classnames.utils";
@@ -35,9 +27,7 @@ function getInstructorName(
 export function ClassesTable({
   entries,
   instructors,
-  onEditEntry,
   onPauseEntry,
-  onActivateEntry,
   classTypesById,
   venuesById,
   getClassPlanSummaryEntry,
@@ -46,9 +36,7 @@ export function ClassesTable({
 }: {
   entries: ClassPlan[];
   instructors: Instructor[];
-  onEditEntry: (entryId: string) => void;
   onPauseEntry: (entryId: string) => Promise<void>;
-  onActivateEntry: (entryId: string) => void;
   classTypesById: Map<ClassType["id"], ClassType>;
   venuesById: Map<Venue["id"], Venue>;
   getClassPlanSummaryEntry: (entry: ClassPlan) => ScheduleListEntry;
@@ -56,11 +44,9 @@ export function ClassesTable({
   onClearFilters: () => void;
 }) {
   const { t } = useI18n();
-  const [openMenuEntryId, setOpenMenuEntryId] = useState<string | null>(null);
   const [entryToPause, setEntryToPause] = useState<ClassPlan | null>(null);
   const [isPausing, setIsPausing] = useState(false);
   const [pauseError, setPauseError] = useState<string | null>(null);
-  const actionTriggerRefs = useRef(new Map<string, HTMLButtonElement>());
   const lastPauseEntryIdRef = useRef<string | null>(null);
 
   function closePauseDialog(open: boolean) {
@@ -126,16 +112,13 @@ export function ClassesTable({
               <th scope="col" className="w-[10%] px-2 py-3 sm:px-4">
                 {t("classes.status")}
               </th>
-              <th scope="col" className="w-[6%] px-2 py-3 text-right sm:px-3">
-                <span className="sr-only">{t("classes.actions")}</span>
-              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {entries.length === 0 ? (
               <tr>
                 <td
-                  colSpan={8}
+                  colSpan={7}
                   className="px-4 py-6 text-center text-sm text-muted-foreground"
                 >
                   <span>{t("classes.noFilterMatches")}</span>
@@ -165,11 +148,7 @@ export function ClassesTable({
                     : entry.schedule.date;
 
                 return (
-                  <tr
-                    key={entry.id}
-                    onClick={() => onEditEntry(entry.id)}
-                    className="cursor-pointer transition-colors hover:bg-primary/20"
-                  >
+                  <tr key={entry.id}>
                     <td
                       className={cn(
                         "px-2 py-4 font-semibold sm:px-4",
@@ -210,64 +189,6 @@ export function ClassesTable({
                         />
                       )}
                     </td>
-                    <td
-                      className="px-2 py-4 text-right sm:px-3"
-                      onClick={(event) => event.stopPropagation()}
-                    >
-                      {!isPlaceholder && (
-                        <DropdownMenu
-                          open={openMenuEntryId === entry.id}
-                          onOpenChange={(open) =>
-                            setOpenMenuEntryId(open ? entry.id : null)
-                          }
-                        >
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              ref={(node) => {
-                                if (node) {
-                                  actionTriggerRefs.current.set(entry.id, node);
-                                } else {
-                                  actionTriggerRefs.current.delete(entry.id);
-                                }
-                              }}
-                              type="button"
-                              variant="ghost"
-                              size="icon-sm"
-                              aria-label={t("classes.entryActions", {
-                                name: className,
-                              })}
-                              aria-haspopup="menu"
-                              aria-expanded={openMenuEntryId === entry.id}
-                            >
-                              <MoreHorizontalIcon />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onSelect={() => onEditEntry(entry.id)}
-                            >
-                              {t("classes.editClass")}
-                            </DropdownMenuItem>
-                            {entry.status === "active" ? (
-                              <DropdownMenuItem
-                                onSelect={() => {
-                                  setPauseError(null);
-                                  setEntryToPause(entry);
-                                }}
-                              >
-                                {t("classes.pause")}
-                              </DropdownMenuItem>
-                            ) : (
-                              <DropdownMenuItem
-                                onSelect={() => onActivateEntry(entry.id)}
-                              >
-                                {t("classes.activate")}
-                              </DropdownMenuItem>
-                            )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      )}
-                    </td>
                   </tr>
                 );
               })
@@ -275,6 +196,9 @@ export function ClassesTable({
           </tbody>
         </table>
       </div>
+      {/* TODO: pausing is still mocked and has no trigger since the row actions
+          menu was removed. Rework this dialog and bring back the pause and
+          activate actions once the backend supports pausing class plans. */}
       {entryToPause ? (
         <PauseClassPlanDialog
           open={Boolean(entryToPause)}
@@ -290,7 +214,6 @@ export function ClassesTable({
                 return;
               }
               event.preventDefault();
-              actionTriggerRefs.current.get(entryId)?.focus();
               lastPauseEntryIdRef.current = null;
             },
           }}

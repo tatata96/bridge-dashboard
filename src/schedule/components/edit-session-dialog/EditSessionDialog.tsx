@@ -64,7 +64,7 @@ export function EditSessionDialog({
   );
   const [scopeNoticePrefix, scopeNoticeLink, scopeNoticeSuffix] =
     t("dialog.scopeNotice").split("**");
-  const classPlanEditPath = `${getPagePath("classes")}/${session.classPlanId}/edit`;
+  const classPlansPath = getPagePath("classes");
 
   function handleOpenChange(nextOpen: boolean) {
     setOpen(nextOpen);
@@ -99,7 +99,7 @@ export function EditSessionDialog({
           <p>
             {scopeNoticePrefix}
             <Link
-              to={classPlanEditPath}
+              to={classPlansPath}
               className="font-medium text-foreground underline underline-offset-4"
             >
               {scopeNoticeLink}
