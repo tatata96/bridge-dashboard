@@ -137,10 +137,6 @@ function App() {
                     element={<ClassFormPage key={location.pathname} />}
                   />
                   <Route
-                    path={`${getPagePath("classes")}/:classId/edit`}
-                    element={<ClassFormPage key={location.pathname} />}
-                  />
-                  <Route
                     path={getPagePath("class-types")}
                     element={<ClassTypesPage />}
                   />

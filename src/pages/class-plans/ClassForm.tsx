@@ -1,23 +1,13 @@
 import { useMemo, useState } from "react";
 import { ArrowLeftIcon } from "lucide-react";
-import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { useClassTypesQuery } from "@/api/class-types/class-types.api";
 import { useVenuesQuery } from "@/api/venues/venues.api";
-import { ClassStatusIndicator } from "@/classes/components/ClassStatusIndicator";
-import { ClassSessionsCard } from "@/classes/components/ClassSessionsCard";
-import { PauseClassPlanDialog } from "@/classes/components/pause-class-plan-dialogue/PauseClassPlanDialog";
-import {
-  mockClassPlans,
-  mockClassTypes,
-  mockClassTypesById,
-} from "@/classes/data/classes.mock-data";
+import { mockClassPlans } from "@/classes/data/classes.mock-data";
 import { WeekdaySelector } from "@/classes/components/WeekdaySelector";
-import { getClassPlanSummaryEntry } from "@/classes/utils/class-sessions.utils";
-import { saveClassStatus } from "@/classes/utils/class-status.utils";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
-import { InfoNotice } from "@/components/ui/info-notice";
 import { NumberStepper } from "@/components/ui/number-stepper";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
@@ -29,28 +19,20 @@ import {
 } from "@/components/ui/select";
 import {
   weekdayIndexes,
-  weekdayLongLabelKeys,
   weekdayShortLabelKeys,
   weekdays,
 } from "@/config/class-labels";
 import { getPagePath } from "@/config/navigation";
-import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/i18n/i18n";
 import {
   addMinutes,
   dateFromTimeString,
-  dateFromYmdString,
   formatShortDateWithYear,
   formatTime,
   formatTimeRange,
   formatYmd,
 } from "@/lib/date.utils";
-import {
-  mockClassSessions,
-  mockInstructors,
-} from "@/schedule/data/schedule.mock-data";
 import type { ClassPlan, ClassSchedule, Weekday } from "@/types/classes";
-import { mockVenues, mockVenuesById } from "@/venues/data/venues.mock-data";
 
 // TODO: make logical time options list
 const startTimeOptions = Array.from(
@@ -65,8 +47,6 @@ const startTimeOptions = Array.from(
 ).sort();
 const noStaffValue = "none";
 const durationOptions = [30, 45, 60, 75, 90] as const;
-
-type SelectOption = { id: string; name: string };
 
 type FormErrors = {
   repeatOn?: string;
@@ -99,119 +79,33 @@ function getFirstClassDate(startDate: Date, repeatOn: Weekday[]) {
 
 export function ClassFormPage() {
   const { t, dateLocale } = useI18n();
-  const { toast } = useToast();
   const navigate = useNavigate();
-  const { classId } = useParams();
-  const classPlanToEdit = useMemo(
-    () => mockClassPlans.find((classPlan) => classPlan.id === classId) ?? null,
-    [classId],
-  );
-  const classTypeToEdit = classPlanToEdit
-    ? (mockClassTypesById.get(classPlanToEdit.classTypeId) ?? null)
-    : null;
-  const isEditMode = Boolean(classId);
-  const isRecurringClassPlan = classPlanToEdit?.schedule.type === "recurring";
-  const isClassTypeLocked = isEditMode;
-  // Create mode loads its options from the API. Edit mode still runs on mock
-  // data until the edit flow is connected.
   const classTypesQuery = useClassTypesQuery("active");
   const venuesQuery = useVenuesQuery();
-  const activeVenueOptions = mockVenues.filter(
-    (venue) => venue.status === "active",
-  );
-  const mockVenueOptions =
-    classPlanToEdit &&
-    !activeVenueOptions.some((venue) => venue.id === classPlanToEdit.venueId)
-      ? [
-          mockVenuesById.get(classPlanToEdit.venueId),
-          ...activeVenueOptions,
-        ].filter((venue): venue is (typeof mockVenues)[number] =>
-          Boolean(venue),
-        )
-      : activeVenueOptions;
-  const classTypeOptions: SelectOption[] = isEditMode
-    ? mockClassTypes
-    : (classTypesQuery.data ?? []);
-  const venueOptions: SelectOption[] = isEditMode
-    ? mockVenueOptions
-    : (venuesQuery.data ?? []);
-  const isClassTypeSelectDisabled =
-    !isEditMode && classTypeOptions.length === 0;
-  const isVenueSelectDisabled = !isEditMode && venueOptions.length === 0;
+  const classTypeOptions = classTypesQuery.data ?? [];
+  const venueOptions = venuesQuery.data ?? [];
+  const isClassTypeSelectDisabled = classTypeOptions.length === 0;
+  const isVenueSelectDisabled = venueOptions.length === 0;
 
-  const [classType, setClassType] = useState<ClassSchedule["type"]>(
-    () => classPlanToEdit?.schedule.type ?? "recurring",
-  );
-  const [selectedClassTypeId, setSelectedClassTypeId] = useState(
-    () => classPlanToEdit?.classTypeId ?? "",
-  );
-  const [selectedVenueId, setSelectedVenueId] = useState(
-    () => classPlanToEdit?.venueId ?? "",
-  );
-  const [selectedStaffId] = useState(
-    () => classPlanToEdit?.instructorId ?? noStaffValue,
-  );
-  const [startDate, setStartDate] = useState(() =>
-    classPlanToEdit
-      ? dateFromYmdString(
-          classPlanToEdit.schedule.type === "one_time"
-            ? classPlanToEdit.schedule.date
-            : classPlanToEdit.schedule.startDate,
-        )
-      : new Date(),
-  );
-  const [endDate, setEndDate] = useState<Date | null>(() =>
-    classPlanToEdit?.schedule.type === "recurring" &&
-    classPlanToEdit.schedule.endDate
-      ? dateFromYmdString(classPlanToEdit.schedule.endDate)
-      : null,
-  );
-  const [repeatOn, setRepeatOn] = useState<Weekday[]>(() =>
-    classPlanToEdit?.schedule.type === "recurring"
-      ? classPlanToEdit.schedule.repeatOn
-      : [],
-  );
-  const [startTime, setStartTime] = useState(
-    () => classPlanToEdit?.startTime ?? "07:00",
-  );
-  const [durationMinutes, setDurationMinutes] = useState(
-    () => classPlanToEdit?.durationMinutes ?? 60,
-  );
-  const [capacity, setCapacity] = useState(
-    () => classPlanToEdit?.capacity ?? 1,
-  );
-  // Create mode needs a real class type and venue chosen from the loaded
-  // options before it can be saved.
+  const [classType, setClassType] =
+    useState<ClassSchedule["type"]>("recurring");
+  const [selectedClassTypeId, setSelectedClassTypeId] = useState("");
+  const [selectedVenueId, setSelectedVenueId] = useState("");
+  // TODO: replace with a real selection once the instructors API is connected.
+  const [selectedStaffId] = useState(noStaffValue);
+  const [startDate, setStartDate] = useState(() => new Date());
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [repeatOn, setRepeatOn] = useState<Weekday[]>([]);
+  const [startTime, setStartTime] = useState("07:00");
+  const [durationMinutes, setDurationMinutes] = useState(60);
+  const [capacity, setCapacity] = useState(1);
+  // Saving needs a real class type and venue chosen from the loaded options.
   const isSaveDisabled =
-    !isEditMode &&
-    (!classTypeOptions.some((option) => option.id === selectedClassTypeId) ||
-      !venueOptions.some((option) => option.id === selectedVenueId));
+    !classTypeOptions.some((option) => option.id === selectedClassTypeId) ||
+    !venueOptions.some((option) => option.id === selectedVenueId);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
-  const [isPauseDialogOpen, setIsPauseDialogOpen] = useState(false);
-  const [isPausing, setIsPausing] = useState(false);
-  const [pauseError, setPauseError] = useState<string | null>(null);
   const dateLabel =
     classType === "one_time" ? t("classes.date") : t("classes.startDate");
-  const canPauseClassPlan = isEditMode && classPlanToEdit?.status === "active";
-  const formTitle = useMemo(() => {
-    if (!isEditMode || !classPlanToEdit) {
-      return t("classes.addClass");
-    }
-
-    const schedule = classPlanToEdit.schedule;
-    const scheduleLabel =
-      schedule.type === "recurring"
-        ? weekdays
-            .filter((day) => schedule.repeatOn.includes(day))
-            .map((day) => t(weekdayLongLabelKeys[day]))
-            .join("/")
-        : formatShortDateWithYear(dateFromYmdString(schedule.date), dateLocale);
-
-    return `${t("classes.editAction")} ${classTypeToEdit?.name ?? t("schedule.unknownClass")} – ${scheduleLabel} ${classPlanToEdit.startTime}`;
-  }, [classPlanToEdit, classTypeToEdit, dateLocale, isEditMode, t]);
-  const classTypeOptionClassName = isClassTypeLocked
-    ? "flex cursor-not-allowed items-center gap-2 text-sm font-medium text-muted-foreground"
-    : "flex cursor-pointer items-center gap-2 text-sm font-medium text-foreground";
   const recurrenceSummary = useMemo(() => {
     if (classType !== "recurring") {
       return null;
@@ -260,10 +154,6 @@ export function ClassFormPage() {
     t,
   ]);
 
-  if (isEditMode && !classPlanToEdit) {
-    return <Navigate to={getPagePath("classes")} replace />;
-  }
-
   function handleSave() {
     const nextErrors: FormErrors = {};
 
@@ -284,10 +174,10 @@ export function ClassFormPage() {
     }
 
     const savedClassPlan: ClassPlan = {
-      id: classPlanToEdit?.id ?? `class-${Date.now()}`,
+      id: `class-${Date.now()}`,
       classTypeId: selectedClassTypeId,
       venueId: selectedVenueId,
-      status: classPlanToEdit?.status ?? "active",
+      status: "active",
       instructorId: selectedStaffId === noStaffValue ? null : selectedStaffId,
       schedule:
         classType === "one_time"
@@ -310,10 +200,6 @@ export function ClassFormPage() {
   }
 
   function handleClassTypeChange(value: string) {
-    if (isClassTypeLocked) {
-      return;
-    }
-
     setClassType(value as ClassSchedule["type"]);
     setFormErrors({});
   }
@@ -361,34 +247,6 @@ export function ClassFormPage() {
     });
   }
 
-  function closePauseDialog(open: boolean) {
-    setIsPauseDialogOpen(open);
-    if (!open) {
-      setPauseError(null);
-    }
-  }
-
-  async function confirmPause() {
-    if (!classPlanToEdit) {
-      return;
-    }
-
-    setIsPausing(true);
-    setPauseError(null);
-
-    try {
-      await saveClassStatus(classPlanToEdit.id, "paused");
-      toast({ title: t("toast.classPaused") });
-      navigate(getPagePath("classes"), {
-        state: { pausedClassId: classPlanToEdit.id },
-      });
-    } catch {
-      setPauseError(t("classes.pauseError"));
-    } finally {
-      setIsPausing(false);
-    }
-  }
-
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-4 p-4">
       <div className="flex w-full min-w-0 flex-col gap-4">
@@ -403,35 +261,9 @@ export function ClassFormPage() {
           <section className="min-h-80 w-full rounded-lg border border-border bg-background p-4 sm:p-6">
             <div className="flex items-center justify-between gap-4">
               <h2 className="text-base font-semibold text-foreground">
-                {formTitle}
+                {t("classes.addClass")}
               </h2>
-              {classPlanToEdit ? (
-                <ClassStatusIndicator
-                  status={classPlanToEdit.status}
-                  label={t(
-                    classPlanToEdit.status === "active"
-                      ? "classes.active"
-                      : "classes.paused",
-                  )}
-                />
-              ) : null}
             </div>
-
-            {isEditMode && isRecurringClassPlan && (
-              <InfoNotice className="mt-8">
-                <p>
-                  {t("classes.editAppliesToAll")}{" "}
-                  {t("classes.editSingleClassPrefix")}
-                  <Link
-                    to={getPagePath("schedule")}
-                    className="font-medium text-foreground underline underline-offset-4"
-                  >
-                    {t("classes.editSingleClassLink")}
-                  </Link>
-                  {t("classes.editSingleClassSuffix")}
-                </p>
-              </InfoNotice>
-            )}
 
             <div className="mt-8 grid gap-8 lg:grid-cols-2">
               <div className="order-2 flex min-w-0 flex-col gap-6">
@@ -442,14 +274,13 @@ export function ClassFormPage() {
                   <RadioGroup
                     value={classType}
                     onValueChange={handleClassTypeChange}
-                    disabled={isClassTypeLocked}
                     className="flex w-fit grid-cols-none flex-wrap gap-6"
                   >
-                    <label className={classTypeOptionClassName}>
+                    <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-foreground">
                       <RadioGroupItem value="recurring" />
                       {t("classes.recurring")}
                     </label>
-                    <label className={classTypeOptionClassName}>
+                    <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-foreground">
                       <RadioGroupItem value="one_time" />
                       {t("classes.oneTime")}
                     </label>
@@ -655,20 +486,13 @@ export function ClassFormPage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value={noStaffValue}>
-                        {t(
-                          isEditMode ? "class.noStaff" : "classes.noInstructor",
-                        )}
+                        {t("classes.noInstructor")}
                       </SelectItem>
-                      {isEditMode
-                        ? mockInstructors.map((instructor) => (
-                            <SelectItem
-                              key={instructor.id}
-                              value={instructor.id}
-                            >
-                              {instructor.name}
-                            </SelectItem>
-                          ))
-                        : null}
+                      {mockInstructors.map((instructor) => (
+                        <SelectItem key={instructor.id} value={instructor.id}>
+                          {instructor.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -677,19 +501,6 @@ export function ClassFormPage() {
             </div>
 
             <div className="mt-8 flex justify-end gap-2 border-t border-border pt-4">
-              {canPauseClassPlan ? (
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="h-9"
-                  onClick={() => {
-                    setPauseError(null);
-                    setIsPauseDialogOpen(true);
-                  }}
-                >
-                  {t("classes.pause")}
-                </Button>
-              ) : null}
               <Button
                 type="button"
                 className="h-9"
@@ -700,29 +511,8 @@ export function ClassFormPage() {
               </Button>
             </div>
           </section>
-
-          {classPlanToEdit ? (
-            <ClassSessionsCard classPlanId={classPlanToEdit.id} />
-          ) : null}
         </div>
       </div>
-      {classPlanToEdit && canPauseClassPlan ? (
-        <PauseClassPlanDialog
-          open={isPauseDialogOpen}
-          onOpenChange={closePauseDialog}
-          summaryEntry={getClassPlanSummaryEntry(
-            classPlanToEdit,
-            mockClassSessions,
-            mockInstructors,
-            mockClassTypesById,
-            mockVenuesById,
-            t,
-          )}
-          isPausing={isPausing}
-          pauseError={pauseError}
-          onConfirm={confirmPause}
-        />
-      ) : null}
     </main>
   );
 }
