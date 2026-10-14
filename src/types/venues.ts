@@ -11,7 +11,6 @@ export type Venue = {
   latitude: number | null;
   longitude: number | null;
   phone: string | null;
-  timezone: string;
   amenityIds: string[];
   status: VenueStatus;
 };

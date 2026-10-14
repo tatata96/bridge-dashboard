@@ -6,6 +6,9 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/classnames.utils";
 
 export function NumberStepper({
+  id,
+  invalid,
+  describedBy,
   value,
   onChange,
   min,
@@ -13,6 +16,9 @@ export function NumberStepper({
   label,
   className,
 }: {
+  id?: string;
+  invalid?: boolean;
+  describedBy?: string;
   value: number;
   onChange: (value: number) => void;
   min?: number;
@@ -68,12 +74,23 @@ export function NumberStepper({
         <MinusIcon />
       </Button>
       <Input
+        id={id}
         type="text"
         inputMode="numeric"
         aria-label={label}
+        aria-invalid={invalid}
+        aria-describedby={describedBy}
         value={draft}
         onChange={(event) => setDraft(event.target.value)}
         onBlur={handleBlur}
+        onKeyDown={(event) => {
+          // Commit the typed value instead of submitting a surrounding form
+          // with the previous one.
+          if (event.key === "Enter") {
+            event.preventDefault();
+            handleBlur();
+          }
+        }}
         className="w-14 text-center"
       />
       <Button

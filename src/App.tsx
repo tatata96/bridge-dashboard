@@ -3,6 +3,10 @@ import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import { AppSidebar } from "@/components/AppSidebar";
 import { SiteHeader } from "@/components/SiteHeader";
+import {
+  DashboardContentSkeleton,
+  FullPageLoading,
+} from "@/components/PageLoading";
 import { Toaster } from "@/components/Toaster";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -79,14 +83,25 @@ function App() {
   const activePage = getPageFromPathname(location.pathname);
   const activePageTitle = t(pageTitleKeys[activePage]);
 
+  // Keeps the sidebar and header on screen while the session and account
+  // load, so a refresh only shows a skeleton in the content area.
+  const dashboardLoading = (
+    <DashboardLayout activePage={activePage} activePageTitle={activePageTitle}>
+      <DashboardContentSkeleton />
+    </DashboardLayout>
+  );
+
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route
         path="/onboarding"
         element={
-          <ProtectedRoute>
-            <PartnerGate isOnboardingCompleted={false}>
+          <ProtectedRoute loadingContent={<FullPageLoading />}>
+            <PartnerGate
+              isOnboardingCompleted={false}
+              loadingContent={<FullPageLoading />}
+            >
               <OnboardingPage />
             </PartnerGate>
           </ProtectedRoute>
@@ -95,8 +110,11 @@ function App() {
       <Route
         path="/*"
         element={
-          <ProtectedRoute>
-            <PartnerGate isOnboardingCompleted>
+          <ProtectedRoute loadingContent={dashboardLoading}>
+            <PartnerGate
+              isOnboardingCompleted
+              loadingContent={dashboardLoading}
+            >
               <DashboardLayout
                 activePage={activePage}
                 activePageTitle={activePageTitle}
@@ -116,10 +134,6 @@ function App() {
                   />
                   <Route
                     path={`${getPagePath("classes")}/add`}
-                    element={<ClassFormPage key={location.pathname} />}
-                  />
-                  <Route
-                    path={`${getPagePath("classes")}/:classId/edit`}
                     element={<ClassFormPage key={location.pathname} />}
                   />
                   <Route

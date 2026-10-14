@@ -17,6 +17,7 @@ import {
   addDays,
   addMonths,
   formatShortDate,
+  formatYmd,
   isSameDay,
   isSameMonth,
 } from "@/lib/date.utils";
@@ -25,6 +26,10 @@ type DatePickerProps = {
   value: Date | null;
   onChange: (date: Date | null) => void;
   label: string;
+  invalid?: boolean;
+  describedBy?: string;
+  // Days before this one, compared by calendar day, are not selectable.
+  minDate?: Date;
   locale?: string;
   placeholder?: string;
   clearLabel?: string;
@@ -67,6 +72,9 @@ function DatePicker({
   value,
   onChange,
   label,
+  invalid,
+  describedBy,
+  minDate,
   locale = "en-US",
   placeholder = label,
   clearLabel,
@@ -157,6 +165,8 @@ function DatePicker({
             variant="outline"
             className={cn("w-full justify-start", className)}
             aria-label={label}
+            aria-invalid={invalid}
+            aria-describedby={describedBy}
           >
             <CalendarIcon data-icon="inline-start" />
             <span
@@ -235,6 +245,9 @@ function DatePicker({
           {calendarDays.map((date) => {
             const selected = value ? isSameDay(date, value) : false;
             const muted = !isSameMonth(date, viewedMonth);
+            const disabled = minDate
+              ? formatYmd(date) < formatYmd(minDate)
+              : false;
 
             return (
               <Button
@@ -247,6 +260,7 @@ function DatePicker({
                   muted && !selected && "text-muted-foreground/50",
                 )}
                 aria-pressed={selected}
+                disabled={disabled}
                 onClick={() => selectDate(date)}
               >
                 {date.getDate()}

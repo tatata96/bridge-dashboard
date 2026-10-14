@@ -26,6 +26,17 @@ export const weekdayIndexes = {
   saturday: 6,
 } satisfies Record<Weekday, number>;
 
+// ISO 8601 weekday numbers, as the class plans API expects them.
+export const weekdayIsoNumbers = {
+  monday: 1,
+  tuesday: 2,
+  wednesday: 3,
+  thursday: 4,
+  friday: 5,
+  saturday: 6,
+  sunday: 7,
+} satisfies Record<Weekday, number>;
+
 export const weekdayShortLabelKeys = {
   monday: "weekday.short.monday",
   tuesday: "weekday.short.tuesday",

@@ -1,95 +1,22 @@
-import { useRef, useState } from "react";
-import { MoreHorizontalIcon } from "lucide-react";
-
-import { ClassStatusIndicator } from "@/classes/components/ClassStatusIndicator";
-import { PauseClassPlanDialog } from "@/classes/components/pause-class-plan-dialogue/PauseClassPlanDialog";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import type { ClassPlanResponse } from "@/api/class-plans/class-plans.types";
+import type { VenueResponse } from "@/api/partners/partners.types";
+import { getClassPlanWeekdays } from "@/classes/utils/class-plans.utils";
 import { weekdayShortLabelKeys } from "@/config/class-labels";
-import { useI18n, type TranslationKey } from "@/i18n/i18n";
-import { cn } from "@/lib/classnames.utils";
-import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
-import type { ClassPlan, ClassType } from "@/types/classes";
-import type { Instructor } from "@/types/schedule";
-import type { Venue } from "@/types/venues";
-
-function getInstructorName(
-  instructorId: string | null,
-  instructors: Instructor[],
-  t: (key: TranslationKey) => string,
-) {
-  if (!instructorId) {
-    return t("classes.noInstructorAssigned");
-  }
-  return (
-    instructors.find((instructor) => instructor.id === instructorId)?.name ??
-    t("classes.unknownInstructor")
-  );
-}
+import { useI18n } from "@/i18n/i18n";
+import { dateFromYmdString, formatShortDateWithYear } from "@/lib/date.utils";
 
 export function ClassesTable({
   entries,
-  instructors,
-  onEditEntry,
-  onPauseEntry,
-  onActivateEntry,
-  classTypesById,
   venuesById,
-  getClassPlanSummaryEntry,
   isFiltering,
   onClearFilters,
 }: {
-  entries: ClassPlan[];
-  instructors: Instructor[];
-  onEditEntry: (entryId: string) => void;
-  onPauseEntry: (entryId: string) => Promise<void>;
-  onActivateEntry: (entryId: string) => void;
-  classTypesById: Map<ClassType["id"], ClassType>;
-  venuesById: Map<Venue["id"], Venue>;
-  getClassPlanSummaryEntry: (entry: ClassPlan) => ScheduleListEntry;
+  entries: ClassPlanResponse[];
+  venuesById: Map<VenueResponse["id"], VenueResponse>;
   isFiltering: boolean;
   onClearFilters: () => void;
 }) {
-  const { t } = useI18n();
-  const [openMenuEntryId, setOpenMenuEntryId] = useState<string | null>(null);
-  const [entryToPause, setEntryToPause] = useState<ClassPlan | null>(null);
-  const [isPausing, setIsPausing] = useState(false);
-  const [pauseError, setPauseError] = useState<string | null>(null);
-  const actionTriggerRefs = useRef(new Map<string, HTMLButtonElement>());
-  const lastPauseEntryIdRef = useRef<string | null>(null);
-
-  function closePauseDialog(open: boolean) {
-    if (open) {
-      return;
-    }
-    lastPauseEntryIdRef.current = entryToPause?.id ?? null;
-    setEntryToPause(null);
-    setPauseError(null);
-  }
-
-  async function confirmPause() {
-    if (!entryToPause) {
-      return;
-    }
-
-    setIsPausing(true);
-    setPauseError(null);
-
-    try {
-      await onPauseEntry(entryToPause.id);
-      lastPauseEntryIdRef.current = entryToPause.id;
-      setEntryToPause(null);
-    } catch {
-      setPauseError(t("classes.pauseError"));
-    } finally {
-      setIsPausing(false);
-    }
-  }
+  const { t, dateLocale } = useI18n();
 
   if (entries.length === 0 && !isFiltering) {
     return (
@@ -105,29 +32,23 @@ export function ClassesTable({
         <table className="w-full table-fixed text-left text-sm">
           <thead className="sticky top-0 z-10 border-b border-border bg-muted text-xs font-medium text-muted-foreground">
             <tr>
-              <th scope="col" className="w-[22%] px-2 py-3 sm:px-4">
+              <th scope="col" className="w-[24%] px-2 py-3 sm:px-4">
                 {t("classes.className")}
               </th>
-              <th scope="col" className="w-[17%] px-2 py-3 sm:px-4">
+              <th scope="col" className="w-[20%] px-2 py-3 sm:px-4">
                 {t("venues.venue")}
               </th>
-              <th scope="col" className="w-[14%] px-2 py-3 sm:px-4">
+              <th scope="col" className="w-[10%] px-2 py-3 sm:px-4">
                 {t("classes.time")}
               </th>
-              <th scope="col" className="w-[15%] px-2 py-3 sm:px-4">
-                {t("classes.staff")}
-              </th>
-              <th scope="col" className="w-[15%] px-2 py-3 sm:px-4">
+              <th scope="col" className="w-[20%] px-2 py-3 sm:px-4">
                 {t("classes.repeatOn")}
               </th>
-              <th scope="col" className="w-[7%] px-2 py-3 sm:px-4">
-                {t("classes.capacity")}
+              <th scope="col" className="w-[13%] px-2 py-3 text-center sm:px-4">
+                {t("classes.totalCapacityColumn")}
               </th>
-              <th scope="col" className="w-[10%] px-2 py-3 sm:px-4">
-                {t("classes.status")}
-              </th>
-              <th scope="col" className="w-[6%] px-2 py-3 text-right sm:px-3">
-                <span className="sr-only">{t("classes.actions")}</span>
+              <th scope="col" className="w-[13%] px-2 py-3 text-center sm:px-4">
+                {t("classes.classistaCapacityColumn")}
               </th>
             </tr>
           </thead>
@@ -135,7 +56,7 @@ export function ClassesTable({
             {entries.length === 0 ? (
               <tr>
                 <td
-                  colSpan={8}
+                  colSpan={6}
                   className="px-4 py-6 text-center text-sm text-muted-foreground"
                 >
                   <span>{t("classes.noFilterMatches")}</span>
@@ -150,123 +71,36 @@ export function ClassesTable({
               </tr>
             ) : (
               entries.map((entry) => {
-                const classType = classTypesById.get(entry.classTypeId);
-                const className = classType?.name ?? t("schedule.unknownClass");
-                const venueName =
-                  venuesById.get(entry.venueId)?.name ??
-                  t("venues.unknownVenue");
-                const isPlaceholder = entry.id === "new-class";
-                const isPaused = entry.status === "paused";
                 const scheduleLabel =
-                  entry.schedule.type === "recurring"
-                    ? entry.schedule.repeatOn
+                  entry.recurrenceType === "RECURRING"
+                    ? getClassPlanWeekdays(entry)
                         .map((weekday) => t(weekdayShortLabelKeys[weekday]))
                         .join(", ")
-                    : entry.schedule.date;
+                    : formatShortDateWithYear(
+                        dateFromYmdString(entry.startDate),
+                        dateLocale,
+                      );
 
                 return (
-                  <tr
-                    key={entry.id}
-                    onClick={() => onEditEntry(entry.id)}
-                    className="cursor-pointer transition-colors hover:bg-primary/20"
-                  >
-                    <td
-                      className={cn(
-                        "px-2 py-4 font-semibold sm:px-4",
-                        isPaused ? "text-muted-foreground" : "text-foreground",
-                      )}
-                    >
-                      {className}
+                  <tr key={entry.id}>
+                    <td className="px-2 py-4 font-semibold text-foreground sm:px-4">
+                      {entry.title}
                     </td>
                     <td className="px-2 py-4 text-muted-foreground sm:px-4">
-                      {venueName}
+                      {venuesById.get(entry.venueId)?.name ??
+                        t("venues.unknownVenue")}
                     </td>
-                    <td
-                      className={cn(
-                        "px-2 py-4 font-medium sm:px-4",
-                        isPaused ? "text-muted-foreground" : "text-foreground",
-                      )}
-                    >
+                    <td className="px-2 py-4 font-medium text-foreground sm:px-4">
                       {entry.startTime}
-                    </td>
-                    <td className="px-2 py-4 text-muted-foreground sm:px-4">
-                      {getInstructorName(entry.instructorId, instructors, t)}
                     </td>
                     <td className="px-2 py-4 text-muted-foreground sm:px-4">
                       {scheduleLabel}
                     </td>
-                    <td className="px-2 py-4 text-muted-foreground sm:px-4">
-                      {isPlaceholder ? "" : entry.capacity}
+                    <td className="px-2 py-4 text-center text-muted-foreground sm:px-4">
+                      {entry.totalCapacity}
                     </td>
-                    <td className="px-2 py-4 text-muted-foreground sm:px-4">
-                      {isPlaceholder ? null : (
-                        <ClassStatusIndicator
-                          status={entry.status}
-                          label={t(
-                            entry.status === "active"
-                              ? "classes.active"
-                              : "classes.paused",
-                          )}
-                        />
-                      )}
-                    </td>
-                    <td
-                      className="px-2 py-4 text-right sm:px-3"
-                      onClick={(event) => event.stopPropagation()}
-                    >
-                      {!isPlaceholder && (
-                        <DropdownMenu
-                          open={openMenuEntryId === entry.id}
-                          onOpenChange={(open) =>
-                            setOpenMenuEntryId(open ? entry.id : null)
-                          }
-                        >
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              ref={(node) => {
-                                if (node) {
-                                  actionTriggerRefs.current.set(entry.id, node);
-                                } else {
-                                  actionTriggerRefs.current.delete(entry.id);
-                                }
-                              }}
-                              type="button"
-                              variant="ghost"
-                              size="icon-sm"
-                              aria-label={t("classes.entryActions", {
-                                name: className,
-                              })}
-                              aria-haspopup="menu"
-                              aria-expanded={openMenuEntryId === entry.id}
-                            >
-                              <MoreHorizontalIcon />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onSelect={() => onEditEntry(entry.id)}
-                            >
-                              {t("classes.editClass")}
-                            </DropdownMenuItem>
-                            {entry.status === "active" ? (
-                              <DropdownMenuItem
-                                onSelect={() => {
-                                  setPauseError(null);
-                                  setEntryToPause(entry);
-                                }}
-                              >
-                                {t("classes.pause")}
-                              </DropdownMenuItem>
-                            ) : (
-                              <DropdownMenuItem
-                                onSelect={() => onActivateEntry(entry.id)}
-                              >
-                                {t("classes.activate")}
-                              </DropdownMenuItem>
-                            )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      )}
+                    <td className="px-2 py-4 text-center text-muted-foreground sm:px-4">
+                      {entry.classistaCapacity}
                     </td>
                   </tr>
                 );
@@ -275,27 +109,6 @@ export function ClassesTable({
           </tbody>
         </table>
       </div>
-      {entryToPause ? (
-        <PauseClassPlanDialog
-          open={Boolean(entryToPause)}
-          onOpenChange={closePauseDialog}
-          summaryEntry={getClassPlanSummaryEntry(entryToPause)}
-          isPausing={isPausing}
-          pauseError={pauseError}
-          onConfirm={confirmPause}
-          contentProps={{
-            onCloseAutoFocus: (event) => {
-              const entryId = lastPauseEntryIdRef.current;
-              if (!entryId) {
-                return;
-              }
-              event.preventDefault();
-              actionTriggerRefs.current.get(entryId)?.focus();
-              lastPauseEntryIdRef.current = null;
-            },
-          }}
-        />
-      ) : null}
     </div>
   );
 }

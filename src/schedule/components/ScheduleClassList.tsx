@@ -1,37 +1,22 @@
+import type { ClassSessionResponse } from "@/api/class-sessions/class-sessions.types";
 import { cn } from "@/lib/classnames.utils";
 import { useI18n } from "@/i18n/i18n";
-import { formatTime } from "@/lib/date.utils";
-import type { ClassSession } from "@/types/schedule";
-
-export type ScheduleListEntry = {
-  session: ClassSession;
-  className: string;
-  venueName: string;
-  instructorName: string;
-};
+import { formatTime, ISTANBUL_TIME_ZONE } from "@/lib/date.utils";
 
 export function ScheduleClassList({
-  entries,
+  sessions,
   selectedSessionId,
   onSelectSession,
 }: {
-  entries: ScheduleListEntry[];
+  sessions: ClassSessionResponse[];
   selectedSessionId: string | null;
   onSelectSession: (sessionId: string) => void;
 }) {
   const { dateLocale, t } = useI18n();
 
-  if (entries.length === 0) {
-    return (
-      <div className="flex min-h-24 flex-1 items-center justify-center rounded-lg border border-border bg-background p-6 text-sm text-muted-foreground">
-        {t("schedule.noClasses")}
-      </div>
-    );
-  }
-
   return (
     <ul className="flex min-w-0 flex-1 divide-x divide-border overflow-x-auto rounded-lg border border-border bg-background xl:flex-col xl:divide-x-0 xl:divide-y xl:overflow-x-visible xl:overflow-y-auto">
-      {entries.map(({ session, className, venueName, instructorName }) => {
+      {sessions.map((session) => {
         const isSelected = session.id === selectedSessionId;
 
         return (
@@ -48,20 +33,25 @@ export function ScheduleClassList({
             >
               <div className="flex min-w-0 flex-col gap-0.5">
                 <span className="text-sm font-medium text-foreground">
-                  {formatTime(new Date(session.startAt), dateLocale)}
+                  {formatTime(
+                    new Date(session.startAt),
+                    dateLocale,
+                    ISTANBUL_TIME_ZONE,
+                  )}
                 </span>
                 <span className="text-sm font-semibold text-foreground">
-                  {className}
+                  {session.title}
                 </span>
                 <span className="text-sm text-muted-foreground">
-                  {venueName}
+                  {session.venueName}
                 </span>
                 <span className="text-sm text-muted-foreground">
-                  {instructorName}
+                  {session.instructorName ?? t("classes.noInstructorAssigned")}
                 </span>
               </div>
+              {/* No bookings API yet, so nothing is reserved. */}
               <span className="text-sm text-muted-foreground">
-                {session.reservedCount}/{session.capacity}
+                0/{session.totalCapacity}
               </span>
             </button>
           </li>

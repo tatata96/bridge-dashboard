@@ -45,20 +45,48 @@ export function formatShortDateWithYear(date: Date, locale = "en-US") {
   )}`;
 }
 
-// Formats a date's time as "7:00 AM".
-export function formatTime(date: Date, locale = "en-US") {
+// The MVP is Istanbul-only, so venue-local times are shown in this zone
+// whatever the browser's timezone is.
+export const ISTANBUL_TIME_ZONE = "Europe/Istanbul";
+
+// Formats a date's time as "7:00 AM", in the browser's timezone unless one is
+// given.
+export function formatTime(date: Date, locale = "en-US", timeZone?: string) {
   return new Intl.DateTimeFormat(locale, {
     hour: "numeric",
     minute: "2-digit",
+    timeZone,
   }).format(date);
 }
 
-// Formats a time range as "7:00-8:00 AM".
-export function formatTimeRange(start: Date, end: Date, locale = "en-US") {
+// Formats a time range as "7:00-8:00 AM", in the browser's timezone unless
+// one is given.
+export function formatTimeRange(
+  start: Date,
+  end: Date,
+  locale = "en-US",
+  timeZone?: string,
+) {
   return new Intl.DateTimeFormat(locale, {
     hour: "numeric",
     minute: "2-digit",
+    timeZone,
   }).formatRange(start, end);
+}
+
+// Today's calendar date in the given timezone, as a local Date at midnight so
+// formatYmd and the date picker (which read local fields) show that date.
+export function getTodayInTimeZone(timeZone: string) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+  }).formatToParts(new Date());
+  const getPart = (type: Intl.DateTimeFormatPartTypes) =>
+    Number(parts.find((part) => part.type === type)?.value);
+
+  return new Date(getPart("year"), getPart("month") - 1, getPart("day"));
 }
 
 // Returns today's date with the time from an "HH:mm" value.

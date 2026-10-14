@@ -116,6 +116,13 @@ the function determines the value to send in a PATCH request.
 
 ## Accessibility
 
+### Image Alt Text
+
+Always provide meaningful, descriptive alt text for logos and informative
+images. Logos must identify the brand (for example, `alt="Classista logo"`),
+even when the brand name also appears nearby. Do not leave logo alt text empty.
+Reserve `alt=""` for purely decorative images that convey no information.
+
 ### Semantic Headings
 
 Use real heading elements (`<h1>`–`<h6>`) for section and content titles
