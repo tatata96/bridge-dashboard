@@ -196,6 +196,7 @@ export const en = {
   "classes.editSingleClassSuffix": ".",
   "classes.backToClasses": "Back to class plans",
   "classes.class": "Class",
+  "classes.selectClassType": "Select class type",
   "classes.classType": "Class type",
   "classes.recurring": "Recurring",
   "classes.oneTime": "One-time",

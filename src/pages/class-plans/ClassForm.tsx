@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { ArrowLeftIcon } from "lucide-react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 
+import { useClassTypesQuery } from "@/api/class-types/class-types.api";
+import { useVenuesQuery } from "@/api/venues/venues.api";
 import { ClassStatusIndicator } from "@/classes/components/ClassStatusIndicator";
 import { ClassSessionsCard } from "@/classes/components/ClassSessionsCard";
 import { PauseClassPlanDialog } from "@/classes/components/pause-class-plan-dialogue/PauseClassPlanDialog";
@@ -64,6 +66,8 @@ const startTimeOptions = Array.from(
 const noStaffValue = "none";
 const durationOptions = [30, 45, 60, 75, 90] as const;
 
+type SelectOption = { id: string; name: string };
+
 type FormErrors = {
   repeatOn?: string;
   endDate?: string;
@@ -108,10 +112,14 @@ export function ClassFormPage() {
   const isEditMode = Boolean(classId);
   const isRecurringClassPlan = classPlanToEdit?.schedule.type === "recurring";
   const isClassTypeLocked = isEditMode;
+  // Create mode loads its options from the API. Edit mode still runs on mock
+  // data until the edit flow is connected.
+  const classTypesQuery = useClassTypesQuery("active");
+  const venuesQuery = useVenuesQuery();
   const activeVenueOptions = mockVenues.filter(
     (venue) => venue.status === "active",
   );
-  const venueOptions =
+  const mockVenueOptions =
     classPlanToEdit &&
     !activeVenueOptions.some((venue) => venue.id === classPlanToEdit.venueId)
       ? [
@@ -121,17 +129,26 @@ export function ClassFormPage() {
           Boolean(venue),
         )
       : activeVenueOptions;
+  const classTypeOptions: SelectOption[] = isEditMode
+    ? mockClassTypes
+    : (classTypesQuery.data ?? []);
+  const venueOptions: SelectOption[] = isEditMode
+    ? mockVenueOptions
+    : (venuesQuery.data ?? []);
+  const isClassTypeSelectDisabled =
+    !isEditMode && classTypeOptions.length === 0;
+  const isVenueSelectDisabled = !isEditMode && venueOptions.length === 0;
 
   const [classType, setClassType] = useState<ClassSchedule["type"]>(
     () => classPlanToEdit?.schedule.type ?? "recurring",
   );
   const [selectedClassTypeId, setSelectedClassTypeId] = useState(
-    () => classPlanToEdit?.classTypeId ?? mockClassTypes[0]?.id ?? "",
+    () => classPlanToEdit?.classTypeId ?? "",
   );
   const [selectedVenueId, setSelectedVenueId] = useState(
-    () => classPlanToEdit?.venueId ?? activeVenueOptions[0]?.id ?? "",
+    () => classPlanToEdit?.venueId ?? "",
   );
-  const [selectedStaffId, setSelectedStaffId] = useState(
+  const [selectedStaffId] = useState(
     () => classPlanToEdit?.instructorId ?? noStaffValue,
   );
   const [startDate, setStartDate] = useState(() =>
@@ -163,6 +180,12 @@ export function ClassFormPage() {
   const [capacity, setCapacity] = useState(
     () => classPlanToEdit?.capacity ?? 1,
   );
+  // Create mode needs a real class type and venue chosen from the loaded
+  // options before it can be saved.
+  const isSaveDisabled =
+    !isEditMode &&
+    (!classTypeOptions.some((option) => option.id === selectedClassTypeId) ||
+      !venueOptions.some((option) => option.id === selectedVenueId));
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isPauseDialogOpen, setIsPauseDialogOpen] = useState(false);
   const [isPausing, setIsPausing] = useState(false);
@@ -570,12 +593,16 @@ export function ClassFormPage() {
                   <Select
                     value={selectedClassTypeId}
                     onValueChange={setSelectedClassTypeId}
+                    disabled={isClassTypeSelectDisabled}
                   >
-                    <SelectTrigger className="h-9 w-full">
-                      <SelectValue />
+                    <SelectTrigger
+                      aria-label={t("classes.selectClassType")}
+                      className="h-9 w-full"
+                    >
+                      <SelectValue placeholder={t("classes.selectClassType")} />
                     </SelectTrigger>
                     <SelectContent>
-                      {mockClassTypes.map((classType) => (
+                      {classTypeOptions.map((classType) => (
                         <SelectItem key={classType.id} value={classType.id}>
                           {classType.name}
                         </SelectItem>
@@ -591,6 +618,7 @@ export function ClassFormPage() {
                   <Select
                     value={selectedVenueId}
                     onValueChange={setSelectedVenueId}
+                    disabled={isVenueSelectDisabled}
                   >
                     <SelectTrigger
                       aria-label={t("venues.selectVenue")}
@@ -608,6 +636,7 @@ export function ClassFormPage() {
                   </Select>
                 </div>
 
+                {/* TODO: re-enable once the instructors API is connected.
                 <div className="flex min-w-0 flex-col gap-4">
                   <span className="flex items-center justify-between gap-3">
                     <span className="text-sm font-medium text-muted-foreground">
@@ -626,16 +655,24 @@ export function ClassFormPage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value={noStaffValue}>
-                        {t("class.noStaff")}
+                        {t(
+                          isEditMode ? "class.noStaff" : "classes.noInstructor",
+                        )}
                       </SelectItem>
-                      {mockInstructors.map((instructor) => (
-                        <SelectItem key={instructor.id} value={instructor.id}>
-                          {instructor.name}
-                        </SelectItem>
-                      ))}
+                      {isEditMode
+                        ? mockInstructors.map((instructor) => (
+                            <SelectItem
+                              key={instructor.id}
+                              value={instructor.id}
+                            >
+                              {instructor.name}
+                            </SelectItem>
+                          ))
+                        : null}
                     </SelectContent>
                   </Select>
                 </div>
+                */}
               </div>
             </div>
 
@@ -653,7 +690,12 @@ export function ClassFormPage() {
                   {t("classes.pause")}
                 </Button>
               ) : null}
-              <Button type="button" className="h-9" onClick={handleSave}>
+              <Button
+                type="button"
+                className="h-9"
+                onClick={handleSave}
+                disabled={isSaveDisabled}
+              >
                 {t("common.save")}
               </Button>
             </div>

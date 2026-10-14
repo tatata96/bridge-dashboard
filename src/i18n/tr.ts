@@ -196,6 +196,7 @@ export const tr = {
   "classes.editSingleClassSuffix": ".",
   "classes.backToClasses": "Ders planlarına dön",
   "classes.class": "Ders",
+  "classes.selectClassType": "Ders tipi seç",
   "classes.classType": "Ders tipi",
   "classes.recurring": "Tekrarlı",
   "classes.oneTime": "Tek seferlik",
