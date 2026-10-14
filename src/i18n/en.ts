@@ -197,6 +197,25 @@ export const en = {
   "classes.backToClasses": "Back to class plans",
   "classes.class": "Class",
   "classes.selectClassType": "Select class type",
+  "classes.loadingVenues": "Loading venues…",
+  "classes.venuesLoadError": "We couldn't load your venues.",
+  "classes.noClassTypesAvailable":
+    "You don't have any active class types yet. Add a class type first.",
+  "classes.noVenuesAvailable":
+    "You don't have any venues yet. Add a venue first.",
+  "classes.totalCapacity": "Total class capacity",
+  "classes.classistaCapacity": "Seats available through Classista",
+  "classes.capacityInvalid": "Enter a whole number of at least 1.",
+  "classes.classistaCapacityExceedsTotal":
+    "Classista seats can't exceed the total class capacity.",
+  "classes.endsAfterMidnight":
+    "The class must end by midnight. Choose an earlier start time or a shorter duration.",
+  "classes.saving": "Saving…",
+  "classes.error.invalid": "Check the values and try again.",
+  "classes.error.notFound":
+    "The class type or venue you selected no longer exists. Reload the page and try again.",
+  "classes.error.generic": "We couldn't create the class plan. Try again.",
+  "toast.classPlanCreated": "Class plan created",
   "classes.classType": "Class type",
   "classes.recurring": "Recurring",
   "classes.oneTime": "One-time",
@@ -213,6 +232,7 @@ export const en = {
   "classes.repeatOn": "Repeat on",
   "classes.repeatOnRequired": "Select at least one repeat day.",
   "classes.endDateBeforeStartDate": "End date cannot be before start date.",
+  "classes.startDateInPast": "The start date cannot be in the past.",
   "classes.recurrenceSummaryPrimary": "Every {days} · {timeRange}",
   "classes.recurrenceSummaryDates": "From {startDate} · {endDate}",
   "classes.recurrenceSummaryEndDate": "until {endDate}",

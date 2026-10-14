@@ -197,6 +197,24 @@ export const tr = {
   "classes.backToClasses": "Ders planlarına dön",
   "classes.class": "Ders",
   "classes.selectClassType": "Ders tipi seç",
+  "classes.loadingVenues": "Mekanlarınız yükleniyor…",
+  "classes.venuesLoadError": "Mekanlarınız yüklenemedi.",
+  "classes.noClassTypesAvailable":
+    "Henüz aktif ders tipiniz yok. Önce bir ders tipi ekleyin.",
+  "classes.noVenuesAvailable": "Henüz mekanınız yok. Önce bir mekan ekleyin.",
+  "classes.totalCapacity": "Toplam ders kontenjanı",
+  "classes.classistaCapacity": "Classista üzerinden satılan koltuk",
+  "classes.capacityInvalid": "En az 1 olan bir tam sayı girin.",
+  "classes.classistaCapacityExceedsTotal":
+    "Classista koltukları toplam ders kontenjanını aşamaz.",
+  "classes.endsAfterMidnight":
+    "Ders gece yarısına kadar bitmelidir. Daha erken bir başlangıç saati veya daha kısa bir süre seçin.",
+  "classes.saving": "Kaydediliyor…",
+  "classes.error.invalid": "Değerleri kontrol edip tekrar deneyin.",
+  "classes.error.notFound":
+    "Seçtiğiniz ders tipi veya mekan artık mevcut değil. Sayfayı yenileyip tekrar deneyin.",
+  "classes.error.generic": "Ders planı oluşturulamadı. Tekrar deneyin.",
+  "toast.classPlanCreated": "Ders planı oluşturuldu",
   "classes.classType": "Ders tipi",
   "classes.recurring": "Tekrarlı",
   "classes.oneTime": "Tek seferlik",
@@ -214,6 +232,7 @@ export const tr = {
   "classes.repeatOnRequired": "En az bir tekrar günü seçin.",
   "classes.endDateBeforeStartDate":
     "Bitiş tarihi başlangıç tarihinden önce olamaz.",
+  "classes.startDateInPast": "Başlangıç tarihi geçmişte olamaz.",
   "classes.recurrenceSummaryPrimary": "Her {days} · {timeRange}",
   "classes.recurrenceSummaryDates": "Başlangıç {startDate} · {endDate}",
   "classes.recurrenceSummaryEndDate": "{endDate} tarihine kadar",
