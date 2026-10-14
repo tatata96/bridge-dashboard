@@ -342,6 +342,9 @@ export const tr = {
   "auth.logoutError": "Çıkış yapılamadı. Lütfen tekrar deneyin.",
   "auth.accountLoading": "Hesabınız yükleniyor…",
   "auth.accountError": "Hesabınız yüklenirken bir hata oluştu.",
+  "account.profile": "Profil",
+  "account.name": "Ad",
+  "account.email": "E-posta",
   "auth.retry": "Tekrar dene",
   "onboarding.title": "İşletmenizi oluşturun",
   "onboarding.subtitle":

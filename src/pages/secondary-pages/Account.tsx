@@ -16,7 +16,8 @@ const languageOptions: {
 
 export function AccountPage() {
   const { language, setLanguage, t } = useI18n();
-  const { signOut } = useAuth();
+  const { signOut, user, classistaUser } = useAuth();
+  const email = classistaUser?.email ?? user?.email ?? null;
   const [loggingOut, setLoggingOut] = useState(false);
   const [logoutError, setLogoutError] = useState<string | null>(null);
 
@@ -34,6 +35,22 @@ export function AccountPage() {
 
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-6 p-4 sm:p-6">
+      <section className="flex max-w-2xl flex-col gap-3">
+        <h2 className="text-lg font-semibold tracking-normal">
+          {t("account.profile")}
+        </h2>
+        <dl className="flex flex-col gap-3 text-sm">
+          <div className="flex flex-col gap-0.5">
+            <dt className="text-muted-foreground">{t("account.name")}</dt>
+            <dd className="font-medium">{classistaUser?.name ?? "—"}</dd>
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <dt className="text-muted-foreground">{t("account.email")}</dt>
+            <dd className="break-all font-medium">{email ?? "—"}</dd>
+          </div>
+        </dl>
+      </section>
+
       <section className="flex max-w-2xl flex-col gap-3">
         <h2 className="text-lg font-semibold tracking-normal">
           {t("common.language")}

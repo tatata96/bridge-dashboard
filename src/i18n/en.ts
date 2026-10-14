@@ -338,6 +338,9 @@ export const en = {
   "auth.logoutError": "Failed to log out. Please try again.",
   "auth.accountLoading": "Loading your account…",
   "auth.accountError": "We couldn't load your account.",
+  "account.profile": "Profile",
+  "account.name": "Name",
+  "account.email": "Email",
   "auth.retry": "Retry",
   "onboarding.title": "Set up your business",
   "onboarding.subtitle":
