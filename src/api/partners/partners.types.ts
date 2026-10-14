@@ -56,7 +56,6 @@ export type VenueResponse = {
   latitude: number | null;
   longitude: number | null;
   phone: string | null;
-  timezone: string;
   amenityIds: VenueAmenity[];
   // ISO 8601 strings (Date serialized as JSON).
   createdAt: string;
@@ -85,7 +84,6 @@ export type UpdateVenueRequest = {
   addressLine?: string;
   district?: string;
   city?: string;
-  timezone?: string;
   postalCode?: string | null;
   phone?: string | null;
   amenityIds?: VenueAmenity[];
