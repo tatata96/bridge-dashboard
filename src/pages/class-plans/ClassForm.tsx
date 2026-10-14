@@ -37,6 +37,8 @@ import {
   formatTime,
   formatTimeRange,
   formatYmd,
+  getTodayInTimeZone,
+  ISTANBUL_TIME_ZONE,
 } from "@/lib/date.utils";
 import { ApiError } from "@/lib/network/api-client";
 import type { ClassSchedule, Weekday } from "@/types/classes";
@@ -167,7 +169,9 @@ export function ClassFormPage() {
     useState<ClassSchedule["type"]>("recurring");
   const [selectedClassTypeId, setSelectedClassTypeId] = useState("");
   const [selectedVenueId, setSelectedVenueId] = useState("");
-  const [startDate, setStartDate] = useState(() => new Date());
+  const [startDate, setStartDate] = useState(() =>
+    getTodayInTimeZone(ISTANBUL_TIME_ZONE),
+  );
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [repeatOn, setRepeatOn] = useState<Weekday[]>([]);
   const [startTime, setStartTime] = useState("07:00");
@@ -241,7 +245,9 @@ export function ClassFormPage() {
     const nextErrors: FormErrors = {};
 
     // Re-checked here because the page may have stayed open past midnight.
-    if (formatYmd(startDate) < formatYmd(new Date())) {
+    if (
+      formatYmd(startDate) < formatYmd(getTodayInTimeZone(ISTANBUL_TIME_ZONE))
+    ) {
       nextErrors.startDate = t("classes.startDateInPast");
     }
 
@@ -413,7 +419,7 @@ export function ClassFormPage() {
                             ? `${formId}-startDate`
                             : undefined
                         }
-                        minDate={new Date()}
+                        minDate={getTodayInTimeZone(ISTANBUL_TIME_ZONE)}
                         locale={dateLocale}
                       />
                       {formErrors.startDate ? (
