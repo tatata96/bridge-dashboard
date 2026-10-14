@@ -8,31 +8,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { categories } from "@/config/class-types";
-import { mockClassTypesById } from "@/classes/data/classes.mock-data";
-import { getCategoryIdsForClassPlans } from "@/classes/utils/classes.utils";
 import { useI18n } from "@/i18n/i18n";
-import type { Instructor } from "@/types/schedule";
-import type { ClassFilters, ClassPlan } from "@/types/classes";
+import type { ClassFilters } from "@/types/classes";
+
+export type CategoryFilterOption = { id: string; name: string };
 
 export function ClassesToolbar({
-  classPlans,
-  instructors,
+  categoryOptions,
   filters,
   onFilterChange,
   onAddClass,
 }: {
-  classPlans: ClassPlan[];
-  instructors: Instructor[];
+  categoryOptions: CategoryFilterOption[];
   filters: ClassFilters;
   onFilterChange: (filters: ClassFilters) => void;
   onAddClass: () => void;
 }) {
   const { t } = useI18n();
-  const categoryIdsWithClassPlans = getCategoryIdsForClassPlans(
-    classPlans,
-    mockClassTypesById,
-  );
 
   function updateFilter(key: keyof ClassFilters, value: string) {
     onFilterChange({ ...filters, [key]: value });
@@ -50,33 +42,11 @@ export function ClassesToolbar({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t("classes.allClasses")}</SelectItem>
-            {categories
-              .filter((category) => categoryIdsWithClassPlans.has(category.id))
-              .map((category) => (
-                <SelectItem key={category.id} value={category.id}>
-                  {t(category.labelKey)}
-                </SelectItem>
-              ))}
-          </SelectContent>
-        </Select>
-
-        <Select
-          value={filters.instructorId}
-          onValueChange={(value) => updateFilter("instructorId", value)}
-        >
-          <SelectTrigger className="h-9 min-w-40">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">{t("classes.allInstructors")}</SelectItem>
-            {instructors.map((instructor) => (
-              <SelectItem key={instructor.id} value={instructor.id}>
-                {instructor.name}
+            {categoryOptions.map((category) => (
+              <SelectItem key={category.id} value={category.id}>
+                {category.name}
               </SelectItem>
             ))}
-            <SelectItem value="none">
-              {t("classes.noInstructorAssigned")}
-            </SelectItem>
           </SelectContent>
         </Select>
       </div>

@@ -1,4 +1,9 @@
-import type { CreateClassPlanRequest } from "@/api/class-plans/class-plans.types";
+import type { CategoryResponse } from "@/api/categories/categories.types";
+import type {
+  ClassPlanResponse,
+  CreateClassPlanRequest,
+} from "@/api/class-plans/class-plans.types";
+import type { ClassTypeResponse } from "@/api/class-types/class-types.types";
 import { weekdayIsoNumbers, weekdays } from "@/config/class-labels";
 import { formatYmd } from "@/lib/date.utils";
 import type { ClassSchedule, Weekday } from "@/types/classes";
@@ -60,4 +65,56 @@ export function buildCreateClassPlanRequest(
       .map((day) => weekdayIsoNumbers[day]),
     ...(values.endDate ? { endDate: formatYmd(values.endDate) } : {}),
   };
+}
+
+// Recurring plans store ISO weekday numbers; the labels are keyed by weekday.
+export function getClassPlanWeekdays(plan: ClassPlanResponse): Weekday[] {
+  return weekdays.filter((day) =>
+    plan.weekdays.includes(weekdayIsoNumbers[day]),
+  );
+}
+
+// The class type's category is a leaf, while the list filters by top-level
+// category. A top-level category with no children is its own leaf.
+function getTopLevelCategoryId(
+  categories: CategoryResponse[],
+  categoryId: string,
+) {
+  return (
+    categories.find(
+      (category) =>
+        category.id === categoryId ||
+        category.children.some((child) => child.id === categoryId),
+    )?.id ?? null
+  );
+}
+
+export function getClassPlanTopLevelCategoryId(
+  plan: ClassPlanResponse,
+  classTypesById: Map<string, ClassTypeResponse>,
+  categories: CategoryResponse[],
+) {
+  const classType = classTypesById.get(plan.classTypeId);
+
+  return classType
+    ? getTopLevelCategoryId(categories, classType.categoryId)
+    : null;
+}
+
+// Top-level categories that at least one of the plans belongs to, in the API's
+// order.
+export function getClassPlanCategoryOptions(
+  plans: ClassPlanResponse[],
+  classTypesById: Map<string, ClassTypeResponse>,
+  categories: CategoryResponse[],
+) {
+  const categoryIds = new Set(
+    plans.map((plan) =>
+      getClassPlanTopLevelCategoryId(plan, classTypesById, categories),
+    ),
+  );
+
+  return categories
+    .filter((category) => categoryIds.has(category.id))
+    .map((category) => ({ id: category.id, name: category.name }));
 }
