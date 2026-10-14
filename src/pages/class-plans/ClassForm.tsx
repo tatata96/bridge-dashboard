@@ -5,7 +5,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useCreateClassPlanMutation } from "@/api/class-plans/class-plans.api";
 import { useClassTypesQuery } from "@/api/class-types/class-types.api";
 import { useVenuesQuery } from "@/api/venues/venues.api";
-import { mockClassPlans } from "@/classes/data/classes.mock-data";
 import { WeekdaySelector } from "@/classes/components/WeekdaySelector";
 import {
   buildCreateClassPlanRequest,
@@ -42,17 +41,12 @@ import {
 import { ApiError } from "@/lib/network/api-client";
 import type { ClassSchedule, Weekday } from "@/types/classes";
 
-// TODO: make logical time options list
-const startTimeOptions = Array.from(
-  new Set([
-    "07:00",
-    "08:00",
-    "09:00",
-    "10:00",
-    "18:00",
-    ...mockClassPlans.map((classPlan) => classPlan.startTime),
-  ]),
-).sort();
+// Every half hour of the day, as "HH:mm".
+const startTimeOptions = Array.from({ length: 48 }, (_, index) => {
+  const hours = String(Math.floor(index / 2)).padStart(2, "0");
+  const minutes = index % 2 === 0 ? "00" : "30";
+  return `${hours}:${minutes}`;
+});
 const durationOptions = [30, 45, 60, 75, 90] as const;
 
 type FormErrors = {
@@ -752,7 +746,7 @@ export function ClassFormPage() {
                       <SelectItem value={noStaffValue}>
                         {t("classes.noInstructor")}
                       </SelectItem>
-                      {mockInstructors.map((instructor) => (
+                      {instructors.map((instructor) => (
                         <SelectItem key={instructor.id} value={instructor.id}>
                           {instructor.name}
                         </SelectItem>

@@ -181,6 +181,13 @@ export const en = {
   "schedule.spotLeft": "spot left",
   "schedule.spotsLeft": "spots left",
   "schedule.unknownClass": "Unknown class",
+  "schedule.totalCapacity": "Total capacity",
+  "schedule.classistaCapacity": "Classista capacity",
+  "schedule.loading": "Loading classes…",
+  "schedule.loadError": "We couldn't load the classes for this day.",
+  "schedule.refreshError":
+    "We couldn't refresh the classes. Showing the last loaded list.",
+  "schedule.noMatches": "No classes match the selected filters.",
   "classes.noClasses": "No classes found.",
   "classes.loading": "Loading class plans…",
   "classes.loadError": "We couldn't load your class plans.",

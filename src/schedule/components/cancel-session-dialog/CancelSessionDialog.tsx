@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { useI18n } from "@/i18n/i18n";
 import { ClassSessionSummary } from "@/schedule/components/session-detail-right-panel/ClassSessionSummary";
-import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
+import type { ScheduleListEntry } from "@/schedule/types/schedule-list-entry.types";
 import { cancellationReasons } from "@/schedule/constants/cancellation-reasons";
 
 export function CancelSessionDialog({

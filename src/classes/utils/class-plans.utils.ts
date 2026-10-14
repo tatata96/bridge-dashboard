@@ -76,7 +76,7 @@ export function getClassPlanWeekdays(plan: ClassPlanResponse): Weekday[] {
 
 // The class type's category is a leaf, while the list filters by top-level
 // category. A top-level category with no children is its own leaf.
-function getTopLevelCategoryId(
+export function getTopLevelCategoryId(
   categories: CategoryResponse[],
   categoryId: string,
 ) {

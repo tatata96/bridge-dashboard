@@ -180,6 +180,13 @@ export const tr = {
   "schedule.spotLeft": "yer kaldı",
   "schedule.spotsLeft": "yer kaldı",
   "schedule.unknownClass": "Bilinmeyen ders",
+  "schedule.totalCapacity": "Toplam kontenjan",
+  "schedule.classistaCapacity": "Classista kontenjanı",
+  "schedule.loading": "Dersler yükleniyor…",
+  "schedule.loadError": "Bu günün dersleri yüklenemedi.",
+  "schedule.refreshError":
+    "Dersler yenilenemedi. Son yüklenen liste gösteriliyor.",
+  "schedule.noMatches": "Seçili filtrelerle eşleşen ders yok.",
   "classes.noClasses": "Ders bulunamadı.",
   "classes.loading": "Ders planlarınız yükleniyor…",
   "classes.loadError": "Ders planlarınız yüklenemedi.",

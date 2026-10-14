@@ -1,3 +1,5 @@
+import type { CategoryResponse } from "@/api/categories/categories.types";
+import type { VenueResponse } from "@/api/partners/partners.types";
 import { DatePicker } from "@/components/ui/date-picker";
 import {
   Select,
@@ -6,28 +8,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { categories } from "@/config/class-types";
 import { useI18n } from "@/i18n/i18n";
-import { mockVenues } from "@/venues/data/venues.mock-data";
-
-function TypeFilterValue({ value }: { value: string }) {
-  const { t } = useI18n();
-  const classType = categories.find((option) => option.id === value);
-
-  if (value === "all") {
-    return t("schedule.allClasses");
-  }
-
-  return classType ? t(classType.labelKey) : value;
-}
+import { ALL_FILTER_VALUE } from "@/schedule/utils/schedule-sessions.utils";
 
 export function ScheduleToolbar({
   selectedDate,
   onDateChange,
   onPrevDay,
   onNextDay,
+  categories,
   typeFilter,
   onTypeFilterChange,
+  venues,
   venueFilter,
   onVenueFilterChange,
 }: {
@@ -35,8 +27,10 @@ export function ScheduleToolbar({
   onDateChange: (date: Date) => void;
   onPrevDay: () => void;
   onNextDay: () => void;
+  categories: CategoryResponse[];
   typeFilter: string;
   onTypeFilterChange: (value: string) => void;
+  venues: VenueResponse[];
   venueFilter: string;
   onVenueFilterChange: (value: string) => void;
 }) {
@@ -65,15 +59,15 @@ export function ScheduleToolbar({
       <Select value={typeFilter} onValueChange={onTypeFilterChange}>
         <SelectTrigger className="w-40 gap-2">
           <span className="text-muted-foreground">{t("schedule.type")}</span>
-          <SelectValue>
-            <TypeFilterValue value={typeFilter} />
-          </SelectValue>
+          <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">{t("schedule.allClasses")}</SelectItem>
-          {categories.map((classType) => (
-            <SelectItem key={classType.id} value={classType.id}>
-              {t(classType.labelKey)}
+          <SelectItem value={ALL_FILTER_VALUE}>
+            {t("schedule.allClasses")}
+          </SelectItem>
+          {categories.map((category) => (
+            <SelectItem key={category.id} value={category.id}>
+              {category.name}
             </SelectItem>
           ))}
         </SelectContent>
@@ -85,8 +79,10 @@ export function ScheduleToolbar({
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">{t("venues.allVenues")}</SelectItem>
-          {mockVenues.map((venue) => (
+          <SelectItem value={ALL_FILTER_VALUE}>
+            {t("venues.allVenues")}
+          </SelectItem>
+          {venues.map((venue) => (
             <SelectItem key={venue.id} value={venue.id}>
               {venue.name}
             </SelectItem>

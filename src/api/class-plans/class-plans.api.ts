@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { classSessionsQueryKey } from "@/api/class-sessions/class-sessions.api";
 import type {
   ClassPlanResponse,
   CreateClassPlanRequest,
@@ -35,6 +36,8 @@ export function useCreateClassPlanMutation() {
     mutationFn: createClassPlan,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: classPlansQueryKey });
+      // Creating a plan generates its sessions, so every cached day is stale.
+      void queryClient.invalidateQueries({ queryKey: classSessionsQueryKey });
     },
   });
 }
