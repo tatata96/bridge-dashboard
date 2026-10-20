@@ -9,6 +9,8 @@ import { useI18n } from "@/i18n/i18n";
 type PartnerGateProps = {
   isOnboardingCompleted: boolean;
   children: ReactNode;
+  // Rendered while /auth/me is loading. Keeps the app shell visible.
+  loadingContent: ReactNode;
 };
 
 // Routes on the /auth/me result. Each route declares whether it needs
@@ -18,6 +20,7 @@ type PartnerGateProps = {
 export function PartnerGate({
   isOnboardingCompleted,
   children,
+  loadingContent,
 }: PartnerGateProps) {
   const { classistaUser, classistaUserError, refetchClassistaUser } = useAuth();
   const { t } = useI18n();
@@ -39,13 +42,7 @@ export function PartnerGate({
   }
 
   if (!classistaUser) {
-    return (
-      <div className="flex min-h-svh items-center justify-center">
-        <span className="text-sm text-muted-foreground">
-          {t("auth.accountLoading")}
-        </span>
-      </div>
-    );
+    return loadingContent;
   }
 
   const onboardingCompleted = classistaUser.partner !== null;

@@ -25,7 +25,7 @@ import { getPagePath } from "@/config/navigation";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/classnames.utils";
 import { ClassSessionSummary } from "@/schedule/components/session-detail-right-panel/ClassSessionSummary";
-import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
+import type { ScheduleListEntry } from "@/schedule/types/schedule-list-entry.types";
 import type { Instructor } from "@/types/schedule";
 
 const UNASSIGNED_INSTRUCTOR = "unassigned";
@@ -64,7 +64,7 @@ export function EditSessionDialog({
   );
   const [scopeNoticePrefix, scopeNoticeLink, scopeNoticeSuffix] =
     t("dialog.scopeNotice").split("**");
-  const classPlanEditPath = `${getPagePath("classes")}/${session.classPlanId}/edit`;
+  const classPlansPath = getPagePath("classes");
 
   function handleOpenChange(nextOpen: boolean) {
     setOpen(nextOpen);
@@ -99,7 +99,7 @@ export function EditSessionDialog({
           <p>
             {scopeNoticePrefix}
             <Link
-              to={classPlanEditPath}
+              to={classPlansPath}
               className="font-medium text-foreground underline underline-offset-4"
             >
               {scopeNoticeLink}

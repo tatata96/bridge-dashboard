@@ -73,7 +73,7 @@ export function buildPartnerPatch(
   });
 }
 
-// Compares only what the form edits. Postal code, timezone and status are not
+// Compares only what the form edits. Postal code and status are not
 // editable on this page, so they are never sent.
 export function buildVenuePatch(
   initial: VenueResponse,

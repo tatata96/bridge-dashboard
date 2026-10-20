@@ -1,6 +1,6 @@
 import { useI18n } from "@/i18n/i18n";
 import { formatShortDateWithYear } from "@/lib/date.utils";
-import type { ScheduleListEntry } from "@/schedule/components/ScheduleClassList";
+import type { ScheduleListEntry } from "@/schedule/types/schedule-list-entry.types";
 
 function formatSessionTime(date: Date, locale: string) {
   return new Intl.DateTimeFormat(locale, {

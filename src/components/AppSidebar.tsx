@@ -36,6 +36,11 @@ export function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link to={getPagePath("schedule")}>
+                <img
+                  src="/logo.svg"
+                  alt=""
+                  className="size-8 shrink-0 rounded-[22%]"
+                />
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate text-xl font-semibold tracking-normal">
                     {APP_NAME}

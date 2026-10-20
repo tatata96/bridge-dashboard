@@ -1,288 +1,93 @@
 import { useState } from "react";
 
-import { useToast } from "@/hooks/use-toast";
+import { useCategoriesQuery } from "@/api/categories/categories.api";
+import { useClassSessionsQuery } from "@/api/class-sessions/class-sessions.api";
+import { useVenuesQuery } from "@/api/venues/venues.api";
 import { useI18n } from "@/i18n/i18n";
-import { addDays, isSameDay } from "@/lib/date.utils";
 import {
-  ScheduleClassList,
-  type ScheduleListEntry,
-} from "@/schedule/components/ScheduleClassList";
+  addDays,
+  formatYmd,
+  getTodayInTimeZone,
+  ISTANBUL_TIME_ZONE,
+} from "@/lib/date.utils";
+import { ScheduleClassList } from "@/schedule/components/ScheduleClassList";
+import {
+  ScheduleListError,
+  ScheduleListLoading,
+  ScheduleListMessage,
+  ScheduleRefreshError,
+} from "@/schedule/components/ScheduleListStates";
 import { ScheduleDetailPanel } from "@/schedule/components/session-detail-right-panel/ScheduleDetailPanel";
-import {
-  mockClassSessions,
-  mockInstructors,
-  mockReservations,
-} from "@/schedule/data/schedule.mock-data";
 import { ScheduleToolbar } from "@/schedule/components/session-detail-right-panel/ScheduleToolbar";
 import {
-  getClassPlanCategoryId,
-  getClassPlanName,
-  getSessionVenueName,
-  getInstructorName,
-  hasSessionEnded,
-  hasSessionStarted,
-} from "@/schedule/utils/schedule.utils";
-import type { ClassSession } from "@/types/schedule";
-
-const CANCELLED_BOOKING_STATUSES = new Set([
-  "cancelled",
-  "late_cancelled",
-  "cancelled_by_partner",
-]);
+  ALL_FILTER_VALUE,
+  filterSessions,
+  getActiveSessions,
+} from "@/schedule/utils/schedule-sessions.utils";
 
 export function SchedulePage() {
-  const { toast } = useToast();
   const { t } = useI18n();
-  const [selectedDate, setSelectedDate] = useState(() => new Date());
-  const [typeFilter, setTypeFilter] = useState("all");
-  const [venueFilter, setVenueFilter] = useState("all");
+  // A local Date holding the Istanbul calendar date, which is what the API
+  // reads; the day boundaries themselves are the backend's job.
+  const [selectedDate, setSelectedDate] = useState(() =>
+    getTodayInTimeZone(ISTANBUL_TIME_ZONE),
+  );
+  const [typeFilter, setTypeFilter] = useState(ALL_FILTER_VALUE);
+  const [venueFilter, setVenueFilter] = useState(ALL_FILTER_VALUE);
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
     null,
   );
-  const [sessions, setSessions] = useState(() => mockClassSessions);
-  const [reservations, setReservations] = useState(() => mockReservations);
 
-  function getVisibleSessions(sourceSessions: ClassSession[]) {
-    return sourceSessions
-      .filter((session) => session.status !== "cancelled")
-      .filter((session) => isSameDay(new Date(session.startAt), selectedDate))
-      .filter((session) => {
-        if (typeFilter === "all") {
-          return true;
-        }
-        return getClassPlanCategoryId(session.classPlanId) === typeFilter;
-      })
-      .filter((session) => {
-        if (venueFilter === "all") {
-          return true;
-        }
-        return session.venueId === venueFilter;
-      })
-      .sort(
-        (a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
-      );
-  }
+  const sessionsQuery = useClassSessionsQuery(formatYmd(selectedDate));
+  const categoriesQuery = useCategoriesQuery();
+  const venuesQuery = useVenuesQuery();
 
-  function updateSessionClass(
-    sessionId: string,
-    changes: { instructorId: string | null; capacity: number },
-  ) {
-    const originalSession = sessions.find(
-      (session) => session.id === sessionId,
-    );
-    if (!originalSession) {
-      console.warn(`Cannot update missing session: ${sessionId}`);
-      return;
-    }
-    if (hasSessionStarted(originalSession)) {
-      return;
-    }
-
-    setSessions((prev) =>
-      prev.map((session) =>
-        session.id === sessionId ? { ...session, ...changes } : session,
-      ),
-    );
-
-    const changeMessages: string[] = [];
-    if (changes.capacity !== originalSession.capacity) {
-      changeMessages.push(
-        t("toast.capacityChanged", {
-          from: originalSession.capacity,
-          to: changes.capacity,
-        }),
-      );
-    }
-    if (changes.instructorId !== originalSession.instructorId) {
-      changeMessages.push(
-        t("toast.instructorChanged", {
-          instructor: getInstructorName(changes.instructorId, t),
-        }),
-      );
-    }
-
-    toast({
-      title: changeMessages.join(". ") || t("toast.classChangesSaved"),
-      action: {
-        label: t("common.undo"),
-        onClick: () => {
-          setSessions((prev) =>
-            prev.map((session) =>
-              session.id === sessionId ? originalSession : session,
-            ),
-          );
-          setSelectedSessionId(sessionId);
-        },
-      },
-    });
-  }
-
-  function cancelSession(sessionId: string) {
-    const session = sessions.find((s) => s.id === sessionId);
-    if (!session) {
-      return;
-    }
-    if (hasSessionStarted(session)) {
-      return;
-    }
-
-    const visibleSessions = getVisibleSessions(sessions);
-    const cancelledIndex = visibleSessions.findIndex((s) => s.id === sessionId);
-    const nextVisibleSessions = visibleSessions.filter(
-      (session) => session.id !== sessionId,
-    );
-    const nextSelectedSession =
-      nextVisibleSessions[cancelledIndex] ??
-      nextVisibleSessions[cancelledIndex - 1] ??
-      null;
-
-    setSessions((prev) =>
-      prev.map((session) =>
-        session.id === sessionId
-          ? { ...session, status: "cancelled" }
-          : session,
-      ),
-    );
-    setReservations((prev) =>
-      prev.map((reservation) =>
-        reservation.sessionId === sessionId &&
-        !CANCELLED_BOOKING_STATUSES.has(reservation.status)
-          ? { ...reservation, status: "cancelled_by_partner" }
-          : reservation,
-      ),
-    );
-    setSelectedSessionId(nextSelectedSession?.id ?? null);
-
-    toast({
-      title: t("toast.sessionCancelled"),
-    });
-  }
-
-  function checkInReservation(reservationId: string) {
-    const reservation = reservations.find((r) => r.id === reservationId);
-    if (!reservation) {
-      return;
-    }
-    if (reservation.status !== "booked") {
-      return;
-    }
-
-    setReservations((prev) =>
-      prev.map((r) =>
-        r.id === reservationId ? { ...r, status: "attended" } : r,
-      ),
-    );
-
-    const firstName = reservation.clientName.split(" ")[0];
-    toast({
-      title: t("toast.checkedIn", { name: firstName }),
-      action: {
-        label: t("common.undo"),
-        onClick: () => undoCheckInReservation(reservationId),
-      },
-    });
-  }
-
-  function undoCheckInReservation(reservationId: string) {
-    const reservation = reservations.find((r) => r.id === reservationId);
-    if (!reservation) {
-      return;
-    }
-    if (reservation.status !== "attended") {
-      return;
-    }
-
-    setReservations((prev) =>
-      prev.map((r) =>
-        r.id === reservationId ? { ...r, status: "booked" } : r,
-      ),
-    );
-
-    const firstName = reservation.clientName.split(" ")[0];
-    toast({
-      title: t("toast.checkInUndone", { name: firstName }),
-    });
-  }
-
-  function cancelBooking(reservationId: string) {
-    const reservation = reservations.find((r) => r.id === reservationId);
-    if (!reservation) {
-      return;
-    }
-    if (CANCELLED_BOOKING_STATUSES.has(reservation.status)) {
-      return;
-    }
-
-    const firstName = reservation.clientName.split(" ")[0];
-
-    setReservations((prev) =>
-      prev.map((r) =>
-        r.id === reservationId ? { ...r, status: "cancelled" } : r,
-      ),
-    );
-    setSessions((prev) =>
-      prev.map((session) => {
-        if (session.id !== reservation.sessionId) {
-          return session;
-        }
-
-        return {
-          ...session,
-          reservedCount: Math.max(0, session.reservedCount - 1),
-        };
-      }),
-    );
-
-    toast({
-      title: t("toast.bookingCancelled", { name: firstName }),
-      action: {
-        label: t("common.undo"),
-        onClick: () => {
-          setReservations((prev) =>
-            prev.map((r) => (r.id === reservationId ? reservation : r)),
-          );
-          setSessions((prev) =>
-            prev.map((session) => {
-              if (session.id !== reservation.sessionId) {
-                return session;
-              }
-
-              return {
-                ...session,
-                reservedCount: session.reservedCount + 1,
-              };
-            }),
-          );
-        },
-      },
-    });
-  }
-
-  const entries: ScheduleListEntry[] = getVisibleSessions(sessions).map(
-    (session) => ({
-      session,
-      className: getClassPlanName(session.classPlanId, t),
-      venueName: getSessionVenueName(session, t),
-      instructorName: getInstructorName(session.instructorId, t),
-    }),
+  const categories = categoriesQuery.data ?? [];
+  const activeSessions = getActiveSessions(sessionsQuery.data ?? []);
+  const visibleSessions = filterSessions(
+    activeSessions,
+    { categoryId: typeFilter, venueId: venueFilter },
+    categories,
   );
 
-  const selectedEntry =
-    entries.find((entry) => entry.session.id === selectedSessionId) ??
-    entries[0];
+  // If the selected session is gone after a date or filter change, fall back
+  // to the first visible one (or none, which shows the empty detail state).
+  const selectedSession =
+    visibleSessions.find((session) => session.id === selectedSessionId) ??
+    visibleSessions[0];
 
-  const selectedEntryReservations = selectedEntry
-    ? reservations.filter(
-        (reservation) => reservation.sessionId === selectedEntry.session.id,
-      )
-    : [];
+  function renderSessionList() {
+    // Each date has its own query, so a newly selected date is pending until
+    // its sessions arrive instead of showing the previous day's.
+    if (sessionsQuery.isPending) {
+      return <ScheduleListLoading />;
+    }
 
-  const classHasEnded = selectedEntry
-    ? hasSessionEnded(selectedEntry.session)
-    : false;
-  const classHasStarted = selectedEntry
-    ? hasSessionStarted(selectedEntry.session)
-    : false;
+    if (!sessionsQuery.data) {
+      return (
+        <ScheduleListError
+          onRetry={() => void sessionsQuery.refetch()}
+          isRetrying={sessionsQuery.isFetching}
+        />
+      );
+    }
+
+    if (activeSessions.length === 0) {
+      return <ScheduleListMessage message={t("schedule.noClasses")} />;
+    }
+
+    if (visibleSessions.length === 0) {
+      return <ScheduleListMessage message={t("schedule.noMatches")} />;
+    }
+
+    return (
+      <ScheduleClassList
+        sessions={visibleSessions}
+        selectedSessionId={selectedSession?.id ?? null}
+        onSelectSession={setSelectedSessionId}
+      />
+    );
+  }
 
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-4 p-4 sm:gap-6 sm:p-6">
@@ -291,32 +96,25 @@ export function SchedulePage() {
         onDateChange={setSelectedDate}
         onPrevDay={() => setSelectedDate((date) => addDays(date, -1))}
         onNextDay={() => setSelectedDate((date) => addDays(date, 1))}
+        categories={categories}
         typeFilter={typeFilter}
         onTypeFilterChange={setTypeFilter}
+        venues={venuesQuery.data ?? []}
         venueFilter={venueFilter}
         onVenueFilterChange={setVenueFilter}
       />
 
       <div className="flex min-w-0 flex-1 flex-col gap-4 xl:flex-row">
         <div className="flex w-full min-w-0 flex-col xl:w-[clamp(22rem,34vw,39rem)] xl:flex-none">
-          <ScheduleClassList
-            entries={entries}
-            selectedSessionId={selectedEntry?.session.id ?? null}
-            onSelectSession={setSelectedSessionId}
-          />
+          {sessionsQuery.isError && sessionsQuery.data ? (
+            <ScheduleRefreshError
+              onRetry={() => void sessionsQuery.refetch()}
+              isRetrying={sessionsQuery.isFetching}
+            />
+          ) : null}
+          {renderSessionList()}
         </div>
-        <ScheduleDetailPanel
-          entry={selectedEntry}
-          reservations={selectedEntryReservations}
-          instructors={mockInstructors}
-          onSaveClass={updateSessionClass}
-          onCancelSession={cancelSession}
-          onCheckIn={checkInReservation}
-          onUndoCheckIn={undoCheckInReservation}
-          onCancelBooking={cancelBooking}
-          classHasEnded={classHasEnded}
-          classHasStarted={classHasStarted}
-        />
+        <ScheduleDetailPanel session={selectedSession} />
       </div>
     </main>
   );

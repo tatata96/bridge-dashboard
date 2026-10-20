@@ -45,5 +45,4 @@ export type ClassType = {
 
 export type ClassFilters = {
   categoryId: string;
-  instructorId: string;
 };
